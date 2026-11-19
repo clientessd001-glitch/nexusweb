@@ -1,0 +1,3789 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSD Nexus • NexusCloud Workspace</title>
+
+  <!-- Fontes: Inter para interface e JetBrains Mono para códigos, tamanhos e atalhos -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            obsidian: {
+              950: '#050810',
+              900: '#090e1a',
+              850: '#0e1526',
+              800: '#131c31',
+              750: '#1a2540',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Ícones Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #050810;
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Barras de rolagem personalizadas */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(9, 14, 26, 0.55);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.22);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(6, 182, 212, 0.55);
+    }
+
+    .glass-card {
+      background: rgba(14, 21, 38, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .nexus-border {
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .animate-shake {
+      animation: shake 0.36s ease-in-out;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-up {
+      animation: fadeSlideUp 0.25s ease-out forwards;
+    }
+
+    /* Recolhimento da barra lateral no desktop */
+    @media (min-width: 1024px) {
+      #workspace-sidebar.is-collapsed {
+        width: 5.25rem;
+      }
+      #workspace-sidebar.is-collapsed .sb-hide {
+        display: none !important;
+      }
+      #workspace-sidebar.is-collapsed .sb-center {
+        justify-content: center;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen w-screen bg-[#050810] text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+
+  <!-- Input de arquivo oculto para uploads reais -->
+  <input type="file" id="cloud-file-picker" multiple class="hidden" />
+
+  <!-- ======================================================================= -->
+  <!-- TELA 1: AUTENTICAÇÃO (CONECTAR NUVEM SSD)                               -->
+  <!-- ======================================================================= -->
+  <section id="view-auth" class="min-h-screen w-full flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-y-auto">
+    <!-- Luzes de fundo -->
+    <div class="pointer-events-none fixed -top-36 left-1/2 -translate-x-1/2 h-96 w-[38rem] rounded-full bg-cyan-500/10 blur-3xl"></div>
+    <div class="pointer-events-none fixed -bottom-24 right-1/4 h-80 w-96 rounded-full bg-indigo-600/10 blur-3xl"></div>
+
+    <!-- Cartão Central Glassmorphism -->
+    <div class="w-full max-w-md rounded-3xl glass-card p-6 sm:p-8 shadow-2xl relative z-10 animate-fade-up">
+
+      <!-- Cabeçalho / Identidade -->
+      <div class="flex flex-col items-center text-center mb-6">
+        <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-emerald-500 p-[1px] shadow-lg shadow-cyan-500/20">
+          <div class="flex h-full w-full items-center justify-center rounded-2xl bg-[#090e1a]">
+            <i data-lucide="cloud-lightning" class="h-7 w-7 text-cyan-400"></i>
+          </div>
+        </div>
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 font-mono text-[11px] font-semibold tracking-wide text-cyan-300 mb-2">
+          SSD SYNC • NEXUSCLOUD
+        </span>
+        <h1 class="text-2xl font-bold tracking-tight text-white">Conectar Nuvem SSD</h1>
+        <p class="mt-1.5 text-xs text-slate-400 leading-relaxed">
+          Entre com seu número para sincronizar seus arquivos e acessar seus cofres protegidos.
+        </p>
+      </div>
+
+      <!-- Aviso Sutil de Configuração Pendente (exibido apenas se SSD_API_CONFIG estiver zerado) -->
+      <div id="admin-config-notice" class="hidden mb-5 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-left">
+        <div class="flex items-start gap-2.5">
+          <i data-lucide="shield-alert" class="h-4 w-4 text-amber-400 shrink-0 mt-0.5"></i>
+          <p class="text-xs text-amber-200/90 leading-relaxed">
+            Configuração pendente: insira <code class="font-mono text-amber-300">api_id</code> e <code class="font-mono text-amber-300">api_hash</code> na constante <code class="font-mono text-amber-300">SSD_API_CONFIG</code> do arquivo HTML antes de publicar.
+          </p>
+        </div>
+      </div>
+
+      <!-- SUB-ESTADO A: Inicializando Motor SSD Sync WebAssembly -->
+      <div id="auth-panel-init" class="py-8 text-center space-y-3">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-400">
+          <i data-lucide="loader-2" class="h-6 w-6 animate-spin"></i>
+        </div>
+        <h2 id="auth-init-title" class="text-sm font-semibold text-white">Inicializando conexão segura...</h2>
+        <p id="auth-init-subtitle" class="text-xs text-slate-400">Preparando motor SSD Sync WebAssembly</p>
+      </div>
+
+      <!-- SUB-ESTADO B: Entrada de Telefone (authorizationStateWaitPhoneNumber) -->
+      <div id="auth-panel-phone" class="hidden space-y-5">
+        <div>
+          <label for="input-phone" class="block text-xs font-medium text-slate-300 mb-2">
+            Número de Celular
+          </label>
+          <div class="flex gap-2">
+            <select
+              id="select-ddi"
+              aria-label="Código do país"
+              class="h-12 rounded-2xl border nexus-border bg-[#090e1a] px-3 font-mono text-xs font-medium text-slate-200 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition cursor-pointer"
+            >
+              <option value="+55">+55 Brasil</option>
+              <option value="+1">+1 EUA / CAN</option>
+              <option value="+351">+351 Portugal</option>
+              <option value="+34">+34 Espanha</option>
+              <option value="+44">+44 Reino Unido</option>
+              <option value="+54">+54 Argentina</option>
+            </select>
+
+            <input
+              id="input-phone"
+              type="tel"
+              autocomplete="tel-national"
+              placeholder="(85) 99999-9999"
+              maxlength="16"
+              class="h-12 flex-1 rounded-2xl border nexus-border bg-[#090e1a] px-4 font-mono text-sm text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition"
+            />
+          </div>
+          <p id="error-phone" class="mt-2 min-h-[16px] text-xs font-medium text-rose-400"></p>
+        </div>
+
+        <button
+          id="btn-submit-phone"
+          type="button"
+          onclick="handlePhoneSubmit()"
+          class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 active:scale-[0.99] disabled:opacity-45 disabled:cursor-not-allowed transition"
+        >
+          <span>Receber Código de Acesso</span>
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </button>
+      </div>
+
+      <!-- SUB-ESTADO C: Código de 5 Dígitos (authorizationStateWaitCode) -->
+      <div id="auth-panel-code" class="hidden space-y-5">
+        <div class="rounded-2xl border nexus-border bg-[#090e1a]/90 p-4 text-center">
+          <div class="flex items-center justify-center gap-2 text-xs">
+            <span id="label-sent-phone" class="font-mono font-semibold text-cyan-400">+55 (85) 99999-9999</span>
+            <button
+              type="button"
+              onclick="handleChangePhoneNumber()"
+              class="font-medium text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition"
+            >
+              Alterar número
+            </button>
+          </div>
+          <p class="mt-2 text-xs text-slate-300 leading-relaxed">
+            Enviamos um código de 5 dígitos para a sua sessão ativa do SSD Sync neste número.
+          </p>
+        </div>
+
+        <!-- 5 Caixas Numéricas Individuais -->
+        <div>
+          <div id="code-inputs-wrapper" class="flex justify-center gap-2.5 sm:gap-3">
+            <input type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" data-code-index="0" aria-label="Dígito 1" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 nexus-border bg-[#090e1a] text-center font-mono text-xl font-bold text-cyan-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/25 transition" />
+            <input type="text" inputmode="numeric" maxlength="1" data-code-index="1" aria-label="Dígito 2" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 nexus-border bg-[#090e1a] text-center font-mono text-xl font-bold text-cyan-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/25 transition" />
+            <input type="text" inputmode="numeric" maxlength="1" data-code-index="2" aria-label="Dígito 3" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 nexus-border bg-[#090e1a] text-center font-mono text-xl font-bold text-cyan-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/25 transition" />
+            <input type="text" inputmode="numeric" maxlength="1" data-code-index="3" aria-label="Dígito 4" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 nexus-border bg-[#090e1a] text-center font-mono text-xl font-bold text-cyan-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/25 transition" />
+            <input type="text" inputmode="numeric" maxlength="1" data-code-index="4" aria-label="Dígito 5" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 nexus-border bg-[#090e1a] text-center font-mono text-xl font-bold text-cyan-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/25 transition" />
+          </div>
+          <p id="error-code" class="mt-2.5 min-h-[16px] text-center text-xs font-medium text-rose-400"></p>
+        </div>
+
+        <button
+          id="btn-verify-code"
+          type="button"
+          onclick="handleCodeSubmit()"
+          class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/20 hover:brightness-110 disabled:opacity-60 transition"
+        >
+          <i data-lucide="shield-check" class="h-4 w-4"></i>
+          <span>Verificar Código</span>
+        </button>
+
+        <!-- Temporizador de 60s e Reenviar Código -->
+        <div class="text-center pt-1">
+          <span id="resend-countdown-label" class="text-xs text-slate-400">
+            Reenviar código em <strong id="resend-seconds" class="font-mono text-slate-200">60</strong>s
+          </span>
+          <button
+            id="btn-resend-code"
+            type="button"
+            onclick="handleResendCode()"
+            class="hidden text-xs font-semibold text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition"
+          >
+            Reenviar código
+          </button>
+        </div>
+      </div>
+
+      <!-- SUB-ESTADO D: Senha em Duas Etapas 2FA (authorizationStateWaitPassword) -->
+      <div id="auth-panel-password" class="hidden space-y-5">
+        <div class="rounded-2xl border border-indigo-500/30 bg-indigo-500/10 p-4 flex items-center gap-3">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-300">
+            <i data-lucide="key-round" class="h-5 w-5"></i>
+          </div>
+          <div class="min-w-0">
+            <h2 class="text-xs font-bold text-white">Verificação em Duas Etapas</h2>
+            <p id="label-password-hint" class="text-xs text-slate-300 truncate mt-0.5">
+              Sua conta possui senha adicional de proteção.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <label for="input-2fa-password" class="block text-xs font-medium text-slate-300 mb-2">
+            Senha de Segurança
+          </label>
+          <div class="relative">
+            <input
+              id="input-2fa-password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Digite sua senha..."
+              class="h-12 w-full rounded-2xl border nexus-border bg-[#090e1a] pl-4 pr-12 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 transition"
+            />
+            <button
+              type="button"
+              onclick="toggle2FAPasswordVisibility()"
+              aria-label="Mostrar ou ocultar senha"
+              class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-white transition"
+            >
+              <i id="icon-2fa-eye" data-lucide="eye" class="h-4 w-4"></i>
+            </button>
+          </div>
+          <p id="error-password" class="mt-2 min-h-[16px] text-xs font-medium text-rose-400"></p>
+        </div>
+
+        <button
+          id="btn-submit-password"
+          type="button"
+          onclick="handlePasswordSubmit()"
+          class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 hover:brightness-110 disabled:opacity-60 transition"
+        >
+          <span>Confirmar Senha</span>
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </button>
+      </div>
+
+      <!-- Rodapé Limpo -->
+      <div class="mt-7 border-t nexus-border pt-4 flex items-center justify-between text-[11px] text-slate-500">
+        <span>Sessão Criptografada • SSD Sync</span>
+        <button type="button" onclick="openAboutModal()" class="hover:text-cyan-400 transition">
+          SSD Soluções 2026
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================= -->
+  <!-- TELA 2A: ASSISTENTE DE ONBOARDING (CRIAR PERFIL & DEFINIR PIN SHA-256)  -->
+  <!-- ======================================================================= -->
+  <section id="view-onboarding" class="hidden min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 relative overflow-y-auto">
+    <div class="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 h-96 w-[36rem] rounded-full bg-emerald-500/10 blur-3xl"></div>
+
+    <div class="w-full max-w-md rounded-3xl glass-card p-6 sm:p-8 shadow-2xl relative z-10 animate-fade-up">
+      <!-- Indicador de Passos -->
+      <div class="mb-6 flex items-center justify-between gap-2">
+        <span id="onb-step-badge" class="rounded-lg bg-cyan-500/15 border border-cyan-500/30 px-2.5 py-1 font-mono text-[11px] font-semibold text-cyan-300">
+          PASSO 1 DE 2
+        </span>
+        <button type="button" onclick="handleLogout()" class="text-xs text-slate-400 hover:text-rose-400 transition">
+          Sair
+        </button>
+      </div>
+
+      <!-- PASSO 1: Criar Perfil / Cofre -->
+      <div id="onb-step-1" class="space-y-5">
+        <div>
+          <h1 class="text-2xl font-bold text-white">Criar seu Perfil</h1>
+          <p class="mt-1 text-xs text-slate-400">
+            Configure seu espaço principal no SSD Nexus e defina sua proteção por PIN.
+          </p>
+        </div>
+
+        <div>
+          <label for="onb-profile-name" class="block text-xs font-medium text-slate-300 mb-1.5">
+            Nome do Perfil ou Cofre
+          </label>
+          <input
+            id="onb-profile-name"
+            type="text"
+            maxlength="32"
+            placeholder="Ex: Perfil Principal, Cofre Pessoal..."
+            class="h-12 w-full rounded-2xl border nexus-border bg-[#090e1a] px-4 text-sm text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition"
+          />
+          <p id="onb-name-error" class="mt-1.5 min-h-[16px] text-xs text-rose-400"></p>
+        </div>
+
+        <!-- Cores de Destaque -->
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-2.5">Cor de Identificação</label>
+          <div class="flex items-center gap-3.5" id="onb-color-swatches">
+            <button type="button" onclick="selectOnboardingColor('emerald')" data-swatch="emerald" aria-label="Esmeralda" class="onb-swatch h-9 w-9 rounded-full bg-emerald-500 ring-2 ring-white ring-offset-2 ring-offset-[#0e1526] transition"></button>
+            <button type="button" onclick="selectOnboardingColor('cyan')" data-swatch="cyan" aria-label="Ciano" class="onb-swatch h-9 w-9 rounded-full bg-cyan-500 opacity-65 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectOnboardingColor('violet')" data-swatch="violet" aria-label="Violeta" class="onb-swatch h-9 w-9 rounded-full bg-violet-500 opacity-65 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectOnboardingColor('amber')" data-swatch="amber" aria-label="Âmbar" class="onb-swatch h-9 w-9 rounded-full bg-amber-500 opacity-65 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectOnboardingColor('rose')" data-swatch="rose" aria-label="Rosa" class="onb-swatch h-9 w-9 rounded-full bg-rose-500 opacity-65 hover:opacity-100 transition"></button>
+          </div>
+        </div>
+
+        <!-- Toggle Proteger perfil com PIN de 4 dígitos -->
+        <label class="flex items-center justify-between gap-3 rounded-2xl border nexus-border bg-[#090e1a]/90 p-4 cursor-pointer hover:border-cyan-500/35 transition">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400">
+              <i data-lucide="shield-check" class="h-5 w-5"></i>
+            </div>
+            <div class="min-w-0">
+              <span class="block text-xs font-semibold text-white">Proteger perfil com PIN de 4 dígitos</span>
+              <span class="block text-[11px] text-slate-400 mt-0.5">Tranca o acesso com criptografia SHA-256</span>
+            </div>
+          </div>
+          <input id="onb-pin-toggle" type="checkbox" checked class="h-5 w-5 rounded border-slate-600 bg-[#050810] text-cyan-500 focus:ring-cyan-500/30 cursor-pointer" />
+        </label>
+
+        <button
+          type="button"
+          onclick="completeOnboardingStep1()"
+          class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-5 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 hover:brightness-110 transition"
+        >
+          <span>Continuar</span>
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </button>
+      </div>
+
+      <!-- PASSO 2: Definir e Confirmar PIN de 4 dígitos -->
+      <div id="onb-step-2" class="hidden space-y-5">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h2 id="onb-pin-heading" class="text-xl font-bold text-white">Crie seu PIN de 4 dígitos</h2>
+            <p id="onb-pin-subheading" class="mt-1 text-xs text-slate-400">
+              Digite 4 números no teclado abaixo ou no seu teclado físico.
+            </p>
+          </div>
+          <button type="button" onclick="backToOnboardingStep1()" class="rounded-xl border nexus-border bg-[#090e1a] px-3 py-1.5 text-xs text-slate-300 hover:text-white transition shrink-0">
+            Voltar
+          </button>
+        </div>
+
+        <!-- 4 Caixas Indicadoras do PIN -->
+        <div id="onb-pin-dots-container" class="my-4 flex justify-center gap-4">
+          <div id="onb-dot-0" class="flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#090e1a] font-mono text-2xl font-bold text-cyan-400 transition"></div>
+          <div id="onb-dot-1" class="flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#090e1a] font-mono text-2xl font-bold text-cyan-400 transition"></div>
+          <div id="onb-dot-2" class="flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#090e1a] font-mono text-2xl font-bold text-cyan-400 transition"></div>
+          <div id="onb-dot-3" class="flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#090e1a] font-mono text-2xl font-bold text-cyan-400 transition"></div>
+        </div>
+
+        <p id="onb-pin-error" class="min-h-[16px] text-center text-xs font-medium text-rose-400"></p>
+
+        <!-- Teclado Numérico Interativo -->
+        <div class="grid grid-cols-3 gap-2.5">
+          <button type="button" onclick="handleOnboardingPinDigit('1')" class="py-3.5 rounded-2xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">1</button>
+          <button type="button" onclick="handleOnboardingPinDigit('2')" class="py-3.5 rounded-2xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">2</button>
+          <button type="button" onclick="handleOnboardingPinDigit('3')" class="py-3.5 rounded-2xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">3</button>
+          <button type="button" onclick="handleOnboardingPinDigit('4')" class="py-3.5 rounded-2xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">4</button>
+          <button type="button" onclick="handleOnboardingPinDigit('5')" class="py-3.5 rounded-2xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">5</button>
+          <button type="button" onclick="handleOnboardingPinDigit('6')" class="py-3.5 rounded-2xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">6</button>
+          <button type="button" onclick="handleOnboardingPinDigit('7')" class="py-3.5 rounded-2xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">7</button>
+          <button type="button" onclick="handleOnboardingPinDigit('8')" class="py-3.5 rounded-2xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">8</button>
+          <button type="button" onclick="handleOnboardingPinDigit('9')" class="py-3.5 rounded-2xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">9</button>
+          <button type="button" onclick="clearOnboardingPinBuffer()" class="py-3.5 rounded-2xl border nexus-border bg-[#090e1a] text-xs font-semibold text-slate-400 hover:text-white transition">Limpar</button>
+          <button type="button" onclick="handleOnboardingPinDigit('0')" class="py-3.5 rounded-2xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">0</button>
+          <button type="button" onclick="backspaceOnboardingPin()" aria-label="Apagar dígito" class="flex py-3.5 items-center justify-center rounded-2xl border nexus-border bg-[#090e1a] text-slate-400 hover:text-white transition">
+            <i data-lucide="delete" class="h-5 w-5"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================================= -->
+  <!-- TELA 2B: SELETOR DE PERFIS ("QUEM ESTÁ ACESSANDO?")                     -->
+  <!-- ======================================================================= -->
+  <section id="view-selector" class="hidden min-h-screen w-full flex-col justify-between p-4 sm:p-8 relative overflow-y-auto">
+    <div class="pointer-events-none fixed top-0 left-1/3 h-80 w-96 rounded-full bg-cyan-500/10 blur-3xl"></div>
+
+    <!-- Cabeçalho -->
+    <header class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 border-b nexus-border pb-5">
+      <div class="flex items-center gap-3">
+        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
+          <i data-lucide="cloud-lightning" class="h-5 w-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-base font-bold text-white">SSD Nexus</span>
+            <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-300">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              SSD Sync Ativo
+            </span>
+          </div>
+          <p id="selector-user-subtitle" class="text-xs text-slate-400 mt-0.5">Conectado à Nuvem SSD</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button
+          type="button"
+          onclick="openNewProfileModal()"
+          class="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/35 bg-cyan-500/10 px-3.5 py-2.5 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 hover:text-white transition"
+        >
+          <i data-lucide="plus" class="h-4 w-4"></i>
+          <span>+ Criar Novo Perfil / Cofre</span>
+        </button>
+
+        <button
+          type="button"
+          onclick="handleLogout()"
+          class="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3.5 py-2.5 text-xs font-semibold text-rose-300 hover:bg-rose-500/20 hover:text-white transition"
+        >
+          <i data-lucide="log-out" class="h-4 w-4"></i>
+          <span>Desconectar</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Grade de Perfis -->
+    <main class="mx-auto my-8 w-full max-w-5xl flex-1">
+      <div class="mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Quem está acessando?</h1>
+        <p class="mt-1 text-sm text-slate-400">
+          Selecione um perfil aberto ou desbloqueie seu cofre privado com o PIN de 4 dígitos.
+        </p>
+      </div>
+
+      <div id="selector-profiles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="mx-auto w-full max-w-5xl border-t nexus-border pt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+      <span>Sessão persistida localmente com criptografia</span>
+      <button type="button" onclick="openAboutModal()" class="hover:text-cyan-400 transition">
+        Desenvolvedor: Josimar Sousa • SSD Soluções 2026
+      </button>
+    </footer>
+  </section>
+
+  <!-- ======================================================================= -->
+  <!-- TELA 3: WORKSPACE DESKTOP DE 3 ZONAS                                    -->
+  <!-- ======================================================================= -->
+  <div id="view-workspace" class="hidden h-screen w-screen overflow-hidden bg-[#050810]">
+
+    <!-- Sobreposição Global Drag & Drop -->
+    <div id="ws-drag-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#050810]/92 backdrop-blur-md p-6">
+      <div class="w-full max-w-lg rounded-3xl border-2 border-dashed border-cyan-400 bg-[#0e1526] p-10 text-center shadow-2xl shadow-cyan-500/15">
+        <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-500/15 text-cyan-400">
+          <i data-lucide="cloud-upload" class="h-8 w-8 animate-bounce"></i>
+        </div>
+        <h2 class="text-xl font-bold text-white">Solte para enviar para <span id="drag-target-profile-name" class="text-cyan-400">seu Perfil</span></h2>
+        <p class="mt-1.5 text-xs text-slate-400">Os arquivos serão sincronizados diretamente na Nuvem SSD</p>
+      </div>
+    </div>
+
+    <!-- Backdrop Mobile da Barra Lateral -->
+    <div id="ws-mobile-backdrop" onclick="toggleMobileDrawer(false)" class="fixed inset-0 z-30 hidden bg-black/65 backdrop-blur-xs lg:hidden"></div>
+
+    <!-- ===================================================================== -->
+    <!-- ZONA 1: BARRA LATERAL RETRÁTIL (ESQUERDA)                             -->
+    <!-- ===================================================================== -->
+    <aside id="workspace-sidebar" class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r nexus-border bg-[#090e1a] transition-all duration-300 lg:static lg:translate-x-0">
+
+      <!-- Topo: Marca e Recolher -->
+      <div class="flex h-16 shrink-0 items-center justify-between border-b nexus-border px-4">
+        <div class="flex items-center gap-3 overflow-hidden">
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20">
+            <i data-lucide="cloud-lightning" class="h-5 w-5"></i>
+          </div>
+          <div class="sb-hide min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="text-sm font-bold text-white">SSD Nexus</span>
+              <span class="rounded bg-cyan-500/15 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-cyan-400">CLOUD</span>
+            </div>
+            <span class="block text-[11px] text-slate-400 truncate">NexusCloud Workspace</span>
+          </div>
+        </div>
+
+        <button type="button" onclick="toggleDesktopSidebar()" title="Recolher / Expandir barra" class="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-[#131c31] hover:text-white transition">
+          <i id="ws-collapse-icon" data-lucide="panel-left-close" class="h-4 w-4"></i>
+        </button>
+        <button type="button" onclick="toggleMobileDrawer(false)" aria-label="Fechar menu" class="flex lg:hidden h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-white">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <!-- Dropdown Seletor de Perfil / Cofre -->
+      <div class="relative border-b nexus-border p-3">
+        <button
+          id="profile-dropdown-trigger"
+          type="button"
+          onclick="toggleProfileDropdown()"
+          class="sb-center flex w-full items-center justify-between gap-2.5 rounded-2xl border nexus-border bg-[#0e1526] p-2.5 text-left hover:border-cyan-500/40 transition"
+        >
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span id="active-prof-dot" class="h-3 w-3 shrink-0 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
+            <div class="sb-hide min-w-0">
+              <div id="active-prof-name" class="truncate text-xs font-bold text-white">Perfil Principal</div>
+              <div id="active-prof-badge" class="flex items-center gap-1 text-[10px] text-slate-400">
+                <i data-lucide="shield-check" class="h-3 w-3 text-emerald-400"></i>
+                <span>Protegido por PIN</span>
+              </div>
+            </div>
+          </div>
+          <i data-lucide="chevrons-up-down" class="sb-hide h-4 w-4 shrink-0 text-slate-400"></i>
+        </button>
+
+        <!-- Menu Dropdown -->
+        <div id="profile-dropdown-menu" class="hidden absolute left-3 right-3 top-[4.25rem] z-50 rounded-2xl border nexus-border bg-[#0e1526] p-2 shadow-2xl animate-fade-up">
+          <div id="dropdown-profiles-list" class="max-h-52 overflow-y-auto space-y-1"></div>
+          <div class="mt-2 border-t nexus-border pt-2 space-y-1">
+            <button
+              type="button"
+              onclick="closeProfileDropdown(); openNewProfileModal();"
+              class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-cyan-400 hover:bg-cyan-500/10 transition"
+            >
+              <i data-lucide="plus-circle" class="h-4 w-4"></i>
+              <span>+ Criar Novo Perfil / Cofre</span>
+            </button>
+            <button
+              type="button"
+              onclick="closeProfileDropdown(); openProfileSelectorView();"
+              class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium text-slate-300 hover:bg-[#131c31] transition"
+            >
+              <i data-lucide="users" class="h-4 w-4 text-slate-400"></i>
+              <span>Tela de Seleção de Perfis</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegação de Categorias -->
+      <nav class="flex-1 overflow-y-auto p-3 space-y-1" aria-label="Categorias de arquivos">
+        <div class="sb-hide px-2.5 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Biblioteca</div>
+
+        <button type="button" onclick="setWorkspaceCategory('all')" data-cat="all" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold bg-[#131c31] text-white border nexus-border transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="folder-kanban" class="h-4 w-4 text-cyan-400 shrink-0"></i>
+            <span class="sb-hide">Todos os Arquivos</span>
+          </div>
+          <span id="count-cat-all" class="sb-hide rounded-full bg-[#050810] px-2 py-0.5 font-mono text-[11px] text-slate-300">0</span>
+        </button>
+
+        <button type="button" onclick="setWorkspaceCategory('media')" data-cat="media" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c31]/70 hover:text-white border border-transparent transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="image" class="h-4 w-4 text-emerald-400 shrink-0"></i>
+            <span class="sb-hide">Mídia & Galeria</span>
+          </div>
+          <span id="count-cat-media" class="sb-hide rounded-full bg-[#050810]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
+        </button>
+
+        <button type="button" onclick="setWorkspaceCategory('documents')" data-cat="documents" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c31]/70 hover:text-white border border-transparent transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="file-archive" class="h-4 w-4 text-indigo-400 shrink-0"></i>
+            <span class="sb-hide">Documentos & APKs</span>
+          </div>
+          <span id="count-cat-documents" class="sb-hide rounded-full bg-[#050810]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
+        </button>
+
+        <button type="button" onclick="setWorkspaceCategory('favorites')" data-cat="favorites" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c31]/70 hover:text-white border border-transparent transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="star" class="h-4 w-4 text-amber-400 shrink-0"></i>
+            <span class="sb-hide">Favoritos</span>
+          </div>
+          <span id="count-cat-favorites" class="sb-hide rounded-full bg-[#050810]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
+        </button>
+
+        <button type="button" onclick="setWorkspaceCategory('transfers')" data-cat="transfers" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c31]/70 hover:text-white border border-transparent transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="arrow-up-down" class="h-4 w-4 text-cyan-400 shrink-0"></i>
+            <span class="sb-hide">Fila de Transferências</span>
+          </div>
+          <span id="count-cat-transfers" class="sb-hide rounded-full bg-[#050810]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
+        </button>
+      </nav>
+
+      <!-- Rodapé da Barra Lateral: Conta, Status, Armazenamento e Ações -->
+      <div class="border-t nexus-border bg-[#050810]/70 p-3 space-y-2.5">
+        <!-- Dados do Usuário Autenticado -->
+        <div class="sb-hide flex items-center gap-2.5 rounded-xl border nexus-border bg-[#0e1526] p-2.5">
+          <div id="sb-user-avatar" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-600 text-xs font-bold text-white">
+            SS
+          </div>
+          <div class="min-w-0 flex-1">
+            <div id="sb-user-name" class="truncate text-xs font-semibold text-white">Usuário SSD</div>
+            <div id="sb-user-phone" class="truncate font-mono text-[10px] text-slate-400">+55 ...</div>
+          </div>
+        </div>
+
+        <!-- Status Live SSD Sync Ativo -->
+        <div class="sb-center flex items-center gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-3 py-2">
+          <span class="relative flex h-2 w-2 shrink-0">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+          </span>
+          <span class="sb-hide text-[11px] font-medium text-emerald-300 truncate">SSD Sync Ativo</span>
+        </div>
+
+        <!-- Medidor de Armazenamento -->
+        <div class="sb-hide rounded-xl border nexus-border bg-[#0e1526] p-2.5">
+          <div class="flex items-center justify-between text-[11px] mb-1">
+            <span class="text-slate-400">Nuvem SSD</span>
+            <span id="sb-storage-used" class="font-mono font-semibold text-cyan-400">0 B</span>
+          </div>
+          <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#050810]">
+            <div id="sb-storage-bar" class="h-full rounded-full bg-gradient-to-r from-cyan-500 to-emerald-400 transition-all duration-500" style="width: 10%"></div>
+          </div>
+          <div class="mt-1 text-[10px] text-slate-500">Sincronização Ilimitada</div>
+        </div>
+
+        <!-- Sobre & Desconectar -->
+        <div class="grid grid-cols-2 gap-1.5 sb-hide">
+          <button
+            type="button"
+            onclick="openAboutModal()"
+            class="flex items-center justify-center gap-1.5 rounded-xl border nexus-border bg-[#131c31] py-2 px-2 text-[11px] font-medium text-slate-300 hover:border-cyan-500/40 hover:text-cyan-300 transition"
+          >
+            <i data-lucide="info" class="h-3.5 w-3.5 text-cyan-400"></i>
+            <span>Sobre</span>
+          </button>
+
+          <button
+            type="button"
+            onclick="handleLogout()"
+            class="flex items-center justify-center gap-1.5 rounded-xl border border-rose-500/25 bg-rose-500/10 py-2 px-2 text-[11px] font-semibold text-rose-300 hover:bg-rose-500/20 hover:text-white transition"
+          >
+            <i data-lucide="log-out" class="h-3.5 w-3.5"></i>
+            <span>Desconectar</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===================================================================== -->
+    <!-- COLUNA CENTRAL + GAVETA DIREITA                                       -->
+    <!-- ===================================================================== -->
+    <div class="flex flex-1 flex-col min-w-0 overflow-hidden">
+
+      <!-- Barra Superior do Workspace -->
+      <header class="flex h-16 shrink-0 items-center justify-between gap-2.5 border-b nexus-border bg-[#090e1a]/90 px-4 lg:px-6 backdrop-blur-md">
+        <div class="flex flex-1 items-center gap-2.5 max-w-xl">
+          <button type="button" onclick="toggleMobileDrawer(true)" aria-label="Abrir menu" class="flex lg:hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border nexus-border bg-[#131c31] text-slate-300">
+            <i data-lucide="menu" class="h-5 w-5"></i>
+          </button>
+
+          <!-- Busca Instantânea (Ctrl + K) -->
+          <div class="relative flex-1">
+            <i data-lucide="search" class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"></i>
+            <input
+              id="ws-search-input"
+              type="text"
+              placeholder="Buscar arquivos na Nuvem SSD..."
+              class="h-10 w-full rounded-xl border nexus-border bg-[#050810] pl-10 pr-16 text-xs sm:text-sm text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition"
+            />
+            <div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+              <button id="ws-clear-search" type="button" onclick="clearWorkspaceSearch()" class="hidden p-1 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="h-3.5 w-3.5"></i>
+              </button>
+              <kbd class="hidden sm:inline-block rounded border nexus-border bg-[#131c31] px-1.5 py-0.5 font-mono text-[10px] text-slate-400">Ctrl+K</kbd>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controles Direitos: Auto-Lock, Grade/Lista, Upload, Bloqueio Rápido -->
+        <div class="flex items-center gap-2">
+          <!-- Temporizador de Auto-Lock por Inatividade (3 min / 5 min / Desativado) -->
+          <div class="hidden xl:flex items-center gap-1.5 rounded-xl border nexus-border bg-[#050810] px-2.5 py-1.5 text-[11px] text-slate-400" title="Tempo de inatividade para bloqueio automático">
+            <i data-lucide="timer" class="h-3.5 w-3.5 text-cyan-400"></i>
+            <select id="select-autolock" onchange="setAutoLockMinutes(this.value)" aria-label="Bloqueio automático por inatividade" class="bg-transparent font-medium text-slate-200 focus:outline-none cursor-pointer">
+              <option value="0" class="bg-[#0e1526]">Auto-Lock: Off</option>
+              <option value="3" class="bg-[#0e1526]">Auto-Lock: 3 min</option>
+              <option value="5" selected class="bg-[#0e1526]">Auto-Lock: 5 min</option>
+            </select>
+          </div>
+
+          <!-- Alternador Grade / Lista -->
+          <div class="hidden sm:flex items-center rounded-xl border nexus-border bg-[#050810] p-1">
+            <button id="btn-mode-grid" type="button" onclick="setWorkspaceView('grid')" class="flex items-center gap-1.5 rounded-lg bg-[#131c31] px-2.5 py-1.5 text-xs font-medium text-cyan-400 transition">
+              <i data-lucide="layout-grid" class="h-3.5 w-3.5"></i>
+              <span class="hidden md:inline">Grade</span>
+            </button>
+            <button id="btn-mode-list" type="button" onclick="setWorkspaceView('list')" class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition">
+              <i data-lucide="list" class="h-3.5 w-3.5"></i>
+              <span class="hidden md:inline">Lista</span>
+            </button>
+          </div>
+
+          <!-- Atualizar Sincronização -->
+          <button
+            type="button"
+            onclick="refreshCloudFiles(true)"
+            title="Sincronizar novamente"
+            aria-label="Sincronizar novamente"
+            class="flex h-10 w-10 items-center justify-center rounded-xl border nexus-border bg-[#131c31] text-slate-300 hover:border-cyan-500/40 hover:text-cyan-300 transition"
+          >
+            <i id="icon-sync-refresh" data-lucide="refresh-cw" class="h-4 w-4"></i>
+          </button>
+
+          <!-- Botão Upload -->
+          <button
+            type="button"
+            onclick="triggerCloudUpload()"
+            class="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-3.5 py-2.5 text-xs font-semibold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 active:scale-[0.99] transition"
+          >
+            <i data-lucide="upload-cloud" class="h-4 w-4"></i>
+            <span>Upload</span>
+          </button>
+
+          <!-- Botão Bloqueio Rápido (Alt+L) -->
+          <button
+            type="button"
+            onclick="triggerPanicLock('Bloqueio Rápido Ativado')"
+            title="Trancar sessão e limpar previews (Alt + L)"
+            class="flex items-center gap-1.5 rounded-xl border border-amber-500/35 bg-amber-500/12 px-3 py-2.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/25 hover:text-white transition"
+          >
+            <i data-lucide="lock" class="h-4 w-4"></i>
+            <span class="hidden md:inline">Bloqueio Rápido (Alt+L)</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Área Principal + Gaveta de Preview -->
+      <div class="flex flex-1 overflow-hidden">
+
+        <!-- ZONA 2: ÁREA CENTRAL DE ARQUIVOS -->
+        <main class="flex-1 overflow-y-auto p-4 lg:p-6">
+
+          <!-- Cabeçalho da Seção -->
+          <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div class="flex flex-wrap items-center gap-2.5">
+                <h1 id="ws-category-title" class="text-xl sm:text-2xl font-bold text-white">Todos os Arquivos</h1>
+                <span id="ws-profile-chip" class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3 py-0.5 text-xs font-semibold text-emerald-300">
+                  Perfil Principal
+                </span>
+              </div>
+              <p class="mt-1 text-xs text-slate-400">
+                Arraste arquivos para qualquer lugar da tela para enviar ou clique em um item para visualizar.
+              </p>
+            </div>
+          </div>
+
+          <!-- Barra Flutuante de Ações em Lote (Multi-seleção) -->
+          <div id="ws-batch-bar" class="mb-4 hidden flex-wrap items-center justify-between gap-3 rounded-2xl border border-cyan-500/35 bg-cyan-500/10 p-3 shadow-lg animate-fade-up">
+            <div class="flex items-center gap-3">
+              <span id="ws-batch-count" class="rounded-lg bg-cyan-500/20 px-2.5 py-1 font-mono text-xs font-bold text-cyan-200">
+                0 selecionados
+              </span>
+              <button type="button" onclick="selectAllVisible()" class="text-xs font-medium text-cyan-300 hover:underline">Selecionar todos</button>
+              <button type="button" onclick="clearSelection()" class="text-xs text-slate-400 hover:text-white">Limpar</button>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" onclick="batchToggleFavorite()" class="inline-flex items-center gap-1.5 rounded-xl border nexus-border bg-[#0e1526] px-3 py-1.5 text-xs font-medium text-amber-300 hover:bg-[#131c31] transition">
+                <i data-lucide="star" class="h-3.5 w-3.5"></i>
+                <span>Favoritar</span>
+              </button>
+
+              <button type="button" onclick="openMoveProfileModal(null)" class="inline-flex items-center gap-1.5 rounded-xl border nexus-border bg-[#0e1526] px-3 py-1.5 text-xs font-medium text-cyan-300 hover:bg-[#131c31] transition">
+                <i data-lucide="folder-input" class="h-3.5 w-3.5"></i>
+                <span>Mover Perfil/Cofre</span>
+              </button>
+
+              <button type="button" onclick="batchDownloadSelected()" class="inline-flex items-center gap-1.5 rounded-xl border nexus-border bg-[#0e1526] px-3 py-1.5 text-xs font-medium text-emerald-300 hover:bg-[#131c31] transition">
+                <i data-lucide="download" class="h-3.5 w-3.5"></i>
+                <span>Baixar</span>
+              </button>
+
+              <div id="ws-batch-delete-area">
+                <button type="button" onclick="askBatchDelete()" class="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/35 bg-rose-500/15 px-3 py-1.5 text-xs font-semibold text-rose-300 hover:bg-rose-500/25 transition">
+                  <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
+                  <span>Excluir</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grade, Lista ou Fila de Transferências -->
+          <div id="ws-files-container"></div>
+        </main>
+
+        <!-- ZONA 3: GAVETA DIREITA DE PREVIEW & DETALHES -->
+        <aside id="ws-preview-drawer" class="fixed inset-y-0 right-0 z-40 hidden w-full sm:w-[410px] flex-col border-l nexus-border bg-[#090e1a] shadow-2xl lg:static"></aside>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: DESBLOQUEIO DE PERFIL / COFRE POR PIN                            -->
+  <!-- ======================================================================= -->
+  <div id="modal-pin-unlock" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#050810]/85 backdrop-blur-md p-4">
+    <div id="modal-pin-card" class="w-full max-w-sm rounded-3xl glass-card p-6 shadow-2xl animate-fade-up">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div id="unlock-pin-icon-box" class="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+            <i data-lucide="lock" class="h-5 w-5"></i>
+          </div>
+          <div>
+            <h3 id="unlock-pin-title" class="text-base font-bold text-white">Cofre Protegido</h3>
+            <p class="text-xs text-slate-400">Digite seu PIN de 4 dígitos</p>
+          </div>
+        </div>
+        <button type="button" onclick="closePinUnlockModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#131c31] hover:text-white">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <div class="my-5 flex justify-center gap-3.5">
+        <div id="unlock-dot-0" class="flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#090e1a] font-mono text-2xl font-bold text-cyan-400"></div>
+        <div id="unlock-dot-1" class="flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#090e1a] font-mono text-2xl font-bold text-cyan-400"></div>
+        <div id="unlock-dot-2" class="flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#090e1a] font-mono text-2xl font-bold text-cyan-400"></div>
+        <div id="unlock-dot-3" class="flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#090e1a] font-mono text-2xl font-bold text-cyan-400"></div>
+      </div>
+
+      <p id="unlock-pin-error" class="mb-3 min-h-[16px] text-center text-xs font-medium text-rose-400"></p>
+
+      <div class="grid grid-cols-3 gap-2">
+        <button type="button" onclick="pressUnlockDigit('1')" class="py-3 rounded-xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">1</button>
+        <button type="button" onclick="pressUnlockDigit('2')" class="py-3 rounded-xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">2</button>
+        <button type="button" onclick="pressUnlockDigit('3')" class="py-3 rounded-xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">3</button>
+        <button type="button" onclick="pressUnlockDigit('4')" class="py-3 rounded-xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">4</button>
+        <button type="button" onclick="pressUnlockDigit('5')" class="py-3 rounded-xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">5</button>
+        <button type="button" onclick="pressUnlockDigit('6')" class="py-3 rounded-xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">6</button>
+        <button type="button" onclick="pressUnlockDigit('7')" class="py-3 rounded-xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">7</button>
+        <button type="button" onclick="pressUnlockDigit('8')" class="py-3 rounded-xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">8</button>
+        <button type="button" onclick="pressUnlockDigit('9')" class="py-3 rounded-xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">9</button>
+        <button type="button" onclick="clearUnlockBuffer()" class="py-3 rounded-xl border nexus-border bg-[#090e1a] text-xs font-semibold text-slate-400 hover:text-white transition">Limpar</button>
+        <button type="button" onclick="pressUnlockDigit('0')" class="py-3 rounded-xl border nexus-border bg-[#131c31] font-mono text-lg font-semibold text-white hover:bg-[#1a2540] active:scale-95 transition">0</button>
+        <button type="button" onclick="backspaceUnlockBuffer()" aria-label="Apagar" class="flex py-3 items-center justify-center rounded-xl border nexus-border bg-[#090e1a] text-slate-400 hover:text-white transition">
+          <i data-lucide="delete" class="h-5 w-5"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: CRIAR NOVO PERFIL / COFRE ADICIONAL                              -->
+  <!-- ======================================================================= -->
+  <div id="modal-new-profile" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#050810]/85 backdrop-blur-md p-4">
+    <div class="w-full max-w-md rounded-3xl glass-card p-6 shadow-2xl animate-fade-up">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2.5">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+            <i data-lucide="folder-plus" class="h-5 w-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Novo Perfil / Cofre</h3>
+            <p class="text-xs text-slate-400">Crie um espaço adicional com PIN independente</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeNewProfileModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#131c31] hover:text-white">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label for="np-name" class="block text-xs font-medium text-slate-300 mb-1.5">Nome do Perfil ou Cofre</label>
+          <input
+            id="np-name"
+            type="text"
+            maxlength="32"
+            placeholder="Ex: Cofre Privado, Trabalho, Galeria..."
+            class="h-11 w-full rounded-xl border nexus-border bg-[#090e1a] px-3.5 text-sm text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-2">Cor de Destaque</label>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="selectNewProfileColor('emerald')" data-np-swatch="emerald" class="np-swatch h-8 w-8 rounded-full bg-emerald-500 opacity-70 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectNewProfileColor('cyan')" data-np-swatch="cyan" class="np-swatch h-8 w-8 rounded-full bg-cyan-500 ring-2 ring-white ring-offset-2 ring-offset-[#0e1526] transition"></button>
+            <button type="button" onclick="selectNewProfileColor('violet')" data-np-swatch="violet" class="np-swatch h-8 w-8 rounded-full bg-violet-500 opacity-70 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectNewProfileColor('amber')" data-np-swatch="amber" class="np-swatch h-8 w-8 rounded-full bg-amber-500 opacity-70 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectNewProfileColor('rose')" data-np-swatch="rose" class="np-swatch h-8 w-8 rounded-full bg-rose-500 opacity-70 hover:opacity-100 transition"></button>
+          </div>
+        </div>
+
+        <label class="flex items-center justify-between gap-3 rounded-xl border nexus-border bg-[#090e1a] p-3 cursor-pointer">
+          <div class="text-xs">
+            <span class="font-semibold text-white block">Proteger com PIN de 4 dígitos</span>
+            <span class="text-[11px] text-slate-400">Recomendado para cofres privados</span>
+          </div>
+          <input id="np-pin-toggle" type="checkbox" checked onchange="toggleNewProfilePinFields()" class="h-4 w-4 rounded border-slate-600 bg-[#050810] text-cyan-500" />
+        </label>
+
+        <div id="np-pin-fields" class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label for="np-pin-1" class="block text-[11px] text-slate-300 mb-1">PIN (4 dígitos)</label>
+            <input id="np-pin-1" type="password" inputmode="numeric" maxlength="4" placeholder="••••" class="h-10 w-full rounded-xl border nexus-border bg-[#090e1a] text-center font-mono text-base tracking-widest text-white focus:border-cyan-500 focus:outline-none" />
+          </div>
+          <div>
+            <label for="np-pin-2" class="block text-[11px] text-slate-300 mb-1">Confirmar PIN</label>
+            <input id="np-pin-2" type="password" inputmode="numeric" maxlength="4" placeholder="••••" class="h-10 w-full rounded-xl border nexus-border bg-[#090e1a] text-center font-mono text-base tracking-widest text-white focus:border-cyan-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <p id="np-error" class="min-h-[16px] text-xs font-medium text-rose-400"></p>
+
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="closeNewProfileModal()" class="rounded-xl border nexus-border bg-[#131c31] px-4 py-2 text-xs font-medium text-slate-300 hover:text-white">
+            Cancelar
+          </button>
+          <button type="button" onclick="saveAdditionalProfile()" class="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-2 text-xs font-semibold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 transition">
+            Criar e Abrir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: MOVER ARQUIVOS PARA OUTRO PERFIL / COFRE                          -->
+  <!-- ======================================================================= -->
+  <div id="modal-move-profile" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#050810]/85 backdrop-blur-md p-4">
+    <div class="w-full max-w-sm rounded-3xl glass-card p-6 shadow-2xl animate-fade-up">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-bold text-white">Mover para Perfil / Cofre</h3>
+        <button type="button" onclick="closeMoveProfileModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+      <p id="move-modal-desc" class="text-xs text-slate-400 mb-4">Escolha o destino:</p>
+      <div id="move-profiles-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: SOBRE O SSD NEXUS                                                -->
+  <!-- ======================================================================= -->
+  <div id="modal-about" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#050810]/85 backdrop-blur-md p-4">
+    <div class="w-full max-w-md rounded-3xl glass-card p-6 shadow-2xl animate-fade-up">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg">
+            <i data-lucide="cloud-lightning" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
+            <span class="rounded bg-cyan-500/15 px-2 py-0.5 font-mono text-[11px] text-cyan-300">Workspace Desktop & Cofres</span>
+          </div>
+        </div>
+        <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <div class="mt-5 space-y-3 rounded-2xl border nexus-border bg-[#090e1a] p-4 text-xs">
+        <div class="flex flex-col gap-1 border-b nexus-border pb-2.5">
+          <span class="text-slate-400">Créditos de Desenvolvimento</span>
+          <span class="font-semibold text-cyan-400 text-sm">Desenvolvedor: Josimar Sousa • SSD Soluções 2026</span>
+        </div>
+        <div class="flex justify-between border-b nexus-border pb-2">
+          <span class="text-slate-400">Motor de Sincronização</span>
+          <span class="font-mono text-emerald-400">SSD Sync WebAssembly + IndexedDB</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Segurança de Cofres</span>
+          <span class="font-medium text-slate-200">PIN SHA-256 + Auto-Lock</span>
+        </div>
+      </div>
+
+      <div class="mt-5 flex justify-end">
+        <button type="button" onclick="closeAboutModal()" class="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-2 text-xs font-semibold text-white hover:brightness-110 transition">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container de Notificações Toast -->
+  <div id="toast-stack" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
+
+  <!-- ======================================================================= -->
+  <!-- SCRIPT PRINCIPAL: CONFIGURAÇÃO DE PRODUÇÃO, SSDSyncEngine & WORKSPACE   -->
+  <!-- ======================================================================= -->
+  <script>
+    /**
+     * ============================================================================
+     * CONFIGURAÇÃO DE PRODUÇÃO DO SSD NEXUS (CREDENCIAL DO PROPRIETÁRIO)
+     * Preencha os dois valores abaixo antes de publicar o arquivo HTML.
+     * Nenhuma interface de configuração é exibida para os usuários finais.
+     * ============================================================================
+     */
+    const SSD_API_CONFIG = {
+      api_id: 32171989,      // <-- INSIRA SEU API_ID NUMÉRICO AQUI (ex: 12345678)
+      api_hash: 'e5024e850807919814641dfcb5d26639'    // <-- INSIRA SEU API_HASH DE 32 CARACTERES AQUI (ex: '0123456789abcdef0123456789abcdef')
+    };
+
+    // =========================================================================
+    // 1. CONSTANTES DE ARMAZENAMENTO LOCAL E PALETA DE CORES
+    // =========================================================================
+    const STORAGE_KEYS = {
+      PROFILES_PREFIX: 'ssd_nexus_profiles_',
+      ASSIGNMENTS_PREFIX: 'ssd_nexus_file_map_',
+      FAVORITES_PREFIX: 'ssd_nexus_favorites_'
+    };
+
+    const ACCENT_PALETTE = {
+      emerald: {
+        dot: 'bg-emerald-400',
+        ring: 'shadow-[0_0_10px_rgba(16,185,129,0.55)]',
+        soft: 'bg-emerald-500/15',
+        border: 'border-emerald-500/35',
+        text: 'text-emerald-300',
+        icon: 'text-emerald-400'
+      },
+      cyan: {
+        dot: 'bg-cyan-400',
+        ring: 'shadow-[0_0_10px_rgba(6,182,212,0.55)]',
+        soft: 'bg-cyan-500/15',
+        border: 'border-cyan-500/35',
+        text: 'text-cyan-300',
+        icon: 'text-cyan-400'
+      },
+      violet: {
+        dot: 'bg-violet-400',
+        ring: 'shadow-[0_0_10px_rgba(139,92,246,0.55)]',
+        soft: 'bg-violet-500/15',
+        border: 'border-violet-500/35',
+        text: 'text-violet-300',
+        icon: 'text-violet-400'
+      },
+      amber: {
+        dot: 'bg-amber-400',
+        ring: 'shadow-[0_0_10px_rgba(245,158,11,0.55)]',
+        soft: 'bg-amber-500/15',
+        border: 'border-amber-500/35',
+        text: 'text-amber-300',
+        icon: 'text-amber-400'
+      },
+      rose: {
+        dot: 'bg-rose-400',
+        ring: 'shadow-[0_0_10px_rgba(244,63,94,0.55)]',
+        soft: 'bg-rose-500/15',
+        border: 'border-rose-500/35',
+        text: 'text-rose-300',
+        icon: 'text-rose-400'
+      }
+    };
+
+    const state = {
+      syncEngine: null,
+      authStateType: 'init',
+      formattedPhone: '',
+      resendTimerId: null,
+      resendRemaining: 60,
+
+      // Dados da conta autenticada
+      user: null,
+
+      // Perfis e Cofres
+      profiles: [],
+      unlockedProfileIds: new Set(),
+      activeProfileId: null,
+
+      // Estado do Onboarding (2 passos)
+      onboarding: {
+        name: '',
+        color: 'emerald',
+        protectWithPin: true,
+        stage: 'create',
+        firstPin: '',
+        buffer: ''
+      },
+
+      // Estado do Modal de Desbloqueio por PIN
+      unlockModal: {
+        targetProfileId: null,
+        buffer: ''
+      },
+
+      // Estado do Modal de Novo Perfil
+      newProfileColor: 'cyan',
+
+      // Arquivos da Nuvem SSD
+      cloudFiles: [],
+      fileAssignments: {},
+      favoriteIds: new Set(),
+      thumbnailUrls: {},
+      previewUrls: {},
+      previewZoom: 1,
+
+      // Fila de transferências
+      transferQueue: [],
+
+      // Workspace UI
+      category: 'all',
+      viewMode: 'grid',
+      searchQuery: '',
+      selectedIds: new Set(),
+      previewItemId: null,
+      moveSingleId: null,
+      confirmSingleDeleteId: null,
+      confirmBatchDelete: false,
+      sidebarCollapsed: false,
+
+      // Auto-Lock por inatividade (5 min padrão)
+      autoLockMinutes: 5,
+      autoLockTimer: null
+    };
+
+    // =========================================================================
+    // 2. VALIDAÇÃO ESTRITA DE SSD_API_CONFIG (PRODUÇÃO TRAVADA)
+    // =========================================================================
+    function hasValidProductionApiConfig() {
+      const id = Number(SSD_API_CONFIG.api_id);
+      const hash = typeof SSD_API_CONFIG.api_hash === 'string' ? SSD_API_CONFIG.api_hash.trim() : '';
+      return id > 0 && hash.length >= 16;
+    }
+
+    // =========================================================================
+    // 3. CRIPTOGRAFIA SHA-256 PARA PIN (WEB CRYPTO API + FALLBACK)
+    // =========================================================================
+    async function sha256Hex(text) {
+      const salted = 'ssd_nexus_vault_v2_' + text;
+      if (window.crypto && window.crypto.subtle) {
+        try {
+          const data = new TextEncoder().encode(salted);
+          const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        } catch (e) {}
+      }
+      return pureJsSha256(salted);
+    }
+
+    function pureJsSha256(ascii) {
+      function rightRotate(value, amount) {
+        return (value >>> amount) | (value << (32 - amount));
+      }
+      const mathPow = Math.pow;
+      const maxWord = mathPow(2, 32);
+      let result = '';
+      const words = [];
+      const asciiBitLength = ascii.length * 8;
+      const hash = [];
+      const k = [];
+      let primeCounter = 0;
+      const isComposite = {};
+      for (let candidate = 2; primeCounter < 64; candidate++) {
+        if (!isComposite[candidate]) {
+          for (let i = 0; i < 313; i += candidate) isComposite[i] = candidate;
+          hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
+          k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+        }
+      }
+      ascii += '\x80';
+      while ((ascii.length % 64) - 56) ascii += '\x00';
+      for (let i = 0; i < ascii.length; i++) {
+        const j = ascii.charCodeAt(i);
+        words[i >> 2] |= j << (((3 - i) % 4) * 8);
+      }
+      words[words.length] = (asciiBitLength / maxWord) | 0;
+      words[words.length] = asciiBitLength;
+      for (let j = 0; j < words.length;) {
+        const w = words.slice(j, (j += 16));
+        const oldHash = hash.slice(0);
+        for (let i = 0; i < 64; i++) {
+          const w15 = w[i - 15], w2 = w[i - 2];
+          const a = hash[0], e = hash[4];
+          const temp1 = hash[7] + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) + ((e & hash[5]) ^ (~e & hash[6])) + k[i] +
+            (w[i] = i < 16 ? w[i] : (w[i - 16] + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) + w[i - 7] + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))) | 0);
+          const temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+          hash.unshift((temp1 + temp2) | 0);
+          hash[4] = (hash[4] + temp1) | 0;
+          hash.pop();
+        }
+        for (let i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+      }
+      for (let i = 0; i < 8; i++) {
+        for (let j = 3; j + 1; j--) {
+          const b = (hash[i] >> (j * 8)) & 255;
+          result += (b < 16 ? 0 : '') + b.toString(16);
+        }
+      }
+      return result;
+    }
+
+    // =========================================================================
+    // 4. CLASSE SSDSyncEngine (ENCAPSULA TDWEB WEBASSEMBLY & INDEXEDDB)
+    // =========================================================================
+    class SSDSyncEngine {
+      constructor({ apiId, apiHash, onUpdate }) {
+        this.apiId = Number(apiId);
+        this.apiHash = String(apiHash).trim();
+        this.onUpdate = onUpdate;
+        this.client = null;
+      }
+
+      loadRuntimeScript() {
+        return new Promise((resolve, reject) => {
+          const cdnUrl = 'https://cdn.jsdelivr.net/npm/tdweb@1.8.0/dist/tdweb.js';
+          const resolveGlobal = () => {
+            if (window.tdweb && typeof window.tdweb.default === 'function') return window.tdweb.default;
+            if (typeof window.tdweb === 'function') return window.tdweb;
+            return null;
+          };
+
+          const alreadyLoaded = resolveGlobal();
+          if (alreadyLoaded) {
+            resolve(alreadyLoaded);
+            return;
+          }
+
+          const existingTag = document.querySelector(`script[src="${cdnUrl}"]`);
+          if (existingTag) {
+            existingTag.addEventListener('load', () => {
+              const ctor = resolveGlobal();
+              ctor ? resolve(ctor) : reject(new Error('Falha ao inicializar módulo SSD Sync.'));
+            });
+            existingTag.addEventListener('error', () => reject(new Error('Erro de rede ao carregar SSD Sync.')));
+            return;
+          }
+
+          const script = document.createElement('script');
+          script.src = cdnUrl;
+          script.async = true;
+          script.onload = () => {
+            const ctor = resolveGlobal();
+            ctor ? resolve(ctor) : reject(new Error('Falha ao inicializar módulo SSD Sync.'));
+          };
+          script.onerror = () => reject(new Error('Erro de rede ao carregar SSD Sync.'));
+          document.head.appendChild(script);
+        });
+      }
+
+      async start() {
+        const TdClient = await this.loadRuntimeScript();
+        if (this.client) {
+          try { await this.client.close(); } catch (e) {}
+          this.client = null;
+        }
+
+        this.client = new TdClient({
+          logVerbosityLevel: 1,
+          jsLogVerbosityLevel: 'error',
+          mode: 'wasm',
+          instanceName: 'ssd_nexus_production'
+        });
+
+        this.client.onUpdate = (update) => {
+          if (typeof this.onUpdate === 'function') {
+            this.onUpdate(update);
+          }
+        };
+      }
+
+      async send(payload) {
+        if (!this.client) throw new Error('Motor SSD Sync não inicializado.');
+        return await this.client.send(payload);
+      }
+
+      async applyTdlibParameters() {
+        return await this.send({
+          '@type': 'setTdlibParameters',
+          use_test_dc: false,
+          database_directory: '/ssd_nexus_db',
+          use_message_database: true,
+          use_secret_chats: false,
+          api_id: this.apiId,
+          api_hash: this.apiHash,
+          system_language_code: 'pt',
+          device_model: 'SSD Nexus Web',
+          application_version: '2.0.0'
+        });
+      }
+
+      async submitPhoneNumber(phoneNumber) {
+        return await this.send({
+          '@type': 'setAuthenticationPhoneNumber',
+          phone_number: phoneNumber
+        });
+      }
+
+      async verifyCode(code) {
+        return await this.send({
+          '@type': 'checkAuthenticationCode',
+          code: code
+        });
+      }
+
+      async resendCode() {
+        return await this.send({
+          '@type': 'resendAuthenticationCode'
+        });
+      }
+
+      async verifyPassword(password) {
+        return await this.send({
+          '@type': 'checkAuthenticationPassword',
+          password: password
+        });
+      }
+
+      async getCurrentAccount() {
+        return await this.send({ '@type': 'getMe' });
+      }
+
+      async ensurePersonalCloudChat(userId) {
+        return await this.send({
+          '@type': 'createPrivateChat',
+          user_id: userId,
+          force: false
+        });
+      }
+
+      async fetchCloudHistory(chatId, fromMessageId = 0, limit = 50) {
+        return await this.send({
+          '@type': 'getChatHistory',
+          chat_id: chatId,
+          from_message_id: fromMessageId,
+          offset: 0,
+          limit: limit,
+          only_local: false
+        });
+      }
+
+      async uploadBlobDocument(chatId, fileBlob) {
+        return await this.send({
+          '@type': 'sendMessage',
+          chat_id: chatId,
+          input_message_content: {
+            '@type': 'inputMessageDocument',
+            document: {
+              '@type': 'inputFileBlob',
+              data: fileBlob,
+              name: fileBlob.name
+            },
+            caption: {
+              '@type': 'formattedText',
+              text: fileBlob.name
+            }
+          }
+        });
+      }
+
+      async downloadCloudFile(fileId, priority = 32) {
+        return await this.send({
+          '@type': 'downloadFile',
+          file_id: fileId,
+          priority: priority,
+          offset: 0,
+          limit: 0,
+          synchronous: true
+        });
+      }
+
+      async readLocalFilePart(fileId) {
+        return await this.send({
+          '@type': 'readFilePart',
+          file_id: fileId,
+          offset: 0,
+          count: 0
+        });
+      }
+
+      async deleteCloudMessages(chatId, messageIds) {
+        return await this.send({
+          '@type': 'deleteMessages',
+          chat_id: chatId,
+          message_ids: messageIds,
+          revoke: true
+        });
+      }
+
+      async logOut() {
+        if (!this.client) return;
+        return await this.send({ '@type': 'logOut' });
+      }
+    }
+
+    // =========================================================================
+    // 5. BOOTSTRAP DE PRODUÇÃO & MÁQUINA DE ESTADOS DE AUTENTICAÇÃO
+    // =========================================================================
+    async function bootstrapProductionApp() {
+      switchView('auth');
+
+      const noticeEl = document.getElementById('admin-config-notice');
+      const submitBtn = document.getElementById('btn-submit-phone');
+
+      // Verifica se o proprietário já preencheu SSD_API_CONFIG no código
+      if (!hasValidProductionApiConfig()) {
+        noticeEl.classList.remove('hidden');
+        submitBtn.disabled = true;
+        setAuthSubPanel('phone');
+        refreshIcons();
+        return;
+      }
+
+      noticeEl.classList.add('hidden');
+      submitBtn.disabled = false;
+
+      setAuthSubPanel('init', {
+        title: 'Inicializando conexão segura...',
+        subtitle: 'Preparando motor SSD Sync WebAssembly'
+      });
+
+      try {
+        state.syncEngine = new SSDSyncEngine({
+          apiId: SSD_API_CONFIG.api_id,
+          apiHash: SSD_API_CONFIG.api_hash,
+          onUpdate: handleSyncUpdate
+        });
+        await state.syncEngine.start();
+      } catch (err) {
+        setAuthSubPanel('phone');
+        document.getElementById('error-phone').textContent =
+          'Não foi possível iniciar o motor SSD Sync neste navegador. Verifique sua conexão e recarregue.';
+      }
+    }
+
+    async function handleSyncUpdate(update) {
+      if (!update || !update['@type']) return;
+
+      if (update['@type'] === 'updateAuthorizationState') {
+        await onAuthorizationStateChanged(update.authorization_state);
+      } else if (update['@type'] === 'updateFile') {
+        onCloudFileUpdated(update.file);
+      } else if (update['@type'] === 'updateNewMessage') {
+        if (state.user && update.message && update.message.chat_id === state.user.id) {
+          const parsed = mapMessageToFileItem(update.message);
+          if (parsed && !state.cloudFiles.some(f => f.messageId === parsed.messageId)) {
+            state.cloudFiles.unshift(parsed);
+            if (!state.fileAssignments[parsed.messageId] && state.activeProfileId) {
+              state.fileAssignments[parsed.messageId] = state.activeProfileId;
+              saveFileAssignments();
+            }
+            if (parsed.thumbFileId) requestThumbnailDownload(parsed.thumbFileId);
+            if (!document.getElementById('view-workspace').classList.contains('hidden')) {
+              renderWorkspaceSidebarCounts();
+              renderWorkspaceFiles();
+            }
+          }
+        }
+      }
+    }
+
+    async function onAuthorizationStateChanged(authState) {
+      if (!authState || !authState['@type']) return;
+      const type = authState['@type'];
+      state.authStateType = type;
+
+      switch (type) {
+        case 'authorizationStateWaitTdlibParameters': {
+          try {
+            await state.syncEngine.applyTdlibParameters();
+          } catch (err) {
+            setAuthSubPanel('phone');
+            document.getElementById('error-phone').textContent =
+              'Falha ao validar parâmetros da aplicação SSD Sync.';
+          }
+          break;
+        }
+
+        case 'authorizationStateWaitPhoneNumber': {
+          stopResendCountdown();
+          setAuthSubPanel('phone');
+          const phoneInput = document.getElementById('input-phone');
+          if (phoneInput) phoneInput.focus();
+          break;
+        }
+
+        case 'authorizationStateWaitCode': {
+          setAuthSubPanel('code');
+          document.getElementById('label-sent-phone').textContent = state.formattedPhone || 'Número informado';
+          const boxes = document.querySelectorAll('.ssd-code-box');
+          boxes.forEach(b => (b.value = ''));
+          document.getElementById('error-code').textContent = '';
+          if (boxes[0]) boxes[0].focus();
+          startResendCountdown(60);
+          break;
+        }
+
+        case 'authorizationStateWaitPassword': {
+          stopResendCountdown();
+          setAuthSubPanel('password');
+          const hint = (authState.password_hint || '').trim();
+          document.getElementById('label-password-hint').textContent = hint
+            ? `Dica da senha: ${hint}`
+            : 'Sua conta possui senha adicional de proteção.';
+          const pwdInput = document.getElementById('input-2fa-password');
+          pwdInput.value = '';
+          document.getElementById('error-password').textContent = '';
+          pwdInput.focus();
+          break;
+        }
+
+        case 'authorizationStateReady': {
+          stopResendCountdown();
+          await handleSessionAuthenticated();
+          break;
+        }
+
+        case 'authorizationStateClosed': {
+          state.user = null;
+          state.unlockedProfileIds.clear();
+          await bootstrapProductionApp();
+          break;
+        }
+      }
+    }
+
+    // =========================================================================
+    // 6. INTERAÇÕES DA TELA DE LOGIN (TELEFONE, CÓDIGO 5 DÍGITOS E 2FA)
+    // =========================================================================
+    function setAuthSubPanel(panelName, meta = {}) {
+      const panels = ['init', 'phone', 'code', 'password'];
+      panels.forEach(p => {
+        const el = document.getElementById(`auth-panel-${p}`);
+        if (el) el.classList.toggle('hidden', p !== panelName);
+      });
+      if (panelName === 'init') {
+        if (meta.title) document.getElementById('auth-init-title').textContent = meta.title;
+        if (meta.subtitle) document.getElementById('auth-init-subtitle').textContent = meta.subtitle;
+      }
+      refreshIcons();
+    }
+
+    // Máscara de celular dinâmica
+    const phoneInputEl = document.getElementById('input-phone');
+    phoneInputEl.addEventListener('input', (e) => {
+      const ddi = document.getElementById('select-ddi').value;
+      const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+
+      if (ddi === '+55') {
+        if (digits.length > 6) {
+          e.target.value = `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+        } else if (digits.length > 2) {
+          e.target.value = `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+        } else if (digits.length > 0) {
+          e.target.value = `(${digits}`;
+        }
+      } else {
+        e.target.value = digits;
+      }
+      document.getElementById('error-phone').textContent = '';
+    });
+
+    phoneInputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handlePhoneSubmit();
+    });
+
+    async function handlePhoneSubmit() {
+      if (!hasValidProductionApiConfig() || !state.syncEngine) return;
+
+      const errEl = document.getElementById('error-phone');
+      const btn = document.getElementById('btn-submit-phone');
+      errEl.textContent = '';
+
+      const ddi = document.getElementById('select-ddi').value;
+      const digits = phoneInputEl.value.replace(/\D/g, '');
+      if (digits.length < 8) {
+        errEl.textContent = 'Digite um número de celular válido com DDD.';
+        phoneInputEl.focus();
+        return;
+      }
+
+      const fullNumber = `${ddi}${digits}`;
+      state.formattedPhone = `${ddi} ${phoneInputEl.value}`;
+
+      btn.disabled = true;
+      try {
+        await state.syncEngine.submitPhoneNumber(fullNumber);
+      } catch (err) {
+        errEl.textContent = translateSyncError(err, 'Não foi possível enviar o código para este número.');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function handleChangePhoneNumber() {
+      stopResendCountdown();
+      setAuthSubPanel('phone');
+      phoneInputEl.focus();
+    }
+
+    // 5 caixas numéricas com auto-avanço, backspace, colagem e envio no 5º dígito
+    const codeBoxes = Array.from(document.querySelectorAll('.ssd-code-box'));
+    codeBoxes.forEach((box, idx) => {
+      box.addEventListener('input', (e) => {
+        const clean = e.target.value.replace(/\D/g, '');
+        e.target.value = clean ? clean[0] : '';
+        document.getElementById('error-code').textContent = '';
+
+        if (clean && idx < codeBoxes.length - 1) {
+          codeBoxes[idx + 1].focus();
+        }
+
+        const fullCode = codeBoxes.map(b => b.value).join('');
+        if (fullCode.length === 5) {
+          handleCodeSubmit();
+        }
+      });
+
+      box.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace') {
+          if (!e.target.value && idx > 0) {
+            codeBoxes[idx - 1].value = '';
+            codeBoxes[idx - 1].focus();
+          }
+        } else if (e.key === 'ArrowLeft' && idx > 0) {
+          codeBoxes[idx - 1].focus();
+        } else if (e.key === 'ArrowRight' && idx < codeBoxes.length - 1) {
+          codeBoxes[idx + 1].focus();
+        }
+      });
+
+      box.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData)
+          .getData('text')
+          .replace(/\D/g, '')
+          .slice(0, 5);
+        if (!pasted) return;
+        pasted.split('').forEach((digit, i) => {
+          if (codeBoxes[i]) codeBoxes[i].value = digit;
+        });
+        const nextFocus = Math.min(pasted.length, codeBoxes.length - 1);
+        codeBoxes[nextFocus].focus();
+        if (pasted.length === 5) {
+          handleCodeSubmit();
+        }
+      });
+    });
+
+    async function handleCodeSubmit() {
+      const code = codeBoxes.map(b => b.value).join('');
+      const errEl = document.getElementById('error-code');
+      const btn = document.getElementById('btn-verify-code');
+
+      if (code.length < 5) {
+        errEl.textContent = 'Preencha todos os 5 dígitos do código.';
+        shakeElement('code-inputs-wrapper');
+        return;
+      }
+
+      btn.disabled = true;
+      errEl.textContent = '';
+      try {
+        await state.syncEngine.verifyCode(code);
+      } catch (err) {
+        errEl.textContent = translateSyncError(err, 'Código inválido ou expirado. Tente novamente.');
+        shakeElement('code-inputs-wrapper');
+        codeBoxes.forEach(b => (b.value = ''));
+        if (codeBoxes[0]) codeBoxes[0].focus();
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function startResendCountdown(seconds) {
+      stopResendCountdown();
+      state.resendRemaining = seconds;
+      const label = document.getElementById('resend-countdown-label');
+      const secSpan = document.getElementById('resend-seconds');
+      const btnResend = document.getElementById('btn-resend-code');
+
+      label.classList.remove('hidden');
+      btnResend.classList.add('hidden');
+      secSpan.textContent = String(state.resendRemaining);
+
+      state.resendTimerId = setInterval(() => {
+        state.resendRemaining -= 1;
+        if (state.resendRemaining <= 0) {
+          stopResendCountdown();
+          label.classList.add('hidden');
+          btnResend.classList.remove('hidden');
+        } else {
+          secSpan.textContent = String(state.resendRemaining);
+        }
+      }, 1000);
+    }
+
+    function stopResendCountdown() {
+      if (state.resendTimerId) {
+        clearInterval(state.resendTimerId);
+        state.resendTimerId = null;
+      }
+    }
+
+    async function handleResendCode() {
+      try {
+        await state.syncEngine.resendCode();
+        showToast('Código Reenviado', 'Um novo código de 5 dígitos foi enviado para seu dispositivo.', 'info');
+        startResendCountdown(60);
+      } catch (err) {
+        document.getElementById('error-code').textContent =
+          translateSyncError(err, 'Aguarde alguns instantes antes de solicitar outro código.');
+      }
+    }
+
+    // 2FA Password
+    document.getElementById('input-2fa-password').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handlePasswordSubmit();
+    });
+
+    function toggle2FAPasswordVisibility() {
+      const inp = document.getElementById('input-2fa-password');
+      const icon = document.getElementById('icon-2fa-eye');
+      const isHidden = inp.type === 'password';
+      inp.type = isHidden ? 'text' : 'password';
+      icon.setAttribute('data-lucide', isHidden ? 'eye-off' : 'eye');
+      refreshIcons();
+    }
+
+    async function handlePasswordSubmit() {
+      const pwdInput = document.getElementById('input-2fa-password');
+      const errEl = document.getElementById('error-password');
+      const btn = document.getElementById('btn-submit-password');
+      const pwd = pwdInput.value;
+
+      if (!pwd) {
+        errEl.textContent = 'Digite sua senha de verificação em duas etapas.';
+        pwdInput.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      errEl.textContent = '';
+      try {
+        await state.syncEngine.verifyPassword(pwd);
+      } catch (err) {
+        errEl.textContent = translateSyncError(err, 'Senha incorreta. Verifique e tente novamente.');
+        shakeElement('input-2fa-password');
+        pwdInput.select();
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function translateSyncError(err, fallback) {
+      const raw = (err && (err.message || err.toString())) || '';
+      if (raw.includes('PHONE_NUMBER_INVALID')) return 'Número de telefone inválido.';
+      if (raw.includes('PHONE_CODE_INVALID')) return 'Código de 5 dígitos incorreto.';
+      if (raw.includes('PHONE_CODE_EXPIRED')) return 'Este código expirou. Solicite um novo código.';
+      if (raw.includes('PASSWORD_HASH_INVALID')) return 'Senha de verificação incorreta.';
+      if (raw.includes('FLOOD_WAIT')) return 'Muitas tentativas recentes. Aguarde alguns segundos.';
+      return fallback;
+    }
+
+    // =========================================================================
+    // 7. PÓS-AUTENTICAÇÃO: getMe E ONBOARDING VS "QUEM ESTÁ ACESSANDO?"
+    // =========================================================================
+    async function handleSessionAuthenticated() {
+      try {
+        const me = await state.syncEngine.getCurrentAccount();
+        const fullName = [me.first_name, me.last_name].filter(Boolean).join(' ').trim() || 'Usuário SSD';
+        const phoneStr = me.phone_number ? `+${me.phone_number}` : state.formattedPhone;
+
+        state.user = {
+          id: me.id,
+          name: fullName,
+          username: me.usernames && me.usernames.editable_username ? `@${me.usernames.editable_username}` : '',
+          phone: phoneStr
+        };
+
+        loadAccountStorage();
+
+        if (state.profiles.length === 0) {
+          startOnboardingWizard(fullName);
+        } else {
+          openProfileSelectorView();
+        }
+      } catch (err) {
+        showToast('Erro de Sincronização', 'Não foi possível carregar os dados da conta.', 'danger');
+      }
+    }
+
+    function loadAccountStorage() {
+      if (!state.user) return;
+      const uid = state.user.id;
+      try {
+        const rawProfiles = localStorage.getItem(STORAGE_KEYS.PROFILES_PREFIX + uid);
+        state.profiles = rawProfiles ? JSON.parse(rawProfiles) : [];
+      } catch (e) {
+        state.profiles = [];
+      }
+
+      try {
+        const rawMap = localStorage.getItem(STORAGE_KEYS.ASSIGNMENTS_PREFIX + uid);
+        state.fileAssignments = rawMap ? JSON.parse(rawMap) : {};
+      } catch (e) {
+        state.fileAssignments = {};
+      }
+
+      try {
+        const rawFav = localStorage.getItem(STORAGE_KEYS.FAVORITES_PREFIX + uid);
+        state.favoriteIds = new Set(rawFav ? JSON.parse(rawFav) : []);
+      } catch (e) {
+        state.favoriteIds = new Set();
+      }
+    }
+
+    function saveAccountProfiles() {
+      if (!state.user) return;
+      try {
+        localStorage.setItem(STORAGE_KEYS.PROFILES_PREFIX + state.user.id, JSON.stringify(state.profiles));
+      } catch (e) {}
+    }
+
+    function saveFileAssignments() {
+      if (!state.user) return;
+      try {
+        localStorage.setItem(STORAGE_KEYS.ASSIGNMENTS_PREFIX + state.user.id, JSON.stringify(state.fileAssignments));
+      } catch (e) {}
+    }
+
+    function saveFavoriteIds() {
+      if (!state.user) return;
+      try {
+        localStorage.setItem(STORAGE_KEYS.FAVORITES_PREFIX + state.user.id, JSON.stringify(Array.from(state.favoriteIds)));
+      } catch (e) {}
+    }
+
+    // =========================================================================
+    // 8. ASSISTENTE DE ONBOARDING (2 PASSOS: PERFIL + PIN SHA-256)
+    // =========================================================================
+    function startOnboardingWizard(defaultName) {
+      state.onboarding = {
+        name: defaultName,
+        color: 'emerald',
+        protectWithPin: true,
+        stage: 'create',
+        firstPin: '',
+        buffer: ''
+      };
+
+      document.getElementById('onb-profile-name').value = defaultName;
+      document.getElementById('onb-pin-toggle').checked = true;
+      document.getElementById('onb-name-error').textContent = '';
+      selectOnboardingColor('emerald');
+
+      document.getElementById('onb-step-badge').textContent = 'PASSO 1 DE 2';
+      document.getElementById('onb-step-1').classList.remove('hidden');
+      document.getElementById('onb-step-2').classList.add('hidden');
+
+      switchView('onboarding');
+    }
+
+    function selectOnboardingColor(colorKey) {
+      state.onboarding.color = colorKey;
+      document.querySelectorAll('.onb-swatch').forEach(btn => {
+        const active = btn.dataset.swatch === colorKey;
+        btn.classList.toggle('ring-2', active);
+        btn.classList.toggle('ring-white', active);
+        btn.classList.toggle('ring-offset-2', active);
+        btn.classList.toggle('ring-offset-[#0e1526]', active);
+        btn.classList.toggle('opacity-65', !active);
+      });
+    }
+
+    async function completeOnboardingStep1() {
+      const nameVal = document.getElementById('onb-profile-name').value.trim();
+      const errEl = document.getElementById('onb-name-error');
+
+      if (!nameVal) {
+        errEl.textContent = 'Informe um nome para o seu perfil.';
+        document.getElementById('onb-profile-name').focus();
+        return;
+      }
+
+      state.onboarding.name = nameVal;
+      state.onboarding.protectWithPin = document.getElementById('onb-pin-toggle').checked;
+
+      if (!state.onboarding.protectWithPin) {
+        const profile = {
+          id: 'prof_' + Date.now(),
+          name: state.onboarding.name,
+          color: state.onboarding.color,
+          pinHash: null,
+          createdAt: Date.now()
+        };
+        state.profiles.push(profile);
+        saveAccountProfiles();
+        state.unlockedProfileIds.add(profile.id);
+        await enterWorkspace(profile.id);
+        return;
+      }
+
+      state.onboarding.stage = 'create';
+      state.onboarding.firstPin = '';
+      state.onboarding.buffer = '';
+      updateOnboardingPinUI();
+
+      document.getElementById('onb-step-badge').textContent = 'PASSO 2 DE 2';
+      document.getElementById('onb-step-1').classList.add('hidden');
+      document.getElementById('onb-step-2').classList.remove('hidden');
+    }
+
+    function backToOnboardingStep1() {
+      state.onboarding.buffer = '';
+      state.onboarding.firstPin = '';
+      state.onboarding.stage = 'create';
+      document.getElementById('onb-step-badge').textContent = 'PASSO 1 DE 2';
+      document.getElementById('onb-step-2').classList.add('hidden');
+      document.getElementById('onb-step-1').classList.remove('hidden');
+    }
+
+    function updateOnboardingPinUI() {
+      const isConfirm = state.onboarding.stage === 'confirm';
+      document.getElementById('onb-pin-heading').textContent = isConfirm
+        ? 'Confirme seu PIN de 4 dígitos'
+        : 'Crie seu PIN de 4 dígitos';
+      document.getElementById('onb-pin-subheading').textContent = isConfirm
+        ? 'Digite novamente o mesmo código para confirmar.'
+        : 'Escolha 4 dígitos para proteger o acesso ao seu perfil.';
+      document.getElementById('onb-pin-error').textContent = '';
+
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`onb-dot-${i}`);
+        if (i < state.onboarding.buffer.length) {
+          dot.textContent = '•';
+          dot.className = 'flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-cyan-400 bg-cyan-500/15 font-mono text-2xl font-bold text-cyan-300 transition';
+        } else {
+          dot.textContent = '';
+          dot.className = 'flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#090e1a] font-mono text-2xl font-bold text-cyan-400 transition';
+        }
+      }
+    }
+
+    async function handleOnboardingPinDigit(digit) {
+      if (state.onboarding.buffer.length >= 4) return;
+      state.onboarding.buffer += digit;
+      updateOnboardingPinUI();
+
+      if (state.onboarding.buffer.length === 4) {
+        await new Promise(r => setTimeout(r, 150));
+        if (state.onboarding.stage === 'create') {
+          state.onboarding.firstPin = state.onboarding.buffer;
+          state.onboarding.buffer = '';
+          state.onboarding.stage = 'confirm';
+          updateOnboardingPinUI();
+        } else {
+          if (state.onboarding.buffer !== state.onboarding.firstPin) {
+            shakeElement('onb-pin-dots-container');
+            state.onboarding.stage = 'create';
+            state.onboarding.firstPin = '';
+            state.onboarding.buffer = '';
+            updateOnboardingPinUI();
+            document.getElementById('onb-pin-error').textContent = 'Os PINs não coincidem. Crie novamente.';
+            return;
+          }
+
+          const pinHash = await sha256Hex(state.onboarding.buffer);
+          const profile = {
+            id: 'prof_' + Date.now(),
+            name: state.onboarding.name,
+            color: state.onboarding.color,
+            pinHash: pinHash,
+            createdAt: Date.now()
+          };
+          state.profiles.push(profile);
+          saveAccountProfiles();
+          state.unlockedProfileIds.add(profile.id);
+
+          showToast('Perfil Protegido Criado', 'Seu PIN de segurança foi salvo com criptografia SHA-256.', 'success');
+          await enterWorkspace(profile.id);
+        }
+      }
+    }
+
+    function backspaceOnboardingPin() {
+      state.onboarding.buffer = state.onboarding.buffer.slice(0, -1);
+      updateOnboardingPinUI();
+    }
+
+    function clearOnboardingPinBuffer() {
+      state.onboarding.buffer = '';
+      updateOnboardingPinUI();
+    }
+
+    // =========================================================================
+    // 9. SELETOR DE PERFIS ("QUEM ESTÁ ACESSANDO?") & DESBLOQUEIO POR PIN
+    // =========================================================================
+    function openProfileSelectorView() {
+      switchView('selector');
+      if (state.user) {
+        const sub = [state.user.name, state.user.phone].filter(Boolean).join(' • ');
+        document.getElementById('selector-user-subtitle').textContent = sub;
+      }
+      renderProfileSelectorGrid();
+    }
+
+    function renderProfileSelectorGrid() {
+      const grid = document.getElementById('selector-profiles-grid');
+      grid.innerHTML = state.profiles.map(prof => {
+        const palette = ACCENT_PALETTE[prof.color] || ACCENT_PALETTE.emerald;
+        const isProtected = Boolean(prof.pinHash);
+        const isUnlocked = !isProtected || state.unlockedProfileIds.has(prof.id);
+
+        return `
+          <button
+            type="button"
+            onclick="handleProfileCardClick('${prof.id}')"
+            class="group flex flex-col justify-between rounded-3xl glass-card p-6 text-left hover:border-cyan-500/45 hover:bg-[#131c31]/90 transition-all shadow-xl animate-fade-up"
+          >
+            <div>
+              <div class="flex items-start justify-between gap-3 mb-5">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl border ${palette.border} ${palette.soft} ${palette.icon}">
+                  <i data-lucide="${isProtected ? (isUnlocked ? 'unlock' : 'lock') : 'folder-check'}" class="h-6 w-6"></i>
+                </div>
+                <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-semibold ${isProtected ? (isUnlocked ? 'border-emerald-500/30 bg-emerald-500/15 text-emerald-300' : 'border-amber-500/30 bg-amber-500/15 text-amber-300') : 'border-cyan-500/30 bg-cyan-500/15 text-cyan-300'}">
+                  ${isProtected ? (isUnlocked ? 'DESBLOQUEADO' : 'COFRE PIN') : 'ACESSO DIRETO'}
+                </span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full ${palette.dot} ${palette.ring}"></span>
+                <h3 class="text-lg font-bold text-white group-hover:text-cyan-300 transition truncate">${escapeHtml(prof.name)}</h3>
+              </div>
+              <p class="mt-1.5 text-xs text-slate-400">
+                ${isProtected ? 'Protegido por PIN de 4 dígitos' : 'Ambiente sem bloqueio por PIN'}
+              </p>
+            </div>
+
+            <div class="mt-6 flex items-center justify-between border-t nexus-border pt-3.5 text-xs">
+              <span class="text-slate-400">${isUnlocked ? 'Pronto para abrir' : 'Toque para desbloquear'}</span>
+              <span class="inline-flex items-center gap-1 font-semibold ${palette.text} group-hover:translate-x-0.5 transition-transform">
+                <span>Entrar</span>
+                <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </span>
+            </div>
+          </button>
+        `;
+      }).join('');
+      refreshIcons();
+    }
+
+    async function handleProfileCardClick(profileId) {
+      const prof = state.profiles.find(p => p.id === profileId);
+      if (!prof) return;
+
+      if (!prof.pinHash || state.unlockedProfileIds.has(prof.id)) {
+        await enterWorkspace(prof.id);
+      } else {
+        openPinUnlockModal(prof.id);
+      }
+    }
+
+    function openPinUnlockModal(profileId) {
+      const prof = state.profiles.find(p => p.id === profileId);
+      if (!prof) return;
+
+      state.unlockModal.targetProfileId = profileId;
+      state.unlockModal.buffer = '';
+
+      document.getElementById('unlock-pin-title').textContent = prof.name;
+      document.getElementById('unlock-pin-error').textContent = '';
+      renderUnlockDots();
+
+      const modal = document.getElementById('modal-pin-unlock');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      refreshIcons();
+    }
+
+    function closePinUnlockModal() {
+      state.unlockModal.targetProfileId = null;
+      state.unlockModal.buffer = '';
+      const modal = document.getElementById('modal-pin-unlock');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function renderUnlockDots() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`unlock-dot-${i}`);
+        if (i < state.unlockModal.buffer.length) {
+          dot.textContent = '•';
+          dot.className = 'flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-cyan-400 bg-cyan-500/15 font-mono text-2xl font-bold text-cyan-300';
+        } else {
+          dot.textContent = '';
+          dot.className = 'flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#090e1a] font-mono text-2xl font-bold text-cyan-400';
+        }
+      }
+    }
+
+    async function pressUnlockDigit(digit) {
+      if (state.unlockModal.buffer.length >= 4) return;
+      state.unlockModal.buffer += digit;
+      document.getElementById('unlock-pin-error').textContent = '';
+      renderUnlockDots();
+
+      if (state.unlockModal.buffer.length === 4) {
+        await new Promise(r => setTimeout(r, 120));
+        await verifyUnlockModalPin();
+      }
+    }
+
+    async function verifyUnlockModalPin() {
+      if (state.unlockModal.buffer.length < 4) return;
+      const prof = state.profiles.find(p => p.id === state.unlockModal.targetProfileId);
+      if (!prof) return;
+
+      const enteredHash = await sha256Hex(state.unlockModal.buffer);
+      if (enteredHash === prof.pinHash) {
+        const targetId = prof.id;
+        state.unlockedProfileIds.add(targetId);
+        closePinUnlockModal();
+        await enterWorkspace(targetId);
+      } else {
+        shakeElement('modal-pin-card');
+        state.unlockModal.buffer = '';
+        renderUnlockDots();
+        document.getElementById('unlock-pin-error').textContent = 'PIN incorreto. Tente novamente.';
+      }
+    }
+
+    function backspaceUnlockBuffer() {
+      state.unlockModal.buffer = state.unlockModal.buffer.slice(0, -1);
+      renderUnlockDots();
+    }
+
+    function clearUnlockBuffer() {
+      state.unlockModal.buffer = '';
+      document.getElementById('unlock-pin-error').textContent = '';
+      renderUnlockDots();
+    }
+
+    // Modal de Criação de Perfil / Cofre Adicional
+    function openNewProfileModal() {
+      state.newProfileColor = 'cyan';
+      document.getElementById('np-name').value = '';
+      document.getElementById('np-pin-toggle').checked = true;
+      document.getElementById('np-pin-1').value = '';
+      document.getElementById('np-pin-2').value = '';
+      document.getElementById('np-error').textContent = '';
+      toggleNewProfilePinFields();
+      selectNewProfileColor('cyan');
+
+      const modal = document.getElementById('modal-new-profile');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('np-name').focus();
+      refreshIcons();
+    }
+
+    function closeNewProfileModal() {
+      const modal = document.getElementById('modal-new-profile');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function selectNewProfileColor(colorKey) {
+      state.newProfileColor = colorKey;
+      document.querySelectorAll('.np-swatch').forEach(btn => {
+        const active = btn.dataset.npSwatch === colorKey;
+        btn.classList.toggle('ring-2', active);
+        btn.classList.toggle('ring-white', active);
+        btn.classList.toggle('ring-offset-2', active);
+        btn.classList.toggle('ring-offset-[#0e1526]', active);
+        btn.classList.toggle('opacity-70', !active);
+      });
+    }
+
+    function toggleNewProfilePinFields() {
+      const checked = document.getElementById('np-pin-toggle').checked;
+      document.getElementById('np-pin-fields').classList.toggle('hidden', !checked);
+    }
+
+    async function saveAdditionalProfile() {
+      const name = document.getElementById('np-name').value.trim();
+      const usePin = document.getElementById('np-pin-toggle').checked;
+      const errEl = document.getElementById('np-error');
+
+      if (!name) {
+        errEl.textContent = 'Informe o nome do perfil ou cofre.';
+        return;
+      }
+
+      let pinHash = null;
+      if (usePin) {
+        const p1 = document.getElementById('np-pin-1').value.replace(/\D/g, '');
+        const p2 = document.getElementById('np-pin-2').value.replace(/\D/g, '');
+        if (p1.length !== 4) {
+          errEl.textContent = 'O PIN deve conter exatamente 4 dígitos.';
+          return;
+        }
+        if (p1 !== p2) {
+          errEl.textContent = 'Os dois PINs digitados não coincidem.';
+          return;
+        }
+        pinHash = await sha256Hex(p1);
+      }
+
+      const newProf = {
+        id: 'prof_' + Date.now(),
+        name,
+        color: state.newProfileColor,
+        pinHash,
+        createdAt: Date.now()
+      };
+
+      state.profiles.push(newProf);
+      saveAccountProfiles();
+      state.unlockedProfileIds.add(newProf.id);
+      closeNewProfileModal();
+      showToast('Perfil Criado', `${name} pronto para uso.`, 'success');
+      await enterWorkspace(newProf.id);
+    }
+
+    // =========================================================================
+    // 10. WORKSPACE DESKTOP (3 ZONAS) & SINCRONIZAÇÃO DE ARQUIVOS REAIS
+    // =========================================================================
+    async function enterWorkspace(profileId) {
+      state.activeProfileId = profileId;
+      state.category = 'all';
+      state.selectedIds.clear();
+      state.previewItemId = null;
+      closePreviewDrawer(false);
+
+      switchView('workspace');
+      renderWorkspaceHeaderAndUser();
+      resetAutoLockTimer();
+
+      if (state.cloudFiles.length === 0) {
+        await refreshCloudFiles(false);
+      } else {
+        renderWorkspaceSidebarCounts();
+        renderWorkspaceFiles();
+      }
+    }
+
+    function renderWorkspaceHeaderAndUser() {
+      if (state.user) {
+        const initials = state.user.name
+          .split(' ')
+          .slice(0, 2)
+          .map(s => s[0])
+          .join('')
+          .toUpperCase() || 'SS';
+        document.getElementById('sb-user-avatar').textContent = initials;
+        document.getElementById('sb-user-name').textContent = state.user.name;
+        document.getElementById('sb-user-phone').textContent = state.user.phone || state.user.username;
+      }
+
+      const activeProf = state.profiles.find(p => p.id === state.activeProfileId) || state.profiles[0];
+      if (!activeProf) return;
+
+      const palette = ACCENT_PALETTE[activeProf.color] || ACCENT_PALETTE.emerald;
+      const isProtected = Boolean(activeProf.pinHash);
+
+      document.getElementById('active-prof-dot').className = `h-3 w-3 shrink-0 rounded-full ${palette.dot} ${palette.ring}`;
+      document.getElementById('active-prof-name').textContent = activeProf.name;
+      document.getElementById('active-prof-badge').innerHTML = isProtected
+        ? `<i data-lucide="shield-check" class="h-3 w-3 text-emerald-400"></i><span>Protegido por PIN</span>`
+        : `<i data-lucide="globe" class="h-3 w-3 text-cyan-400"></i><span>Acesso Direto</span>`;
+
+      const chip = document.getElementById('ws-profile-chip');
+      chip.className = `inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-xs font-semibold ${palette.border} ${palette.soft} ${palette.text}`;
+      chip.textContent = activeProf.name;
+
+      document.getElementById('drag-target-profile-name').textContent = activeProf.name;
+      renderDropdownProfilesList();
+      refreshIcons();
+    }
+
+    function renderDropdownProfilesList() {
+      const container = document.getElementById('dropdown-profiles-list');
+      container.innerHTML = state.profiles.map(p => {
+        const palette = ACCENT_PALETTE[p.color] || ACCENT_PALETTE.emerald;
+        const isCurrent = p.id === state.activeProfileId;
+        const isProtected = Boolean(p.pinHash);
+        const isUnlocked = !isProtected || state.unlockedProfileIds.has(p.id);
+
+        return `
+          <button
+            type="button"
+            onclick="switchWorkspaceProfile('${p.id}')"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition ${isCurrent ? 'bg-[#131c31] text-white font-semibold' : 'text-slate-300 hover:bg-[#131c31]/70 hover:text-white'}"
+          >
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="h-2.5 w-2.5 shrink-0 rounded-full ${palette.dot}"></span>
+              <span class="truncate">${escapeHtml(p.name)}</span>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              ${isProtected
+                ? `<i data-lucide="${isUnlocked ? 'unlock' : 'lock'}" class="h-3.5 w-3.5 ${isUnlocked ? 'text-emerald-400' : 'text-amber-400'}"></i>`
+                : ''
+              }
+              ${isCurrent ? `<i data-lucide="check" class="h-3.5 w-3.5 text-cyan-400"></i>` : ''}
+            </div>
+          </button>
+        `;
+      }).join('');
+      refreshIcons();
+    }
+
+    function toggleProfileDropdown() {
+      document.getElementById('profile-dropdown-menu').classList.toggle('hidden');
+    }
+
+    function closeProfileDropdown() {
+      document.getElementById('profile-dropdown-menu').classList.add('hidden');
+    }
+
+    async function switchWorkspaceProfile(targetId) {
+      closeProfileDropdown();
+      if (targetId === state.activeProfileId) return;
+
+      const prof = state.profiles.find(p => p.id === targetId);
+      if (!prof) return;
+
+      if (prof.pinHash && !state.unlockedProfileIds.has(prof.id)) {
+        openPinUnlockModal(prof.id);
+        return;
+      }
+
+      await enterWorkspace(prof.id);
+    }
+
+    // =========================================================================
+    // 11. LEITURA DE ARQUIVOS REAIS DA NUVEM PESSOAL
+    // =========================================================================
+    async function refreshCloudFiles(notify = false) {
+      if (!state.syncEngine || !state.user) return;
+
+      const refreshIcon = document.getElementById('icon-sync-refresh');
+      if (refreshIcon) refreshIcon.classList.add('animate-spin');
+
+      try {
+        await state.syncEngine.ensurePersonalCloudChat(state.user.id);
+
+        let collected = [];
+        let fromMessageId = 0;
+
+        for (let batch = 0; batch < 2; batch++) {
+          const history = await state.syncEngine.fetchCloudHistory(state.user.id, fromMessageId, 50);
+          if (!history || !Array.isArray(history.messages) || history.messages.length === 0) break;
+
+          for (const msg of history.messages) {
+            const parsed = mapMessageToFileItem(msg);
+            if (parsed) collected.push(parsed);
+          }
+
+          fromMessageId = history.messages[history.messages.length - 1].id;
+        }
+
+        const seen = new Set();
+        state.cloudFiles = collected.filter(item => {
+          if (seen.has(item.messageId)) return false;
+          seen.add(item.messageId);
+          return true;
+        });
+
+        const defaultProfId = state.profiles[0] ? state.profiles[0].id : state.activeProfileId;
+        let mapChanged = false;
+        for (const item of state.cloudFiles) {
+          if (!state.fileAssignments[item.messageId] && defaultProfId) {
+            state.fileAssignments[item.messageId] = defaultProfId;
+            mapChanged = true;
+          }
+          if (item.thumbFileId) {
+            requestThumbnailDownload(item.thumbFileId);
+          }
+        }
+        if (mapChanged) saveFileAssignments();
+
+        renderWorkspaceSidebarCounts();
+        renderWorkspaceFiles();
+
+        if (notify) {
+          showToast('Sincronização Concluída', `${state.cloudFiles.length} item(ns) sincronizados na Nuvem SSD.`, 'success');
+        }
+      } catch (err) {
+        if (notify) {
+          showToast('Aviso de Sincronização', 'Não foi possível atualizar os arquivos agora.', 'warning');
+        }
+      } finally {
+        if (refreshIcon) refreshIcon.classList.remove('animate-spin');
+      }
+    }
+
+    function mapMessageToFileItem(msg) {
+      if (!msg || !msg.content) return null;
+      const c = msg.content;
+      const type = c['@type'];
+      const dateObj = new Date((msg.date || Math.floor(Date.now() / 1000)) * 1000);
+      const dateFormatted = dateObj.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      if (type === 'messageDocument' && c.document) {
+        const doc = c.document;
+        const fileName = doc.file_name || `Arquivo_${msg.id}`;
+        const ext = (fileName.split('.').pop() || 'DOC').toUpperCase();
+        const fileObj = doc.document || {};
+        const thumbObj = doc.thumbnail && doc.thumbnail.file ? doc.thumbnail.file : null;
+        return {
+          messageId: msg.id,
+          fileId: fileObj.id || null,
+          thumbFileId: thumbObj ? thumbObj.id : null,
+          name: fileName,
+          ext,
+          category: classifyExtension(fileName, doc.mime_type),
+          mimeType: doc.mime_type || 'application/octet-stream',
+          sizeBytes: fileObj.size || 0,
+          date: dateFormatted,
+          timestamp: msg.date || 0
+        };
+      }
+
+      if (type === 'messagePhoto' && c.photo && Array.isArray(c.photo.sizes) && c.photo.sizes.length > 0) {
+        const largest = c.photo.sizes[c.photo.sizes.length - 1];
+        const smallest = c.photo.sizes[0];
+        const captionText = c.caption && c.caption.text ? c.caption.text.trim() : '';
+        const name = captionText && captionText.length <= 48 ? `${captionText}.jpg` : `Foto_${msg.id}.jpg`;
+        return {
+          messageId: msg.id,
+          fileId: largest.photo ? largest.photo.id : null,
+          thumbFileId: smallest && smallest.photo ? smallest.photo.id : null,
+          name,
+          ext: 'JPG',
+          category: 'media',
+          mimeType: 'image/jpeg',
+          sizeBytes: largest.photo ? largest.photo.size : 0,
+          dimensions: `${largest.width} × ${largest.height} px`,
+          date: dateFormatted,
+          timestamp: msg.date || 0
+        };
+      }
+
+      if (type === 'messageVideo' && c.video) {
+        const vid = c.video;
+        const fileName = vid.file_name || `Video_${msg.id}.mp4`;
+        const fileObj = vid.video || {};
+        const thumbObj = vid.thumbnail && vid.thumbnail.file ? vid.thumbnail.file : null;
+        return {
+          messageId: msg.id,
+          fileId: fileObj.id || null,
+          thumbFileId: thumbObj ? thumbObj.id : null,
+          name: fileName,
+          ext: (fileName.split('.').pop() || 'MP4').toUpperCase(),
+          category: 'media',
+          isVideo: true,
+          mimeType: vid.mime_type || 'video/mp4',
+          sizeBytes: fileObj.size || 0,
+          dimensions: `${vid.width || 1920} × ${vid.height || 1080}`,
+          duration: vid.duration || 0,
+          date: dateFormatted,
+          timestamp: msg.date || 0
+        };
+      }
+
+      if ((type === 'messageAudio' && c.audio) || (type === 'messageVoiceNote' && c.voice_note)) {
+        const aud = c.audio || c.voice_note;
+        const fileName = aud.file_name || `Audio_${msg.id}.ogg`;
+        const fileObj = aud.audio || aud.voice || {};
+        return {
+          messageId: msg.id,
+          fileId: fileObj.id || null,
+          thumbFileId: null,
+          name: fileName,
+          ext: (fileName.split('.').pop() || 'AUDIO').toUpperCase(),
+          category: 'media',
+          mimeType: aud.mime_type || 'audio/mpeg',
+          sizeBytes: fileObj.size || 0,
+          duration: aud.duration || 0,
+          date: dateFormatted,
+          timestamp: msg.date || 0
+        };
+      }
+
+      return null;
+    }
+
+    function classifyExtension(fileName, mime = '') {
+      const ext = (fileName.split('.').pop() || '').toLowerCase();
+      if (
+        ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'mp4', 'mkv', 'webm', 'mov', 'avi', 'mp3', 'wav', 'ogg', 'm4a'].includes(ext) ||
+        mime.startsWith('image/') ||
+        mime.startsWith('video/') ||
+        mime.startsWith('audio/')
+      ) {
+        return 'media';
+      }
+      return 'documents';
+    }
+
+    async function requestThumbnailDownload(thumbFileId) {
+      if (!thumbFileId || state.thumbnailUrls[thumbFileId] || !state.syncEngine) return;
+      state.thumbnailUrls[thumbFileId] = 'loading';
+      try {
+        const fileInfo = await state.syncEngine.downloadCloudFile(thumbFileId, 16);
+        if (fileInfo && fileInfo.local && fileInfo.local.is_downloading_completed) {
+          const part = await state.syncEngine.readLocalFilePart(thumbFileId);
+          if (part && part.data) {
+            const blobUrl = URL.createObjectURL(new Blob([part.data]));
+            state.thumbnailUrls[thumbFileId] = blobUrl;
+            renderWorkspaceFiles();
+          }
+        }
+      } catch (e) {
+        delete state.thumbnailUrls[thumbFileId];
+      }
+    }
+
+    // =========================================================================
+    // 12. UPLOAD DE ARQUIVOS REAIS & FILA DE TRANSFERÊNCIAS
+    // =========================================================================
+    function triggerCloudUpload() {
+      document.getElementById('cloud-file-picker').click();
+    }
+
+    document.getElementById('cloud-file-picker').addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        uploadFilesToCloud(Array.from(e.target.files));
+        e.target.value = '';
+      }
+    });
+
+    async function uploadFilesToCloud(fileList) {
+      if (!state.syncEngine || !state.user) return;
+
+      for (const rawFile of fileList) {
+        const transferId = 'tr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+        const transferItem = {
+          id: transferId,
+          fileId: null,
+          name: rawFile.name,
+          sizeBytes: rawFile.size,
+          direction: 'upload',
+          progress: 5,
+          status: 'sending'
+        };
+        state.transferQueue.unshift(transferItem);
+        renderWorkspaceSidebarCounts();
+        if (state.category === 'transfers') renderWorkspaceFiles();
+
+        const toastEl = createUploadProgressToast(rawFile.name);
+
+        try {
+          const sentMsg = await state.syncEngine.uploadBlobDocument(state.user.id, rawFile);
+          if (sentMsg && sentMsg.id) {
+            state.fileAssignments[sentMsg.id] = state.activeProfileId;
+            saveFileAssignments();
+
+            const docFile = sentMsg.content && sentMsg.content.document && sentMsg.content.document.document;
+            if (docFile && docFile.id) {
+              transferItem.fileId = docFile.id;
+              transferItem.toastEl = toastEl;
+            }
+          }
+        } catch (err) {
+          transferItem.status = 'error';
+          removeProgressToast(toastEl);
+          showToast('Falha no Upload', `Não foi possível enviar ${rawFile.name}.`, 'danger');
+          renderWorkspaceSidebarCounts();
+          if (state.category === 'transfers') renderWorkspaceFiles();
+        }
+      }
+    }
+
+    function onCloudFileUpdated(fileObj) {
+      if (!fileObj) return;
+      const transfer = state.transferQueue.find(t => t.fileId === fileObj.id && t.status === 'sending');
+      if (transfer && fileObj.remote) {
+        const total = fileObj.size || transfer.sizeBytes || 1;
+        const uploaded = fileObj.remote.uploaded_size || 0;
+        const pct = fileObj.remote.is_uploading_completed
+          ? 100
+          : Math.min(99, Math.round((uploaded / total) * 100));
+
+        transfer.progress = pct;
+        updateUploadProgressToast(transfer.toastEl, pct);
+        if (state.category === 'transfers') renderWorkspaceFiles();
+
+        if (fileObj.remote.is_uploading_completed) {
+          transfer.status = 'completed';
+          transfer.progress = 100;
+          setTimeout(() => removeProgressToast(transfer.toastEl), 1200);
+          showToast('Arquivo Sincronizado', `${transfer.name} salvo na Nuvem SSD.`, 'success');
+          renderWorkspaceSidebarCounts();
+          refreshCloudFiles(false);
+        }
+      }
+    }
+
+    // Drag & Drop Global
+    let dragCounter = 0;
+    const dragOverlayEl = document.getElementById('ws-drag-overlay');
+
+    window.addEventListener('dragenter', (e) => {
+      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
+      e.preventDefault();
+      dragCounter++;
+      dragOverlayEl.classList.remove('hidden');
+      dragOverlayEl.classList.add('flex');
+    });
+
+    window.addEventListener('dragover', (e) => {
+      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
+      e.preventDefault();
+    });
+
+    window.addEventListener('dragleave', (e) => {
+      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
+      e.preventDefault();
+      dragCounter--;
+      if (dragCounter <= 0) {
+        dragCounter = 0;
+        dragOverlayEl.classList.add('hidden');
+        dragOverlayEl.classList.remove('flex');
+      }
+    });
+
+    window.addEventListener('drop', (e) => {
+      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
+      e.preventDefault();
+      dragCounter = 0;
+      dragOverlayEl.classList.add('hidden');
+      dragOverlayEl.classList.remove('flex');
+
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        uploadFilesToCloud(Array.from(e.dataTransfer.files));
+      }
+    });
+
+    // =========================================================================
+    // 13. RENDERIZAÇÃO DA GRADE, LISTA, FILA DE TRANSFERÊNCIAS & MULTI-SELEÇÃO
+    // =========================================================================
+    function getProfileVisibleFiles() {
+      let items = state.cloudFiles.filter(f => state.fileAssignments[f.messageId] === state.activeProfileId);
+
+      if (state.category === 'media') {
+        items = items.filter(f => f.category === 'media');
+      } else if (state.category === 'documents') {
+        items = items.filter(f => f.category === 'documents');
+      } else if (state.category === 'favorites') {
+        items = items.filter(f => state.favoriteIds.has(f.messageId));
+      }
+
+      if (state.searchQuery.trim() !== '') {
+        const q = state.searchQuery.toLowerCase();
+        items = items.filter(f => f.name.toLowerCase().includes(q) || f.ext.toLowerCase().includes(q));
+      }
+
+      return items;
+    }
+
+    function renderWorkspaceSidebarCounts() {
+      const profItems = state.cloudFiles.filter(f => state.fileAssignments[f.messageId] === state.activeProfileId);
+      document.getElementById('count-cat-all').textContent = profItems.length;
+      document.getElementById('count-cat-media').textContent = profItems.filter(f => f.category === 'media').length;
+      document.getElementById('count-cat-documents').textContent = profItems.filter(f => f.category === 'documents').length;
+      document.getElementById('count-cat-favorites').textContent = profItems.filter(f => state.favoriteIds.has(f.messageId)).length;
+      document.getElementById('count-cat-transfers').textContent = state.transferQueue.length;
+
+      const totalBytes = state.cloudFiles.reduce((acc, f) => acc + (f.sizeBytes || 0), 0);
+      document.getElementById('sb-storage-used').textContent = formatFileSize(totalBytes);
+      const barPct = Math.min(100, Math.max(8, Math.round((totalBytes / (5 * 1024 * 1024 * 1024)) * 100)));
+      document.getElementById('sb-storage-bar').style.width = barPct + '%';
+    }
+
+    function getVisualMetaForFile(file) {
+      const isVideo = file.isVideo || (file.mimeType && file.mimeType.startsWith('video/'));
+      if (isVideo) {
+        return { icon: 'film', color: 'text-rose-400', badge: 'bg-rose-500/15 text-rose-300 border-rose-500/30', bg: 'from-rose-500/15 to-[#090e1a]' };
+      }
+      if (file.category === 'media') {
+        const isAudio = file.mimeType && file.mimeType.startsWith('audio/');
+        return {
+          icon: isAudio ? 'music' : 'image',
+          color: 'text-emerald-400',
+          badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+          bg: 'from-emerald-500/15 to-[#090e1a]'
+        };
+      }
+      if (file.ext === 'APK') {
+        return { icon: 'package', color: 'text-amber-400', badge: 'bg-amber-500/15 text-amber-300 border-amber-500/30', bg: 'from-amber-500/15 to-[#090e1a]' };
+      }
+      return { icon: 'file-text', color: 'text-cyan-400', badge: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30', bg: 'from-cyan-500/15 to-[#090e1a]' };
+    }
+
+    function renderWorkspaceFiles() {
+      const container = document.getElementById('ws-files-container');
+
+      // Aba Fila de Transferências
+      if (state.category === 'transfers') {
+        updateBatchActionBar();
+        if (state.transferQueue.length === 0) {
+          container.innerHTML = `
+            <div class="flex flex-col items-center justify-center rounded-3xl border border-dashed nexus-border bg-[#090e1a]/60 py-16 px-4 text-center animate-fade-up">
+              <div class="mb-3.5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#131c31] text-cyan-400">
+                <i data-lucide="arrow-up-down" class="h-7 w-7"></i>
+              </div>
+              <h3 class="text-base font-bold text-white">Nenhuma transferência recente</h3>
+              <p class="mt-1.5 max-w-sm text-xs text-slate-400">
+                Os envios e downloads realizados nesta sessão aparecem aqui com progresso em tempo real.
+              </p>
+            </div>
+          `;
+          refreshIcons();
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="space-y-3 animate-fade-up">
+            ${state.transferQueue.map(tr => `
+              <div class="rounded-2xl border nexus-border bg-[#0e1526] p-4 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-400">
+                    <i data-lucide="${tr.status === 'completed' ? 'check-circle-2' : (tr.status === 'error' ? 'alert-circle' : 'upload-cloud')}" class="h-5 w-5"></i>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="truncate text-xs font-semibold text-white">${escapeHtml(tr.name)}</span>
+                      <span class="font-mono text-xs font-bold ${tr.status === 'completed' ? 'text-emerald-400' : (tr.status === 'error' ? 'text-rose-400' : 'text-cyan-400')}">${tr.progress}%</span>
+                    </div>
+                    <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#050810]">
+                      <div class="h-full rounded-full ${tr.status === 'error' ? 'bg-rose-500' : 'bg-gradient-to-r from-cyan-500 to-emerald-400'} transition-all" style="width: ${tr.progress}%"></div>
+                    </div>
+                    <div class="mt-1 text-[11px] text-slate-400">
+                      ${formatFileSize(tr.sizeBytes)} • ${tr.status === 'completed' ? 'Sincronizado' : (tr.status === 'error' ? 'Falha no envio' : 'Enviando para Nuvem SSD...')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        refreshIcons();
+        return;
+      }
+
+      const items = getProfileVisibleFiles();
+      updateBatchActionBar();
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="flex flex-col items-center justify-center rounded-3xl border border-dashed nexus-border bg-[#090e1a]/60 py-16 px-4 text-center animate-fade-up">
+            <div class="mb-3.5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#131c31] text-cyan-400">
+              <i data-lucide="cloud-upload" class="h-7 w-7"></i>
+            </div>
+            <h3 class="text-base font-bold text-white">Nenhum arquivo neste espaço</h3>
+            <p class="mt-1.5 max-w-sm text-xs text-slate-400 leading-relaxed">
+              Envie documentos, fotos, vídeos ou APKs para sincronizá-los com segurança na sua Nuvem SSD.
+            </p>
+            <button
+              type="button"
+              onclick="triggerCloudUpload()"
+              class="mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 transition"
+            >
+              <i data-lucide="plus" class="h-4 w-4"></i>
+              <span>Enviar primeiro arquivo</span>
+            </button>
+          </div>
+        `;
+        refreshIcons();
+        return;
+      }
+
+      if (state.viewMode === 'grid') {
+        container.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+            ${items.map(file => {
+              const meta = getVisualMetaForFile(file);
+              const isSelected = state.selectedIds.has(file.messageId);
+              const isPreviewing = state.previewItemId === file.messageId;
+              const isFav = state.favoriteIds.has(file.messageId);
+              const thumbUrl = file.thumbFileId && state.thumbnailUrls[file.thumbFileId] && state.thumbnailUrls[file.thumbFileId] !== 'loading'
+                ? state.thumbnailUrls[file.thumbFileId]
+                : null;
+
+              return `
+                <div
+                  onclick="handleFileCardClick(event, ${file.messageId})"
+                  class="group relative flex flex-col overflow-hidden rounded-2xl border ${isPreviewing ? 'border-cyan-400 ring-2 ring-cyan-500/20 bg-[#131c31]' : (isSelected ? 'border-cyan-400/70 bg-[#131c31]/90' : 'nexus-border bg-[#0e1526] hover:border-slate-600 hover:bg-[#131c31]/75')} cursor-pointer transition-all animate-fade-up"
+                >
+                  <div class="relative h-32 w-full border-b nexus-border bg-gradient-to-br ${meta.bg} flex items-center justify-center overflow-hidden">
+                    ${thumbUrl
+                      ? `<img src="${thumbUrl}" alt="${escapeHtml(file.name)}" class="h-full w-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition duration-300" />`
+                      : `<div class="flex h-12 w-12 items-center justify-center rounded-2xl border nexus-border bg-[#090e1a]/85 ${meta.color} shadow-md">
+                           <i data-lucide="${meta.icon}" class="h-6 w-6"></i>
+                         </div>`
+                    }
+
+                    <!-- Checkbox Multi-Seleção -->
+                    <button
+                      type="button"
+                      onclick="toggleSelectFile(event, ${file.messageId})"
+                      aria-label="Selecionar arquivo"
+                      class="absolute left-2.5 top-2.5 flex h-6 w-6 items-center justify-center rounded-lg border ${isSelected ? 'border-cyan-400 bg-cyan-500 text-slate-950' : 'border-white/25 bg-[#050810]/75 text-transparent group-hover:text-slate-300'} backdrop-blur-md transition"
+                    >
+                      <i data-lucide="check" class="h-3.5 w-3.5"></i>
+                    </button>
+
+                    <!-- Estrela Favorito -->
+                    <button
+                      type="button"
+                      onclick="toggleFavoriteFile(event, ${file.messageId})"
+                      aria-label="Favoritar"
+                      class="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-lg border nexus-border bg-[#050810]/75 backdrop-blur-md ${isFav ? 'text-amber-400' : 'text-slate-400 hover:text-white'} transition"
+                    >
+                      <i data-lucide="star" class="h-3.5 w-3.5 ${isFav ? 'fill-amber-400' : ''}"></i>
+                    </button>
+
+                    <span class="absolute bottom-2 left-2.5 rounded border px-1.5 py-0.5 font-mono text-[10px] font-semibold backdrop-blur-md ${meta.badge}">
+                      ${escapeHtml(file.ext)}
+                    </span>
+                  </div>
+
+                  <div class="p-3.5">
+                    <div class="truncate text-xs font-semibold text-slate-100 group-hover:text-cyan-300 transition" title="${escapeHtml(file.name)}">
+                      ${escapeHtml(file.name)}
+                    </div>
+                    <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400">
+                      <span class="font-mono text-slate-300">${formatFileSize(file.sizeBytes)}</span>
+                      <span>${file.date}</span>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="overflow-hidden rounded-2xl border nexus-border bg-[#0e1526] animate-fade-up">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b nexus-border bg-[#090e1a] text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                    <th class="py-3 pl-4 pr-2 w-10">
+                      <button type="button" onclick="selectAllVisible()" aria-label="Selecionar todos" class="flex h-5 w-5 items-center justify-center rounded border nexus-border bg-[#131c31] text-slate-300 hover:border-cyan-400">
+                        <i data-lucide="check" class="h-3 w-3"></i>
+                      </button>
+                    </th>
+                    <th class="py-3 px-3">Nome</th>
+                    <th class="py-3 px-3">Formato</th>
+                    <th class="py-3 px-3">Tamanho</th>
+                    <th class="py-3 px-3 hidden md:table-cell">Sincronizado em</th>
+                    <th class="py-3 pr-4 text-right">Favorito</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5 text-xs">
+                  ${items.map(file => {
+                    const meta = getVisualMetaForFile(file);
+                    const isSelected = state.selectedIds.has(file.messageId);
+                    const isPreviewing = state.previewItemId === file.messageId;
+                    const isFav = state.favoriteIds.has(file.messageId);
+
+                    return `
+                      <tr
+                        onclick="handleFileCardClick(event, ${file.messageId})"
+                        class="cursor-pointer transition ${isPreviewing ? 'bg-cyan-500/12' : (isSelected ? 'bg-cyan-500/10' : 'hover:bg-[#131c31]')}"
+                      >
+                        <td class="py-3 pl-4 pr-2">
+                          <button
+                            type="button"
+                            onclick="toggleSelectFile(event, ${file.messageId})"
+                            class="flex h-5 w-5 items-center justify-center rounded border ${isSelected ? 'border-cyan-400 bg-cyan-500 text-slate-950' : 'border-slate-600 bg-[#090e1a] text-transparent'}"
+                          >
+                            <i data-lucide="check" class="h-3 w-3"></i>
+                          </button>
+                        </td>
+                        <td class="py-3 px-3">
+                          <div class="flex items-center gap-2.5">
+                            <i data-lucide="${meta.icon}" class="h-4 w-4 ${meta.color} shrink-0"></i>
+                            <span class="font-medium text-slate-100 truncate max-w-[200px] sm:max-w-sm">${escapeHtml(file.name)}</span>
+                          </div>
+                        </td>
+                        <td class="py-3 px-3">
+                          <span class="rounded border px-1.5 py-0.5 font-mono text-[10px] font-semibold ${meta.badge}">${escapeHtml(file.ext)}</span>
+                        </td>
+                        <td class="py-3 px-3 font-mono text-slate-300">${formatFileSize(file.sizeBytes)}</td>
+                        <td class="py-3 px-3 text-slate-400 hidden md:table-cell">${file.date}</td>
+                        <td class="py-3 pr-4 text-right">
+                          <button type="button" onclick="toggleFavoriteFile(event, ${file.messageId})" class="p-1 ${isFav ? 'text-amber-400' : 'text-slate-500 hover:text-white'}">
+                            <i data-lucide="star" class="h-4 w-4 ${isFav ? 'fill-amber-400' : ''}"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+      refreshIcons();
+    }
+
+    function handleFileCardClick(event, messageId) {
+      if (event.ctrlKey || event.metaKey) {
+        toggleSelectFile(event, messageId);
+        return;
+      }
+      openPreviewDrawer(messageId);
+    }
+
+    function toggleSelectFile(event, messageId) {
+      if (event) event.stopPropagation();
+      if (state.selectedIds.has(messageId)) {
+        state.selectedIds.delete(messageId);
+      } else {
+        state.selectedIds.add(messageId);
+      }
+      state.confirmBatchDelete = false;
+      renderWorkspaceFiles();
+    }
+
+    function selectAllVisible() {
+      getProfileVisibleFiles().forEach(f => state.selectedIds.add(f.messageId));
+      renderWorkspaceFiles();
+    }
+
+    function clearSelection() {
+      state.selectedIds.clear();
+      state.confirmBatchDelete = false;
+      renderWorkspaceFiles();
+    }
+
+    function updateBatchActionBar() {
+      const bar = document.getElementById('ws-batch-bar');
+      const count = state.selectedIds.size;
+      if (count === 0 || state.category === 'transfers') {
+        bar.classList.add('hidden');
+        bar.classList.remove('flex');
+        return;
+      }
+
+      bar.classList.remove('hidden');
+      bar.classList.add('flex');
+      document.getElementById('ws-batch-count').textContent = `${count} selecionado${count > 1 ? 's' : ''}`;
+
+      const delArea = document.getElementById('ws-batch-delete-area');
+      if (state.confirmBatchDelete) {
+        delArea.innerHTML = `
+          <div class="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/40 bg-rose-500/15 px-2.5 py-1">
+            <span class="text-[11px] font-medium text-rose-200">Excluir ${count}?</span>
+            <button type="button" onclick="confirmBatchDeleteAction()" class="rounded bg-rose-600 px-2 py-0.5 text-[11px] font-bold text-white hover:bg-rose-500">Sim</button>
+            <button type="button" onclick="cancelBatchDeleteAction()" class="rounded bg-[#131c31] px-2 py-0.5 text-[11px] text-slate-300">Não</button>
+          </div>
+        `;
+      } else {
+        delArea.innerHTML = `
+          <button type="button" onclick="askBatchDelete()" class="inline-flex items-center gap-1.5 rounded-xl border border-rose-500/35 bg-rose-500/15 px-3 py-1.5 text-xs font-semibold text-rose-300 hover:bg-rose-500/25 transition">
+            <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
+            <span>Excluir</span>
+          </button>
+        `;
+      }
+    }
+
+    function batchToggleFavorite() {
+      state.selectedIds.forEach(id => state.favoriteIds.add(id));
+      saveFavoriteIds();
+      renderWorkspaceSidebarCounts();
+      renderWorkspaceFiles();
+      showToast('Adicionados aos Favoritos', `${state.selectedIds.size} item(ns) marcados como favoritos.`, 'info');
+    }
+
+    async function batchDownloadSelected() {
+      const ids = Array.from(state.selectedIds);
+      for (const id of ids) {
+        await downloadFileToDevice(id);
+      }
+    }
+
+    function askBatchDelete() {
+      state.confirmBatchDelete = true;
+      updateBatchActionBar();
+    }
+
+    function cancelBatchDeleteAction() {
+      state.confirmBatchDelete = false;
+      updateBatchActionBar();
+      refreshIcons();
+    }
+
+    async function confirmBatchDeleteAction() {
+      const ids = Array.from(state.selectedIds);
+      if (ids.length === 0) return;
+
+      await deleteCloudMessages(ids);
+      if (state.previewItemId && state.selectedIds.has(state.previewItemId)) {
+        closePreviewDrawer(false);
+      }
+      state.selectedIds.clear();
+      state.confirmBatchDelete = false;
+      renderWorkspaceSidebarCounts();
+      renderWorkspaceFiles();
+    }
+
+    async function deleteCloudMessages(messageIds) {
+      if (!state.syncEngine || !state.user) return;
+      try {
+        await state.syncEngine.deleteCloudMessages(state.user.id, messageIds);
+        const idSet = new Set(messageIds);
+        state.cloudFiles = state.cloudFiles.filter(f => !idSet.has(f.messageId));
+        messageIds.forEach(id => {
+          delete state.fileAssignments[id];
+          state.favoriteIds.delete(id);
+        });
+        saveFileAssignments();
+        saveFavoriteIds();
+        showToast('Removido da Nuvem', `${messageIds.length} arquivo(s) excluído(s).`, 'info');
+      } catch (err) {
+        showToast('Erro ao Excluir', 'Não foi possível remover os arquivos da nuvem.', 'danger');
+      }
+    }
+
+    function toggleFavoriteFile(event, messageId) {
+      if (event) event.stopPropagation();
+      if (state.favoriteIds.has(messageId)) {
+        state.favoriteIds.delete(messageId);
+      } else {
+        state.favoriteIds.add(messageId);
+      }
+      saveFavoriteIds();
+      renderWorkspaceSidebarCounts();
+      renderWorkspaceFiles();
+      if (state.previewItemId === messageId) {
+        const file = state.cloudFiles.find(f => f.messageId === messageId);
+        if (file) renderPreviewDrawer(file, state.previewUrls[file.fileId] || null, false);
+      }
+    }
+
+    // Mover arquivos entre Perfis / Cofres
+    function openMoveProfileModal(singleMessageId = null) {
+      state.moveSingleId = singleMessageId;
+      const otherProfiles = state.profiles.filter(p => p.id !== state.activeProfileId);
+      const listEl = document.getElementById('move-profiles-list');
+      const qty = singleMessageId ? 1 : state.selectedIds.size;
+
+      document.getElementById('move-modal-desc').textContent = `Mover ${qty} arquivo(s) para:`;
+
+      if (otherProfiles.length === 0) {
+        listEl.innerHTML = `
+          <div class="rounded-2xl border nexus-border bg-[#090e1a] p-4 text-center text-xs text-slate-400">
+            Crie outro perfil ou cofre no menu lateral para organizar arquivos separadamente.
+          </div>
+        `;
+      } else {
+        listEl.innerHTML = otherProfiles.map(p => {
+          const palette = ACCENT_PALETTE[p.color] || ACCENT_PALETTE.emerald;
+          return `
+            <button
+              type="button"
+              onclick="executeMoveToProfile('${p.id}')"
+              class="flex w-full items-center justify-between rounded-2xl border nexus-border bg-[#090e1a] p-3 text-left hover:border-cyan-500/40 hover:bg-[#131c31] transition"
+            >
+              <div class="flex items-center gap-3">
+                <span class="h-3 w-3 rounded-full ${palette.dot}"></span>
+                <div>
+                  <div class="text-xs font-bold text-white">${escapeHtml(p.name)}</div>
+                  <div class="text-[11px] text-slate-400">${p.pinHash ? 'Protegido por PIN' : 'Acesso Direto'}</div>
+                </div>
+              </div>
+              <i data-lucide="arrow-right" class="h-4 w-4 text-slate-400"></i>
+            </button>
+          `;
+        }).join('');
+      }
+
+      const modal = document.getElementById('modal-move-profile');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      refreshIcons();
+    }
+
+    function closeMoveProfileModal() {
+      const modal = document.getElementById('modal-move-profile');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function executeMoveToProfile(destProfileId) {
+      const dest = state.profiles.find(p => p.id === destProfileId);
+      if (!dest) return;
+
+      const targets = state.moveSingleId ? [state.moveSingleId] : Array.from(state.selectedIds);
+      targets.forEach(msgId => {
+        state.fileAssignments[msgId] = destProfileId;
+      });
+      saveFileAssignments();
+
+      if (state.moveSingleId && state.previewItemId === state.moveSingleId) {
+        closePreviewDrawer(false);
+      }
+      state.selectedIds.clear();
+      closeMoveProfileModal();
+      renderWorkspaceSidebarCounts();
+      renderWorkspaceFiles();
+      showToast('Movido com Sucesso', `${targets.length} item(ns) movido(s) para ${dest.name}.`, 'success');
+    }
+
+    // =========================================================================
+    // 14. GAVETA DIREITA DE PREVIEW (PLAYER HTML5, ZOOM DE IMAGEM & METADADOS)
+    // =========================================================================
+    async function openPreviewDrawer(messageId) {
+      const file = state.cloudFiles.find(f => f.messageId === messageId);
+      if (!file) return;
+
+      state.previewItemId = messageId;
+      state.confirmSingleDeleteId = null;
+      state.previewZoom = 1;
+      renderWorkspaceFiles();
+
+      const cachedUrl = file.fileId ? state.previewUrls[file.fileId] : null;
+      const canStreamMedia =
+        file.fileId &&
+        file.sizeBytes <= 80 * 1024 * 1024 &&
+        (file.mimeType.startsWith('image/') || file.mimeType.startsWith('video/') || file.mimeType.startsWith('audio/'));
+
+      renderPreviewDrawer(file, cachedUrl, Boolean(canStreamMedia && !cachedUrl));
+
+      if (canStreamMedia && !cachedUrl) {
+        const blobUrl = await fetchCloudFileBlobUrl(file);
+        if (blobUrl && state.previewItemId === messageId) {
+          renderPreviewDrawer(file, blobUrl, false);
+        }
+      }
+    }
+
+    async function fetchCloudFileBlobUrl(file) {
+      if (!state.syncEngine || !file.fileId) return null;
+      if (state.previewUrls[file.fileId]) return state.previewUrls[file.fileId];
+
+      try {
+        const info = await state.syncEngine.downloadCloudFile(file.fileId, 32);
+        if (info && info.local && info.local.is_downloading_completed) {
+          const part = await state.syncEngine.readLocalFilePart(file.fileId);
+          if (part && part.data) {
+            const blob = new Blob([part.data], { type: file.mimeType || 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            state.previewUrls[file.fileId] = url;
+            return url;
+          }
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    function adjustPreviewZoom(delta) {
+      if (delta === 0) {
+        state.previewZoom = 1;
+      } else {
+        state.previewZoom = Math.min(2.75, Math.max(0.75, +(state.previewZoom + delta).toFixed(2)));
+      }
+      const imgEl = document.getElementById('ws-preview-zoom-img');
+      const labelEl = document.getElementById('ws-preview-zoom-label');
+      if (imgEl) imgEl.style.transform = `scale(${state.previewZoom})`;
+      if (labelEl) labelEl.textContent = `${Math.round(state.previewZoom * 100)}%`;
+    }
+
+    function renderPreviewDrawer(file, mediaUrl, isLoadingMedia) {
+      const drawer = document.getElementById('ws-preview-drawer');
+      const meta = getVisualMetaForFile(file);
+      const isFav = state.favoriteIds.has(file.messageId);
+      const prof = state.profiles.find(p => p.id === state.fileAssignments[file.messageId]);
+
+      drawer.classList.remove('hidden');
+      drawer.classList.add('flex');
+
+      let previewStageHtml = '';
+      if (isLoadingMedia) {
+        previewStageHtml = `
+          <div class="flex h-48 flex-col items-center justify-center gap-2.5 p-4 text-center">
+            <i data-lucide="loader-2" class="h-6 w-6 animate-spin text-cyan-400"></i>
+            <span class="text-xs text-slate-400">Carregando prévia da Nuvem SSD...</span>
+          </div>
+        `;
+      } else if (mediaUrl && file.mimeType.startsWith('image/')) {
+        previewStageHtml = `
+          <div class="relative flex h-64 items-center justify-center overflow-hidden bg-[#050810] p-2">
+            <img
+              id="ws-preview-zoom-img"
+              src="${mediaUrl}"
+              alt="${escapeHtml(file.name)}"
+              style="transform: scale(${state.previewZoom});"
+              class="max-h-60 max-w-full rounded-xl object-contain transition-transform duration-200"
+            />
+            <div class="absolute bottom-2.5 right-2.5 flex items-center gap-1 rounded-xl border nexus-border bg-[#090e1a]/90 px-2 py-1 backdrop-blur-md">
+              <button type="button" onclick="adjustPreviewZoom(-0.25)" aria-label="Reduzir zoom" class="p-1 text-slate-300 hover:text-white">
+                <i data-lucide="zoom-out" class="h-3.5 w-3.5"></i>
+              </button>
+              <span id="ws-preview-zoom-label" class="font-mono text-[10px] text-cyan-300 px-1">${Math.round(state.previewZoom * 100)}%</span>
+              <button type="button" onclick="adjustPreviewZoom(0.25)" aria-label="Aumentar zoom" class="p-1 text-slate-300 hover:text-white">
+                <i data-lucide="zoom-in" class="h-3.5 w-3.5"></i>
+              </button>
+              <button type="button" onclick="adjustPreviewZoom(0)" title="Resetar zoom" class="p-1 text-slate-400 hover:text-white">
+                <i data-lucide="maximize-2" class="h-3 w-3"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (mediaUrl && file.mimeType.startsWith('video/')) {
+        previewStageHtml = `
+          <video src="${mediaUrl}" controls class="w-full max-h-64 bg-black"></video>
+        `;
+      } else if (mediaUrl && file.mimeType.startsWith('audio/')) {
+        previewStageHtml = `
+          <div class="p-5 flex flex-col items-center gap-3 bg-gradient-to-b from-emerald-500/10 to-[#050810]">
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-400">
+              <i data-lucide="music" class="h-6 w-6"></i>
+            </div>
+            <audio src="${mediaUrl}" controls class="w-full h-10"></audio>
+          </div>
+        `;
+      } else {
+        previewStageHtml = `
+          <div class="flex h-44 flex-col items-center justify-center gap-2 p-4 bg-gradient-to-b ${meta.bg}">
+            <div class="flex h-14 w-14 items-center justify-center rounded-2xl border nexus-border bg-[#090e1a] ${meta.color}">
+              <i data-lucide="${meta.icon}" class="h-7 w-7"></i>
+            </div>
+            <span class="font-mono text-xs text-slate-300">${escapeHtml(file.ext)} • ${formatFileSize(file.sizeBytes)}</span>
+          </div>
+        `;
+      }
+
+      drawer.innerHTML = `
+        <div class="flex h-16 shrink-0 items-center justify-between border-b nexus-border px-5">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="rounded border px-1.5 py-0.5 font-mono text-[10px] font-semibold ${meta.badge}">${escapeHtml(file.ext)}</span>
+            <span class="truncate text-xs font-bold text-white" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
+          </div>
+          <button type="button" onclick="closePreviewDrawer(true)" aria-label="Fechar prévia" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#131c31] hover:text-white">
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-5 space-y-5">
+          <div class="overflow-hidden rounded-2xl border nexus-border bg-[#050810]">
+            ${previewStageHtml}
+          </div>
+
+          <!-- Metadados do Arquivo -->
+          <div class="rounded-2xl border nexus-border bg-[#0e1526] p-4 space-y-2.5 text-xs">
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Detalhes do Arquivo</div>
+            <div class="flex justify-between border-b nexus-border pb-2">
+              <span class="text-slate-400">Tamanho</span>
+              <span class="font-mono font-semibold text-cyan-400">${formatFileSize(file.sizeBytes)}</span>
+            </div>
+            <div class="flex justify-between border-b nexus-border pb-2">
+              <span class="text-slate-400">Tipo MIME</span>
+              <span class="font-mono text-slate-300 truncate max-w-[180px]">${escapeHtml(file.mimeType)}</span>
+            </div>
+            ${file.dimensions ? `
+              <div class="flex justify-between border-b nexus-border pb-2">
+                <span class="text-slate-400">Dimensões</span>
+                <span class="font-mono text-slate-300">${file.dimensions}</span>
+              </div>
+            ` : ''}
+            <div class="flex justify-between border-b nexus-border pb-2">
+              <span class="text-slate-400">Perfil / Cofre</span>
+              <span class="font-medium text-slate-200">${prof ? escapeHtml(prof.name) : 'Nuvem SSD'}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Sincronizado em</span>
+              <span class="text-slate-300">${file.date}</span>
+            </div>
+          </div>
+
+          <!-- Ações do Arquivo -->
+          <div class="space-y-2">
+            <button
+              type="button"
+              onclick="downloadFileToDevice(${file.messageId})"
+              class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 py-2.5 px-4 text-xs font-semibold text-white shadow-lg shadow-cyan-500/20 hover:brightness-110 transition"
+            >
+              <i data-lucide="download" class="h-4 w-4"></i>
+              <span>Baixar no Dispositivo</span>
+            </button>
+
+            <div class="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onclick="toggleFavoriteFile(event, ${file.messageId})"
+                class="flex items-center justify-center gap-1.5 rounded-xl border nexus-border bg-[#131c31] py-2.5 px-3 text-xs font-medium text-slate-200 hover:text-white transition"
+              >
+                <i data-lucide="star" class="h-4 w-4 ${isFav ? 'text-amber-400 fill-amber-400' : 'text-slate-400'}"></i>
+                <span>${isFav ? 'Favoritado' : 'Favoritar'}</span>
+              </button>
+
+              <button
+                type="button"
+                onclick="openMoveProfileModal(${file.messageId})"
+                class="flex items-center justify-center gap-1.5 rounded-xl border nexus-border bg-[#131c31] py-2.5 px-3 text-xs font-medium text-cyan-300 hover:text-white transition"
+              >
+                <i data-lucide="folder-input" class="h-4 w-4"></i>
+                <span>Mover Perfil</span>
+              </button>
+            </div>
+
+            ${state.confirmSingleDeleteId === file.messageId ? `
+              <div class="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 text-center space-y-2 animate-fade-up">
+                <p class="text-xs font-medium text-rose-200">Excluir este arquivo da Nuvem SSD?</p>
+                <div class="flex gap-2">
+                  <button type="button" onclick="cancelSingleDelete()" class="flex-1 rounded-lg bg-[#131c31] py-1.5 text-xs text-slate-300">Cancelar</button>
+                  <button type="button" onclick="confirmSingleDeleteAction(${file.messageId})" class="flex-1 rounded-lg bg-rose-600 py-1.5 text-xs font-bold text-white">Excluir</button>
+                </div>
+              </div>
+            ` : `
+              <button
+                type="button"
+                onclick="askSingleDelete(${file.messageId})"
+                class="flex w-full items-center justify-center gap-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 py-2.5 px-4 text-xs font-medium text-rose-300 hover:bg-rose-500/20 transition"
+              >
+                <i data-lucide="trash-2" class="h-4 w-4"></i>
+                <span>Excluir Arquivo</span>
+              </button>
+            `}
+          </div>
+        </div>
+      `;
+      refreshIcons();
+    }
+
+    function closePreviewDrawer(rerender = true) {
+      state.previewItemId = null;
+      state.confirmSingleDeleteId = null;
+      const drawer = document.getElementById('ws-preview-drawer');
+      drawer.classList.add('hidden');
+      drawer.classList.remove('flex');
+      if (rerender) renderWorkspaceFiles();
+    }
+
+    async function downloadFileToDevice(messageId) {
+      const file = state.cloudFiles.find(f => f.messageId === messageId);
+      if (!file) return;
+
+      showToast('Preparando Download', `Baixando ${file.name}...`, 'info');
+      const blobUrl = await fetchCloudFileBlobUrl(file);
+      if (!blobUrl) {
+        showToast('Erro no Download', 'Não foi possível transferir o arquivo agora.', 'danger');
+        return;
+      }
+
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Download Concluído', `${file.name} salvo no seu dispositivo.`, 'success');
+    }
+
+    function askSingleDelete(messageId) {
+      state.confirmSingleDeleteId = messageId;
+      const file = state.cloudFiles.find(f => f.messageId === messageId);
+      if (file) renderPreviewDrawer(file, state.previewUrls[file.fileId] || null, false);
+    }
+
+    function cancelSingleDelete() {
+      state.confirmSingleDeleteId = null;
+      const file = state.cloudFiles.find(f => f.messageId === state.previewItemId);
+      if (file) renderPreviewDrawer(file, state.previewUrls[file.fileId] || null, false);
+    }
+
+    async function confirmSingleDeleteAction(messageId) {
+      await deleteCloudMessages([messageId]);
+      closePreviewDrawer(false);
+      renderWorkspaceSidebarCounts();
+      renderWorkspaceFiles();
+    }
+
+    // =========================================================================
+    // 15. NAVEGAÇÃO DO WORKSPACE, PANIC LOCK (ALT+L), AUTO-LOCK E LOGOUT
+    // =========================================================================
+    function setWorkspaceCategory(cat) {
+      state.category = cat;
+      state.selectedIds.clear();
+      state.confirmBatchDelete = false;
+
+      const titles = {
+        all: 'Todos os Arquivos',
+        media: 'Mídia & Galeria',
+        documents: 'Documentos & APKs',
+        favorites: 'Favoritos',
+        transfers: 'Fila de Transferências'
+      };
+      document.getElementById('ws-category-title').textContent = titles[cat] || 'Todos os Arquivos';
+
+      document.querySelectorAll('.ws-cat-btn').forEach(btn => {
+        const active = btn.dataset.cat === cat;
+        btn.className = active
+          ? 'ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold bg-[#131c31] text-white border nexus-border transition'
+          : 'ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c31]/70 hover:text-white border border-transparent transition';
+      });
+
+      renderWorkspaceFiles();
+      toggleMobileDrawer(false);
+    }
+
+    function setWorkspaceView(mode) {
+      state.viewMode = mode;
+      const gridBtn = document.getElementById('btn-mode-grid');
+      const listBtn = document.getElementById('btn-mode-list');
+      if (mode === 'grid') {
+        gridBtn.className = 'flex items-center gap-1.5 rounded-lg bg-[#131c31] px-2.5 py-1.5 text-xs font-medium text-cyan-400 transition';
+        listBtn.className = 'flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition';
+      } else {
+        listBtn.className = 'flex items-center gap-1.5 rounded-lg bg-[#131c31] px-2.5 py-1.5 text-xs font-medium text-cyan-400 transition';
+        gridBtn.className = 'flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition';
+      }
+      renderWorkspaceFiles();
+    }
+
+    function toggleDesktopSidebar() {
+      const sb = document.getElementById('workspace-sidebar');
+      const icon = document.getElementById('ws-collapse-icon');
+      state.sidebarCollapsed = !state.sidebarCollapsed;
+      sb.classList.toggle('is-collapsed', state.sidebarCollapsed);
+      icon.setAttribute('data-lucide', state.sidebarCollapsed ? 'panel-left-open' : 'panel-left-close');
+      refreshIcons();
+    }
+
+    function toggleMobileDrawer(open) {
+      const sb = document.getElementById('workspace-sidebar');
+      const bd = document.getElementById('ws-mobile-backdrop');
+      sb.classList.toggle('-translate-x-full', !open);
+      bd.classList.toggle('hidden', !open);
+    }
+
+    // Busca instantânea
+    const wsSearchEl = document.getElementById('ws-search-input');
+    const wsClearSearchEl = document.getElementById('ws-clear-search');
+
+    wsSearchEl.addEventListener('input', (e) => {
+      state.searchQuery = e.target.value;
+      wsClearSearchEl.classList.toggle('hidden', state.searchQuery.length === 0);
+      renderWorkspaceFiles();
+    });
+
+    function clearWorkspaceSearch() {
+      state.searchQuery = '';
+      wsSearchEl.value = '';
+      wsClearSearchEl.classList.add('hidden');
+      renderWorkspaceFiles();
+    }
+
+    // Bloqueio Rápido / Panic Lock (revoga Object URLs e tranca todos os cofres)
+    function revokeAllObjectUrls() {
+      Object.keys(state.previewUrls).forEach(k => {
+        const url = state.previewUrls[k];
+        if (typeof url === 'string' && url.startsWith('blob:')) {
+          try { URL.revokeObjectURL(url); } catch (e) {}
+        }
+        delete state.previewUrls[k];
+      });
+      Object.keys(state.thumbnailUrls).forEach(k => {
+        const url = state.thumbnailUrls[k];
+        if (typeof url === 'string' && url.startsWith('blob:')) {
+          try { URL.revokeObjectURL(url); } catch (e) {}
+        }
+        delete state.thumbnailUrls[k];
+      });
+    }
+
+    function triggerPanicLock(reason = 'Bloqueio Rápido Ativado') {
+      revokeAllObjectUrls();
+      state.unlockedProfileIds.clear();
+      state.selectedIds.clear();
+      closePreviewDrawer(false);
+      closeProfileDropdown();
+      openProfileSelectorView();
+      showToast(reason, 'Sessão trancada e previews temporários limpos da memória.', 'warning');
+    }
+
+    function setAutoLockMinutes(val) {
+      state.autoLockMinutes = Number(val) || 0;
+      resetAutoLockTimer();
+    }
+
+    function resetAutoLockTimer() {
+      if (state.autoLockTimer) {
+        clearTimeout(state.autoLockTimer);
+        state.autoLockTimer = null;
+      }
+      const inWorkspace = !document.getElementById('view-workspace').classList.contains('hidden');
+      if (inWorkspace && state.autoLockMinutes > 0 && state.unlockedProfileIds.size > 0) {
+        state.autoLockTimer = setTimeout(() => {
+          triggerPanicLock('Bloqueio Automático por Inatividade');
+        }, state.autoLockMinutes * 60 * 1000);
+      }
+    }
+
+    ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evtName => {
+      window.addEventListener(evtName, () => {
+        if (!document.getElementById('view-workspace').classList.contains('hidden')) {
+          resetAutoLockTimer();
+        }
+      }, { passive: true });
+    });
+
+    // Desconectar (logOut)
+    async function handleLogout() {
+      revokeAllObjectUrls();
+      closeProfileDropdown();
+      closePreviewDrawer(false);
+      state.unlockedProfileIds.clear();
+      state.cloudFiles = [];
+      state.transferQueue = [];
+      state.selectedIds.clear();
+
+      if (state.syncEngine) {
+        try {
+          await state.syncEngine.logOut();
+        } catch (e) {
+          await bootstrapProductionApp();
+        }
+      } else {
+        await bootstrapProductionApp();
+      }
+    }
+
+    // Atalhos globais de teclado
+    document.addEventListener('keydown', (e) => {
+      // Ctrl+K -> Busca instantânea
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        if (!document.getElementById('view-workspace').classList.contains('hidden')) {
+          e.preventDefault();
+          wsSearchEl.focus();
+          wsSearchEl.select();
+          return;
+        }
+      }
+
+      // Alt+L -> Bloqueio Rápido
+      if (e.altKey && e.key.toLowerCase() === 'l') {
+        if (!document.getElementById('view-workspace').classList.contains('hidden')) {
+          e.preventDefault();
+          triggerPanicLock('Bloqueio Rápido (Alt + L)');
+          return;
+        }
+      }
+
+      // Teclado físico no Modal de Desbloqueio por PIN
+      const pinUnlockOpen = !document.getElementById('modal-pin-unlock').classList.contains('hidden');
+      if (pinUnlockOpen) {
+        if (/^[0-9]$/.test(e.key)) {
+          e.preventDefault();
+          pressUnlockDigit(e.key);
+        } else if (e.key === 'Backspace') {
+          e.preventDefault();
+          backspaceUnlockBuffer();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          verifyUnlockModalPin();
+        } else if (e.key === 'Escape') {
+          closePinUnlockModal();
+        }
+        return;
+      }
+
+      // Teclado físico no Passo 2 do Onboarding (Definir PIN)
+      const onboardingStep2Open =
+        !document.getElementById('view-onboarding').classList.contains('hidden') &&
+        !document.getElementById('onb-step-2').classList.contains('hidden');
+      if (onboardingStep2Open) {
+        if (/^[0-9]$/.test(e.key)) {
+          e.preventDefault();
+          handleOnboardingPinDigit(e.key);
+        } else if (e.key === 'Backspace') {
+          e.preventDefault();
+          backspaceOnboardingPin();
+        }
+        return;
+      }
+
+      // Escape fecha modais e gavetas abertas
+      if (e.key === 'Escape') {
+        closeNewProfileModal();
+        closeMoveProfileModal();
+        closeAboutModal();
+        closeProfileDropdown();
+        if (state.previewItemId) closePreviewDrawer(true);
+      }
+    });
+
+    // Fecha dropdown de perfil ao clicar fora
+    document.addEventListener('click', (e) => {
+      const trigger = document.getElementById('profile-dropdown-trigger');
+      const menu = document.getElementById('profile-dropdown-menu');
+      if (trigger && menu && !trigger.contains(e.target) && !menu.contains(e.target)) {
+        closeProfileDropdown();
+      }
+    });
+
+    // =========================================================================
+    // 16. UTILITÁRIOS GERAIS, MODAIS E TOASTS
+    // =========================================================================
+    function switchView(viewName) {
+      const views = ['auth', 'onboarding', 'selector', 'workspace'];
+      views.forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (!el) return;
+        const active = v === viewName;
+        el.classList.toggle('hidden', !active);
+        el.classList.toggle('flex', active);
+      });
+      refreshIcons();
+    }
+
+    function openAboutModal() {
+      const m = document.getElementById('modal-about');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      refreshIcons();
+    }
+
+    function closeAboutModal() {
+      const m = document.getElementById('modal-about');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function refreshIcons() {
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function shakeElement(elementId) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.classList.remove('animate-shake');
+      void el.offsetWidth;
+      el.classList.add('animate-shake');
+    }
+
+    function formatFileSize(bytes) {
+      if (!bytes || bytes <= 0) return '0 B';
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+      if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1).replace('.', ',')} MB`;
+      return `${(bytes / (1024 * 1024 * 1024)).toFixed(2).replace('.', ',')} GB`;
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function showToast(title, subtitle = '', tone = 'info') {
+      const stack = document.getElementById('toast-stack');
+      const palette = {
+        info: 'border-cyan-500/40 bg-[#0e1526]/95 text-cyan-300',
+        success: 'border-emerald-500/40 bg-[#0e1526]/95 text-emerald-300',
+        warning: 'border-amber-500/40 bg-[#0e1526]/95 text-amber-300',
+        danger: 'border-rose-500/40 bg-[#0e1526]/95 text-rose-300'
+      };
+      const icons = {
+        info: 'info',
+        success: 'check-circle-2',
+        warning: 'lock',
+        danger: 'alert-circle'
+      };
+
+      const card = document.createElement('div');
+      card.className = `pointer-events-auto flex items-start gap-3 rounded-2xl border p-3.5 shadow-2xl backdrop-blur-xl animate-fade-up ${palette[tone] || palette.info}`;
+      card.innerHTML = `
+        <i data-lucide="${icons[tone] || 'info'}" class="h-5 w-5 shrink-0 mt-0.5"></i>
+        <div class="min-w-0 flex-1">
+          <div class="text-xs font-semibold text-white">${escapeHtml(title)}</div>
+          ${subtitle ? `<div class="mt-0.5 text-[11px] text-slate-400 leading-snug">${escapeHtml(subtitle)}</div>` : ''}
+        </div>
+      `;
+      stack.appendChild(card);
+      refreshIcons();
+
+      setTimeout(() => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(6px)';
+        card.style.transition = 'all 0.25s ease';
+        setTimeout(() => card.remove(), 260);
+      }, 3400);
+    }
+
+    function createUploadProgressToast(fileName) {
+      const stack = document.getElementById('toast-stack');
+      const card = document.createElement('div');
+      card.className = 'pointer-events-auto rounded-2xl border border-cyan-500/40 bg-[#0e1526]/95 p-3.5 shadow-2xl backdrop-blur-xl animate-fade-up';
+      card.innerHTML = `
+        <div class="flex items-center justify-between gap-2 mb-1.5">
+          <span class="truncate text-xs font-semibold text-white max-w-[210px]">Enviando ${escapeHtml(fileName)}</span>
+          <span data-up-pct class="font-mono text-xs font-bold text-cyan-400">5%</span>
+        </div>
+        <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#050810]">
+          <div data-up-bar class="h-full rounded-full bg-gradient-to-r from-cyan-500 to-emerald-400 transition-all duration-200" style="width: 5%"></div>
+        </div>
+      `;
+      stack.appendChild(card);
+      return card;
+    }
+
+    function updateUploadProgressToast(card, pct) {
+      if (!card) return;
+      const pctEl = card.querySelector('[data-up-pct]');
+      const barEl = card.querySelector('[data-up-bar]');
+      if (pctEl) pctEl.textContent = `${pct}%`;
+      if (barEl) barEl.style.width = `${pct}%`;
+    }
+
+    function removeProgressToast(card) {
+      if (!card) return;
+      card.style.opacity = '0';
+      setTimeout(() => card.remove(), 250);
+    }
+
+    // =========================================================================
+    // 17. INICIALIZAÇÃO AUTOMÁTICA
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', async () => {
+      refreshIcons();
+      await bootstrapProductionApp();
+    });
+  </script>
+</body>
+</html>
