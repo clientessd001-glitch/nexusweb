@@ -2008,7 +2008,12 @@
       }
     }
 
-    // 9. UPLOAD REAL PARA O CANAL PRIVADO DO COFRE ATIVO
+// 9. UPLOAD EM STREAMING (BLOCOS DE 512 KB) PARA VÍDEOS E ARQUIVOS GRANDES
+    const SSD_UPLOAD_CHUNK_SIZE = 512 * 1024; // 512 KB por bloco (padrão máximo MTProto)
+    const SSD_BIG_FILE_THRESHOLD = 10 * 1024 * 1024; // > 10 MB usa SaveBigFilePart
+    const SSD_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024; // 2 GB (limite padrão da conta)
+    const SSD_UPLOAD_CONCURRENCY = 3; // 3 blocos simultâneos (~1,5 MB em RAM)
+
     function triggerCloudUpload() { document.getElementById('cloud-file-picker').click(); }
 
     document.getElementById('cloud-file-picker').addEventListener('change', (e) => {
@@ -2018,47 +2023,297 @@
       }
     });
 
+    function generateSafeFileId() {
+      return Math.floor(Math.random() * 8000000000000000) + 100000000000000;
+    }
+
+    function extractVideoMetadata(file) {
+      return new Promise((resolve) => {
+        if (!file.type || !file.type.startsWith('video/')) {
+          resolve(null);
+          return;
+        }
+        const url = URL.createObjectURL(file);
+        const video = document.createElement('video');
+        let settled = false;
+        const finish = (meta) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          video.removeAttribute('src');
+          try { video.load(); } catch (e) {}
+          URL.revokeObjectURL(url);
+          resolve(meta);
+        };
+        const timer = setTimeout(() => finish(null), 3500);
+        video.preload = 'metadata';
+        video.muted = true;
+        video.onloadedmetadata = () => {
+          finish({
+            duration: Math.max(0, Math.round(video.duration || 0)),
+            w: video.videoWidth || 0,
+            h: video.videoHeight || 0
+          });
+        };
+        video.onerror = () => finish(null);
+        video.src = url;
+      });
+    }
+
+    function createUploadProgressCard(fileName, totalSize, cancelState) {
+      const stack = document.getElementById('toast-stack');
+      const card = document.createElement('div');
+      card.className = 'pointer-events-auto rounded-2xl border border-[#06b6d4]/45 bg-[#0d1324]/95 p-3.5 shadow-2xl backdrop-blur-xl animate-fade-up space-y-2';
+      card.innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <span class="truncate text-xs font-semibold text-white max-w-[195px]" title="${escapeHtml(fileName)}">Enviando ${escapeHtml(fileName)}</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <span data-up-pct class="font-mono text-xs font-bold text-[#06b6d4]">0%</span>
+            <button type="button" data-up-cancel title="Cancelar envio" class="rounded-md border border-[#dc2626]/40 bg-[#dc2626]/15 px-1.5 py-0.5 text-[10px] font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition">Cancelar</button>
+          </div>
+        </div>
+        <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#060913]">
+          <div data-up-bar class="h-full rounded-full bg-gradient-to-r from-[#2563eb] to-[#06b6d4] transition-all duration-150" style="width: 1%"></div>
+        </div>
+        <div class="flex items-center justify-between text-[10px] font-mono text-slate-400">
+          <span data-up-bytes>0 B / ${formatFileSize(totalSize)}</span>
+          <span data-up-speed>Preparando...</span>
+        </div>
+      `;
+      const cancelBtn = card.querySelector('[data-up-cancel]');
+      cancelBtn.addEventListener('click', () => {
+        cancelState.aborted = true;
+        cancelBtn.disabled = true;
+        cancelBtn.textContent = 'Cancelando...';
+      });
+      stack.appendChild(card);
+      return card;
+    }
+
+    function updateUploadProgressCard(card, { pct, uploadedBytes, totalSize, speedBps, statusText }) {
+      if (!card) return;
+      const pctEl = card.querySelector('[data-up-pct]');
+      const barEl = card.querySelector('[data-up-bar]');
+      const bytesEl = card.querySelector('[data-up-bytes]');
+      const speedEl = card.querySelector('[data-up-speed]');
+      if (pctEl) pctEl.textContent = `${pct}%`;
+      if (barEl) barEl.style.width = `${pct}%`;
+      if (bytesEl && typeof uploadedBytes === 'number') {
+        bytesEl.textContent = `${formatFileSize(uploadedBytes)} / ${formatFileSize(totalSize)}`;
+      }
+      if (speedEl) {
+        speedEl.textContent = statusText || (speedBps > 0 ? `${formatFileSize(speedBps)}/s` : 'Enviando...');
+      }
+    }
+
+    async function uploadFileInChunks(file, onProgress, cancelState) {
+      const { Api, Buffer } = state.gramjsLib;
+      const totalSize = file.size;
+      const totalParts = Math.ceil(totalSize / SSD_UPLOAD_CHUNK_SIZE);
+      const isBig = totalSize > SSD_BIG_FILE_THRESHOLD;
+      const fileId = generateSafeFileId();
+
+      let nextPart = 0;
+      let uploadedBytes = 0;
+      let fatalError = null;
+      const startedAt = Date.now();
+
+      async function uploadSinglePart(partIndex) {
+        const start = partIndex * SSD_UPLOAD_CHUNK_SIZE;
+        const end = Math.min(start + SSD_UPLOAD_CHUNK_SIZE, totalSize);
+        const chunkAb = await file.slice(start, end).arrayBuffer();
+        const chunkBuf = Buffer.from(new Uint8Array(chunkAb));
+
+        let attempt = 0;
+        const maxAttempts = 5;
+
+        while (attempt < maxAttempts) {
+          if (cancelState.aborted) throw new Error('UPLOAD_CANCELLED');
+          attempt++;
+          try {
+            if (!state.client.connected) await state.client.connect();
+
+            if (isBig) {
+              await state.client.invoke(
+                new Api.upload.SaveBigFilePart({
+                  fileId,
+                  filePart: partIndex,
+                  fileTotalParts: totalParts,
+                  bytes: chunkBuf
+                })
+              );
+            } else {
+              await state.client.invoke(
+                new Api.upload.SaveFilePart({
+                  fileId,
+                  filePart: partIndex,
+                  bytes: chunkBuf
+                })
+              );
+            }
+
+            uploadedBytes += chunkBuf.length;
+            resetAutoLockTimer();
+
+            if (typeof onProgress === 'function') {
+              const elapsedSec = Math.max(0.2, (Date.now() - startedAt) / 1000);
+              onProgress({
+                pct: Math.min(99, Math.max(1, Math.round((uploadedBytes / totalSize) * 100))),
+                uploadedBytes,
+                totalSize,
+                speedBps: uploadedBytes / elapsedSec
+              });
+            }
+            return;
+          } catch (err) {
+            if (cancelState.aborted) throw new Error('UPLOAD_CANCELLED');
+            const errMsg = String((err && (err.errorMessage || err.message)) || '');
+            const floodMatch = errMsg.match(/FLOOD_WAIT_(\d+)/i);
+            if (floodMatch) {
+              const waitMs = (parseInt(floodMatch[1], 10) + 1) * 1000;
+              await new Promise(r => setTimeout(r, Math.min(waitMs, 30000)));
+            } else if (attempt < maxAttempts) {
+              await new Promise(r => setTimeout(r, attempt * 1500));
+              try {
+                if (!state.client.connected) await state.client.connect();
+              } catch (e) {}
+            } else {
+              throw err;
+            }
+          }
+        }
+      }
+
+      const workerCount = Math.min(SSD_UPLOAD_CONCURRENCY, totalParts);
+      const workers = [];
+      for (let w = 0; w < workerCount; w++) {
+        workers.push((async () => {
+          while (!fatalError && !cancelState.aborted) {
+            const partIndex = nextPart++;
+            if (partIndex >= totalParts) break;
+            try {
+              await uploadSinglePart(partIndex);
+            } catch (err) {
+              fatalError = err;
+              break;
+            }
+          }
+        })());
+      }
+
+      await Promise.all(workers);
+
+      if (cancelState.aborted) throw new Error('UPLOAD_CANCELLED');
+      if (fatalError) throw fatalError;
+
+      if (isBig) {
+        return new Api.InputFileBig({ id: fileId, parts: totalParts, name: file.name });
+      }
+      return new Api.InputFile({ id: fileId, parts: totalParts, name: file.name, md5Checksum: '' });
+    }
+
     async function uploadFilesToCloud(fileList) {
       if (!state.client || !state.gramjsLib) {
         showToast('Desconectado', 'Conecte-se à Nuvem SSD antes de enviar arquivos.', 'warning');
         return;
       }
 
-      const { CustomFile, Buffer } = state.gramjsLib;
-      if (!CustomFile || !Buffer) {
-        showToast('Erro de Motor', 'CustomFile ou Buffer não disponíveis em ./gramjs.js.', 'danger');
+      const { Api, Buffer } = state.gramjsLib;
+      if (!Api || !Buffer) {
+        showToast('Erro de Motor', 'Api ou Buffer não disponíveis em ./gramjs.js.', 'danger');
         return;
       }
 
       const activeProf = state.profiles.find(p => p.id === state.activeProfileId) || state.profiles[0];
-      const targetPeer = await resolveProfilePeer(activeProf);
+      const rawPeer = await resolveProfilePeer(activeProf);
+      const inputPeer = rawPeer === 'me'
+        ? new Api.InputPeerSelf()
+        : await state.client.getInputEntity(rawPeer);
+
       let uploadedCount = 0;
 
       for (const file of fileList) {
-        const toastCard = createProgressToast(`Enviando ${file.name}`);
+        if (!file.size) {
+          showToast('Arquivo Vazio', `${file.name} possui 0 bytes e foi ignorado.`, 'warning');
+          continue;
+        }
+        if (file.size > SSD_MAX_FILE_SIZE) {
+          showToast('Arquivo Muito Grande', `${file.name} excede o limite de 2 GB por arquivo.`, 'danger');
+          continue;
+        }
+
+        const cancelState = { aborted: false };
+        const toastCard = createUploadProgressCard(file.name, file.size, cancelState);
+
         try {
           if (!state.client.connected) await state.client.connect();
-          const ab = await file.arrayBuffer();
-          const buffer = Buffer.from(ab);
-          const customFile = new CustomFile(file.name, file.size, '', buffer);
 
-          await state.client.sendFile(targetPeer, {
-            file: customFile,
-            caption: file.name,
-            forceDocument: !file.type.startsWith('image/'),
-            progressCallback: (p) => {
-              const pct = Math.min(100, Math.max(1, Math.round(Number(p) * 100)));
-              updateProgressToast(toastCard, pct);
-            }
+          const inputFile = await uploadFileInChunks(
+            file,
+            (prog) => updateUploadProgressCard(toastCard, prog),
+            cancelState
+          );
+
+          updateUploadProgressCard(toastCard, {
+            pct: 99,
+            uploadedBytes: file.size,
+            totalSize: file.size,
+            statusText: 'Finalizando no cofre...'
           });
 
-          updateProgressToast(toastCard, 100);
-          setTimeout(() => removeProgressToast(toastCard), 700);
+          const isSmallPhoto = file.type && file.type.startsWith('image/') && file.size <= SSD_BIG_FILE_THRESHOLD;
+          const isVideo = (file.type && file.type.startsWith('video/')) || /\.(mp4|mov|m4v|webm|mkv|avi)$/i.test(file.name);
+
+          let media;
+          if (isSmallPhoto) {
+            media = new Api.InputMediaUploadedPhoto({ file: inputFile });
+          } else {
+            const attributes = [new Api.DocumentAttributeFilename({ fileName: file.name })];
+            if (isVideo) {
+              const vMeta = await extractVideoMetadata(file);
+              if (vMeta && vMeta.w > 0 && vMeta.h > 0) {
+                attributes.push(new Api.DocumentAttributeVideo({
+                  duration: vMeta.duration,
+                  w: vMeta.w,
+                  h: vMeta.h,
+                  supportsStreaming: true
+                }));
+              }
+            }
+            media = new Api.InputMediaUploadedDocument({
+              file: inputFile,
+              mimeType: file.type || (isVideo ? 'video/mp4' : 'application/octet-stream'),
+              attributes,
+              forceFile: !isVideo
+            });
+          }
+
+          await state.client.invoke(
+            new Api.messages.SendMedia({
+              peer: inputPeer,
+              media,
+              message: file.name,
+              randomId: generateSafeFileId()
+            })
+          );
+
+          updateUploadProgressCard(toastCard, {
+            pct: 100,
+            uploadedBytes: file.size,
+            totalSize: file.size,
+            statusText: 'Concluído!'
+          });
+          setTimeout(() => removeProgressToast(toastCard), 900);
           uploadedCount++;
         } catch (err) {
-          console.error('[SSD Nexus Upload Error]', err);
           removeProgressToast(toastCard);
-          showToast('Falha no Upload', `Não foi possível enviar ${file.name}.`, 'danger');
+          if (err && err.message === 'UPLOAD_CANCELLED') {
+            showToast('Envio Cancelado', `Upload de ${file.name} foi interrompido.`, 'warning');
+          } else {
+            console.error('[SSD Nexus Chunk Upload Error]', err);
+            const detail = sanitizeBrandText(err && (err.errorMessage || err.message) ? (err.errorMessage || err.message) : 'Erro desconhecido');
+            showToast('Falha no Upload', `${file.name}: ${detail}`, 'danger');
+          }
         }
       }
 
@@ -2067,7 +2322,7 @@
         await refreshCloudFiles(false);
       }
     }
-
+    
     let dragCounter = 0;
     const dragOverlayEl = document.getElementById('ws-drag-overlay');
     window.addEventListener('dragenter', (e) => {
