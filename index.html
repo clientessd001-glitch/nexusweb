@@ -24,8 +24,9 @@
           colors: {
             nexus: {
               bg: '#060913',
-              surface: '#0b1020',
-              elevated: '#111931',
+              panel: '#0d1324',
+              elevated: '#131c36',
+              border: '#1e293b',
               blue: '#2563eb',
               cyan: '#06b6d4',
               red: '#dc2626',
@@ -57,25 +58,21 @@
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: rgba(6, 9, 19, 0.75);
+      background: #060913;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.24);
+      background: #1e293b;
       border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(6, 182, 212, 0.65);
+      background: #06b6d4;
     }
 
-    .glass-card {
-      background: rgba(11, 16, 32, 0.9);
+    .nexus-card {
+      background: rgba(13, 19, 36, 0.94);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.09);
-    }
-
-    .nexus-border {
-      border-color: rgba(255, 255, 255, 0.09);
+      border: 1px solid #1e293b;
     }
 
     @keyframes shake {
@@ -124,8 +121,8 @@
     <div class="pointer-events-none fixed -top-36 left-1/2 -translate-x-1/2 h-96 w-[38rem] rounded-full bg-[#2563eb]/16 blur-3xl"></div>
     <div class="pointer-events-none fixed -bottom-24 right-1/4 h-80 w-96 rounded-full bg-[#06b6d4]/12 blur-3xl"></div>
 
-    <!-- Cartão Central Glassmorphism -->
-    <div class="w-full max-w-md rounded-3xl glass-card p-6 sm:p-8 shadow-2xl relative z-10 animate-fade-up">
+    <!-- Cartão Central -->
+    <div class="w-full max-w-md rounded-3xl nexus-card p-6 sm:p-8 shadow-2xl relative z-10 animate-fade-up">
 
       <!-- Cabeçalho / Identidade -->
       <div class="flex flex-col items-center text-center mb-6">
@@ -150,10 +147,10 @@
         </div>
         <div class="space-y-1">
           <h2 id="auth-init-title" class="text-sm font-semibold text-white">Inicializando conexão segura...</h2>
-          <p id="auth-init-subtitle" class="text-xs text-slate-400">Carregando módulo local SSD Sync WebAssembly</p>
+          <p id="auth-init-subtitle" class="text-xs text-slate-400">Carregando motor local SSD Sync WebAssembly (./tdweb.js)</p>
         </div>
         <div class="mx-auto max-w-[240px] pt-1">
-          <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#060913]">
+          <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#060913] border border-[#1e293b]">
             <div id="auth-init-bar" class="h-full rounded-full bg-gradient-to-r from-[#2563eb] to-[#06b6d4] transition-all duration-500" style="width: 25%"></div>
           </div>
         </div>
@@ -161,7 +158,7 @@
 
       <!-- SUB-ESTADO A2: Falha ou Timeout na Inicialização WebAssembly -->
       <div id="auth-panel-init-error" class="hidden py-5 text-center space-y-4">
-        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#dc2626]/15 text-[#dc2626] border border-[#dc2626]/35">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#dc2626]/15 text-[#dc2626] border border-[#dc2626]/40">
           <i data-lucide="wifi-off" class="h-6 w-6"></i>
         </div>
         <div class="space-y-1.5">
@@ -169,7 +166,7 @@
           <p id="auth-init-error-msg" class="text-xs text-slate-300 leading-relaxed">
             Não foi possível concluir a inicialização do WebAssembly local dentro do tempo limite de 60 segundos.
           </p>
-          <p id="auth-init-error-detail" class="font-mono text-[11px] text-slate-500"></p>
+          <p id="auth-init-error-detail" class="font-mono text-[11px] text-slate-400 break-all"></p>
         </div>
         <button
           type="button"
@@ -191,7 +188,7 @@
             <select
               id="select-ddi"
               aria-label="Código do país"
-              class="h-12 rounded-2xl border nexus-border bg-[#060913] px-3 font-mono text-xs font-medium text-slate-200 focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/25 transition cursor-pointer"
+              class="h-12 rounded-2xl border border-[#1e293b] bg-[#060913] px-3 font-mono text-xs font-medium text-slate-200 focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/25 transition cursor-pointer"
             >
               <option value="+55">+55 Brasil</option>
               <option value="+1">+1 EUA / CAN</option>
@@ -207,10 +204,20 @@
               autocomplete="tel-national"
               placeholder="(85) 99999-9999"
               maxlength="16"
-              class="h-12 flex-1 rounded-2xl border nexus-border bg-[#060913] px-4 font-mono text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/25 transition"
+              class="h-12 flex-1 rounded-2xl border border-[#1e293b] bg-[#060913] px-4 font-mono text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/25 transition"
             />
           </div>
-          <p id="error-phone" class="mt-2 min-h-[16px] text-xs font-medium text-[#dc2626]"></p>
+
+          <!-- Caixa de Alerta Vermelha com Erro Real do Servidor -->
+          <div id="error-phone-box" class="hidden mt-3 rounded-2xl border border-[#dc2626]/50 bg-[#dc2626]/12 p-3 text-left animate-fade-up">
+            <div class="flex items-start gap-2">
+              <i data-lucide="alert-circle" class="h-4 w-4 text-[#dc2626] shrink-0 mt-0.5"></i>
+              <div class="min-w-0 flex-1 space-y-1">
+                <p id="error-phone-raw" class="font-mono text-[11px] font-semibold text-rose-200 break-words"></p>
+                <p id="error-phone-hint" class="text-[11px] text-rose-300/90 leading-snug"></p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <button
@@ -226,7 +233,7 @@
 
       <!-- SUB-ESTADO C: Código de 5 Dígitos (authorizationStateWaitCode) -->
       <div id="auth-panel-code" class="hidden space-y-5">
-        <div class="rounded-2xl border nexus-border bg-[#060913]/90 p-4 text-center">
+        <div class="rounded-2xl border border-[#1e293b] bg-[#060913]/90 p-4 text-center">
           <div class="flex items-center justify-center gap-2 text-xs">
             <span id="label-sent-phone" class="font-mono font-semibold text-[#06b6d4]">+55 (85) 99999-9999</span>
             <button
@@ -245,13 +252,23 @@
         <!-- 5 Caixas Numéricas Individuais -->
         <div>
           <div id="code-inputs-wrapper" class="flex justify-center gap-2.5 sm:gap-3">
-            <input type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" data-code-index="0" aria-label="Dígito 1" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 nexus-border bg-[#060913] text-center font-mono text-xl font-bold text-[#06b6d4] focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/30 transition" />
-            <input type="text" inputmode="numeric" maxlength="1" data-code-index="1" aria-label="Dígito 2" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 nexus-border bg-[#060913] text-center font-mono text-xl font-bold text-[#06b6d4] focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/30 transition" />
-            <input type="text" inputmode="numeric" maxlength="1" data-code-index="2" aria-label="Dígito 3" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 nexus-border bg-[#060913] text-center font-mono text-xl font-bold text-[#06b6d4] focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/30 transition" />
-            <input type="text" inputmode="numeric" maxlength="1" data-code-index="3" aria-label="Dígito 4" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 nexus-border bg-[#060913] text-center font-mono text-xl font-bold text-[#06b6d4] focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/30 transition" />
-            <input type="text" inputmode="numeric" maxlength="1" data-code-index="4" aria-label="Dígito 5" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 nexus-border bg-[#060913] text-center font-mono text-xl font-bold text-[#06b6d4] focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/30 transition" />
+            <input type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" data-code-index="0" aria-label="Dígito 1" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 border-[#1e293b] bg-[#060913] text-center font-mono text-xl font-bold text-[#06b6d4] focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/30 transition" />
+            <input type="text" inputmode="numeric" maxlength="1" data-code-index="1" aria-label="Dígito 2" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 border-[#1e293b] bg-[#060913] text-center font-mono text-xl font-bold text-[#06b6d4] focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/30 transition" />
+            <input type="text" inputmode="numeric" maxlength="1" data-code-index="2" aria-label="Dígito 3" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 border-[#1e293b] bg-[#060913] text-center font-mono text-xl font-bold text-[#06b6d4] focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/30 transition" />
+            <input type="text" inputmode="numeric" maxlength="1" data-code-index="3" aria-label="Dígito 4" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 border-[#1e293b] bg-[#060913] text-center font-mono text-xl font-bold text-[#06b6d4] focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/30 transition" />
+            <input type="text" inputmode="numeric" maxlength="1" data-code-index="4" aria-label="Dígito 5" class="ssd-code-box h-14 w-11 sm:w-12 rounded-2xl border-2 border-[#1e293b] bg-[#060913] text-center font-mono text-xl font-bold text-[#06b6d4] focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/30 transition" />
           </div>
-          <p id="error-code" class="mt-2.5 min-h-[16px] text-center text-xs font-medium text-[#dc2626]"></p>
+
+          <!-- Caixa de Alerta Vermelha com Erro Real do Código -->
+          <div id="error-code-box" class="hidden mt-3 rounded-2xl border border-[#dc2626]/50 bg-[#dc2626]/12 p-3 text-left animate-fade-up">
+            <div class="flex items-start gap-2">
+              <i data-lucide="alert-circle" class="h-4 w-4 text-[#dc2626] shrink-0 mt-0.5"></i>
+              <div class="min-w-0 flex-1 space-y-1">
+                <p id="error-code-raw" class="font-mono text-[11px] font-semibold text-rose-200 break-words"></p>
+                <p id="error-code-hint" class="text-[11px] text-rose-300/90 leading-snug"></p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <button
@@ -304,7 +321,7 @@
               type="password"
               autocomplete="current-password"
               placeholder="Digite sua senha..."
-              class="h-12 w-full rounded-2xl border nexus-border bg-[#060913] pl-4 pr-12 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/25 transition"
+              class="h-12 w-full rounded-2xl border border-[#1e293b] bg-[#060913] pl-4 pr-12 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/25 transition"
             />
             <button
               type="button"
@@ -315,7 +332,17 @@
               <i id="icon-2fa-eye" data-lucide="eye" class="h-4 w-4"></i>
             </button>
           </div>
-          <p id="error-password" class="mt-2 min-h-[16px] text-xs font-medium text-[#dc2626]"></p>
+
+          <!-- Caixa de Alerta Vermelha com Erro Real da Senha 2FA -->
+          <div id="error-password-box" class="hidden mt-3 rounded-2xl border border-[#dc2626]/50 bg-[#dc2626]/12 p-3 text-left animate-fade-up">
+            <div class="flex items-start gap-2">
+              <i data-lucide="alert-circle" class="h-4 w-4 text-[#dc2626] shrink-0 mt-0.5"></i>
+              <div class="min-w-0 flex-1 space-y-1">
+                <p id="error-password-raw" class="font-mono text-[11px] font-semibold text-rose-200 break-words"></p>
+                <p id="error-password-hint" class="text-[11px] text-rose-300/90 leading-snug"></p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <button
@@ -330,7 +357,7 @@
       </div>
 
       <!-- Rodapé Limpo -->
-      <div class="mt-7 border-t nexus-border pt-4 flex items-center justify-between text-[11px] text-slate-500">
+      <div class="mt-7 border-t border-[#1e293b] pt-4 flex items-center justify-between text-[11px] text-slate-500">
         <span>Sessão Criptografada • SSD Sync</span>
         <button type="button" onclick="openAboutModal()" class="hover:text-[#06b6d4] transition">
           SSD Soluções 2026
@@ -345,23 +372,22 @@
   <section id="view-onboarding" class="hidden min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 relative overflow-y-auto">
     <div class="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 h-96 w-[36rem] rounded-full bg-[#2563eb]/15 blur-3xl"></div>
 
-    <div class="w-full max-w-md rounded-3xl glass-card p-6 sm:p-8 shadow-2xl relative z-10 animate-fade-up">
-      <!-- Indicador de Passos -->
+    <div class="w-full max-w-md rounded-3xl nexus-card p-6 sm:p-8 shadow-2xl relative z-10 animate-fade-up">
       <div class="mb-6 flex items-center justify-between gap-2">
         <span id="onb-step-badge" class="rounded-lg bg-[#06b6d4]/15 border border-[#06b6d4]/35 px-2.5 py-1 font-mono text-[11px] font-semibold text-[#06b6d4]">
           PASSO 1 DE 2
         </span>
         <button type="button" onclick="handleLogout()" class="text-xs text-slate-400 hover:text-[#dc2626] transition">
-          Sair
+          Desconectar Conta
         </button>
       </div>
 
       <!-- PASSO 1: Criar Perfil / Cofre -->
       <div id="onb-step-1" class="space-y-5">
         <div>
-          <h1 class="text-2xl font-bold text-white">Criar seu Perfil</h1>
+          <h1 class="text-2xl font-bold text-white">Criar seu Perfil / Cofre</h1>
           <p class="mt-1 text-xs text-slate-400">
-            Configure seu espaço principal no SSD Nexus e defina sua proteção por PIN.
+            Configure seu espaço principal no SSD Nexus e defina sua proteção por PIN criptografado.
           </p>
         </div>
 
@@ -373,8 +399,8 @@
             id="onb-profile-name"
             type="text"
             maxlength="32"
-            placeholder="Ex: Perfil Principal, Cofre Pessoal..."
-            class="h-12 w-full rounded-2xl border nexus-border bg-[#060913] px-4 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/25 transition"
+            placeholder="Ex: Perfil Principal, Cofre Privado..."
+            class="h-12 w-full rounded-2xl border border-[#1e293b] bg-[#060913] px-4 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/25 transition"
           />
           <p id="onb-name-error" class="mt-1.5 min-h-[16px] text-xs text-[#dc2626]"></p>
         </div>
@@ -383,7 +409,7 @@
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-2.5">Cor de Identificação</label>
           <div class="flex items-center gap-3.5" id="onb-color-swatches">
-            <button type="button" onclick="selectOnboardingColor('cyan')" data-swatch="cyan" aria-label="Ciano" class="onb-swatch h-9 w-9 rounded-full bg-[#06b6d4] ring-2 ring-white ring-offset-2 ring-offset-[#0b1020] transition"></button>
+            <button type="button" onclick="selectOnboardingColor('cyan')" data-swatch="cyan" aria-label="Ciano" class="onb-swatch h-9 w-9 rounded-full bg-[#06b6d4] ring-2 ring-white ring-offset-2 ring-offset-[#0d1324] transition"></button>
             <button type="button" onclick="selectOnboardingColor('blue')" data-swatch="blue" aria-label="Azul Elétrico" class="onb-swatch h-9 w-9 rounded-full bg-[#2563eb] opacity-65 hover:opacity-100 transition"></button>
             <button type="button" onclick="selectOnboardingColor('red')" data-swatch="red" aria-label="Vermelho" class="onb-swatch h-9 w-9 rounded-full bg-[#dc2626] opacity-65 hover:opacity-100 transition"></button>
             <button type="button" onclick="selectOnboardingColor('emerald')" data-swatch="emerald" aria-label="Esmeralda" class="onb-swatch h-9 w-9 rounded-full bg-emerald-500 opacity-65 hover:opacity-100 transition"></button>
@@ -391,15 +417,15 @@
           </div>
         </div>
 
-        <!-- Toggle Proteger perfil com PIN de 4 dígitos -->
-        <label class="flex items-center justify-between gap-3 rounded-2xl border nexus-border bg-[#060913]/90 p-4 cursor-pointer hover:border-[#06b6d4]/45 transition">
+        <!-- Toggle Proteger perfil com PIN de 4 a 6 dígitos -->
+        <label class="flex items-center justify-between gap-3 rounded-2xl border border-[#1e293b] bg-[#060913]/90 p-4 cursor-pointer hover:border-[#06b6d4]/45 transition">
           <div class="flex items-center gap-3 min-w-0">
             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#06b6d4]/15 text-[#06b6d4]">
               <i data-lucide="shield-check" class="h-5 w-5"></i>
             </div>
             <div class="min-w-0">
-              <span class="block text-xs font-semibold text-white">Proteger perfil com PIN de 4 dígitos</span>
-              <span class="block text-[11px] text-slate-400 mt-0.5">Tranca o acesso com criptografia SHA-256</span>
+              <span class="block text-xs font-semibold text-white">Proteger perfil com PIN (4 a 6 dígitos)</span>
+              <span class="block text-[11px] text-slate-400 mt-0.5">Tranca o acesso com hash SHA-256 local</span>
             </div>
           </div>
           <input id="onb-pin-toggle" type="checkbox" checked class="h-5 w-5 rounded border-slate-600 bg-[#060913] text-[#06b6d4] focus:ring-[#06b6d4]/30 cursor-pointer" />
@@ -415,47 +441,59 @@
         </button>
       </div>
 
-      <!-- PASSO 2: Definir e Confirmar PIN de 4 dígitos -->
+      <!-- PASSO 2: Definir e Confirmar PIN de 4 a 6 dígitos -->
       <div id="onb-step-2" class="hidden space-y-5">
         <div class="flex items-center justify-between gap-2">
           <div>
-            <h2 id="onb-pin-heading" class="text-xl font-bold text-white">Crie seu PIN de 4 dígitos</h2>
+            <h2 id="onb-pin-heading" class="text-xl font-bold text-white">Crie seu PIN de Segurança</h2>
             <p id="onb-pin-subheading" class="mt-1 text-xs text-slate-400">
-              Digite 4 números no teclado abaixo ou no seu teclado físico.
+              Digite de 4 a 6 números e toque em Confirmar.
             </p>
           </div>
-          <button type="button" onclick="backToOnboardingStep1()" class="rounded-xl border nexus-border bg-[#060913] px-3 py-1.5 text-xs text-slate-300 hover:text-white transition shrink-0">
+          <button type="button" onclick="backToOnboardingStep1()" class="rounded-xl border border-[#1e293b] bg-[#060913] px-3 py-1.5 text-xs text-slate-300 hover:text-white transition shrink-0">
             Voltar
           </button>
         </div>
 
-        <!-- 4 Caixas Indicadoras do PIN -->
-        <div id="onb-pin-dots-container" class="my-4 flex justify-center gap-4">
-          <div id="onb-dot-0" class="flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-2xl font-bold text-[#06b6d4] transition"></div>
-          <div id="onb-dot-1" class="flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-2xl font-bold text-[#06b6d4] transition"></div>
-          <div id="onb-dot-2" class="flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-2xl font-bold text-[#06b6d4] transition"></div>
-          <div id="onb-dot-3" class="flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-2xl font-bold text-[#06b6d4] transition"></div>
+        <!-- 6 Caixas Indicadoras do PIN (4 obrigatórias + 2 opcionais) -->
+        <div id="onb-pin-dots-container" class="my-4 flex justify-center gap-2.5">
+          <div id="onb-dot-0" class="flex h-13 w-11 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-xl font-bold text-[#06b6d4] transition"></div>
+          <div id="onb-dot-1" class="flex h-13 w-11 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-xl font-bold text-[#06b6d4] transition"></div>
+          <div id="onb-dot-2" class="flex h-13 w-11 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-xl font-bold text-[#06b6d4] transition"></div>
+          <div id="onb-dot-3" class="flex h-13 w-11 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-xl font-bold text-[#06b6d4] transition"></div>
+          <div id="onb-dot-4" class="flex h-13 w-11 py-3 items-center justify-center rounded-2xl border border-dashed border-slate-700/70 bg-[#060913]/60 font-mono text-xl font-bold text-[#06b6d4] transition"></div>
+          <div id="onb-dot-5" class="flex h-13 w-11 py-3 items-center justify-center rounded-2xl border border-dashed border-slate-700/70 bg-[#060913]/60 font-mono text-xl font-bold text-[#06b6d4] transition"></div>
         </div>
 
         <p id="onb-pin-error" class="min-h-[16px] text-center text-xs font-medium text-[#dc2626]"></p>
 
         <!-- Teclado Numérico Interativo -->
-        <div class="grid grid-cols-3 gap-2.5">
-          <button type="button" onclick="handleOnboardingPinDigit('1')" class="py-3.5 rounded-2xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">1</button>
-          <button type="button" onclick="handleOnboardingPinDigit('2')" class="py-3.5 rounded-2xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">2</button>
-          <button type="button" onclick="handleOnboardingPinDigit('3')" class="py-3.5 rounded-2xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">3</button>
-          <button type="button" onclick="handleOnboardingPinDigit('4')" class="py-3.5 rounded-2xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">4</button>
-          <button type="button" onclick="handleOnboardingPinDigit('5')" class="py-3.5 rounded-2xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">5</button>
-          <button type="button" onclick="handleOnboardingPinDigit('6')" class="py-3.5 rounded-2xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">6</button>
-          <button type="button" onclick="handleOnboardingPinDigit('7')" class="py-3.5 rounded-2xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">7</button>
-          <button type="button" onclick="handleOnboardingPinDigit('8')" class="py-3.5 rounded-2xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">8</button>
-          <button type="button" onclick="handleOnboardingPinDigit('9')" class="py-3.5 rounded-2xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">9</button>
-          <button type="button" onclick="clearOnboardingPinBuffer()" class="py-3.5 rounded-2xl border nexus-border bg-[#060913] text-xs font-semibold text-slate-400 hover:text-white transition">Limpar</button>
-          <button type="button" onclick="handleOnboardingPinDigit('0')" class="py-3.5 rounded-2xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">0</button>
-          <button type="button" onclick="backspaceOnboardingPin()" aria-label="Apagar dígito" class="flex py-3.5 items-center justify-center rounded-2xl border nexus-border bg-[#060913] text-slate-400 hover:text-white transition">
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" onclick="handleOnboardingPinDigit('1')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">1</button>
+          <button type="button" onclick="handleOnboardingPinDigit('2')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">2</button>
+          <button type="button" onclick="handleOnboardingPinDigit('3')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">3</button>
+          <button type="button" onclick="handleOnboardingPinDigit('4')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">4</button>
+          <button type="button" onclick="handleOnboardingPinDigit('5')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">5</button>
+          <button type="button" onclick="handleOnboardingPinDigit('6')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">6</button>
+          <button type="button" onclick="handleOnboardingPinDigit('7')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">7</button>
+          <button type="button" onclick="handleOnboardingPinDigit('8')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">8</button>
+          <button type="button" onclick="handleOnboardingPinDigit('9')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">9</button>
+          <button type="button" onclick="clearOnboardingPinBuffer()" class="py-3 rounded-2xl border border-[#1e293b] bg-[#060913] text-xs font-semibold text-slate-400 hover:text-white transition">Limpar</button>
+          <button type="button" onclick="handleOnboardingPinDigit('0')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">0</button>
+          <button type="button" onclick="backspaceOnboardingPin()" aria-label="Apagar dígito" class="flex py-3 items-center justify-center rounded-2xl border border-[#1e293b] bg-[#060913] text-slate-400 hover:text-white transition">
             <i data-lucide="delete" class="h-5 w-5"></i>
           </button>
         </div>
+
+        <button
+          id="btn-onb-confirm-pin"
+          type="button"
+          onclick="submitOnboardingPinStep()"
+          class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 text-sm font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 transition"
+        >
+          <i data-lucide="check-circle-2" class="h-4 w-4"></i>
+          <span id="btn-onb-confirm-pin-label">Avançar para Confirmação</span>
+        </button>
       </div>
     </div>
   </section>
@@ -467,7 +505,7 @@
     <div class="pointer-events-none fixed top-0 left-1/3 h-80 w-96 rounded-full bg-[#2563eb]/15 blur-3xl"></div>
 
     <!-- Cabeçalho -->
-    <header class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 border-b nexus-border pb-5">
+    <header class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-5">
       <div class="flex items-center gap-3">
         <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#06b6d4] text-white shadow-lg shadow-[#2563eb]/25">
           <i data-lucide="cloud-lightning" class="h-5 w-5"></i>
@@ -500,7 +538,7 @@
           class="inline-flex items-center gap-1.5 rounded-xl border border-[#dc2626]/40 bg-[#dc2626]/12 px-3.5 py-2.5 text-xs font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition"
         >
           <i data-lucide="log-out" class="h-4 w-4"></i>
-          <span>Desconectar</span>
+          <span>Desconectar Conta</span>
         </button>
       </div>
     </header>
@@ -510,7 +548,7 @@
       <div class="mb-6">
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Quem está acessando?</h1>
         <p class="mt-1 text-sm text-slate-400">
-          Selecione um perfil aberto ou desbloqueie seu cofre privado com o PIN de 4 dígitos.
+          Selecione um perfil aberto ou desbloqueie seu cofre privado com o PIN de segurança.
         </p>
       </div>
 
@@ -518,8 +556,8 @@
     </main>
 
     <!-- Rodapé -->
-    <footer class="mx-auto w-full max-w-5xl border-t nexus-border pt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-      <span>Sessão persistida localmente com criptografia</span>
+    <footer class="mx-auto w-full max-w-5xl border-t border-[#1e293b] pt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+      <span>Cofres protegidos localmente via SHA-256</span>
       <button type="button" onclick="openAboutModal()" class="hover:text-[#06b6d4] transition">
         Desenvolvedor: Josimar Sousa • SSD Soluções 2026
       </button>
@@ -533,7 +571,7 @@
 
     <!-- Sobreposição Global Drag & Drop -->
     <div id="ws-drag-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/92 backdrop-blur-md p-6">
-      <div class="w-full max-w-lg rounded-3xl border-2 border-dashed border-[#06b6d4] bg-[#0b1020] p-10 text-center shadow-2xl shadow-[#06b6d4]/20">
+      <div class="w-full max-w-lg rounded-3xl border-2 border-dashed border-[#06b6d4] bg-[#0d1324] p-10 text-center shadow-2xl shadow-[#06b6d4]/20">
         <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#06b6d4]/15 text-[#06b6d4]">
           <i data-lucide="cloud-upload" class="h-8 w-8 animate-bounce"></i>
         </div>
@@ -548,10 +586,10 @@
     <!-- ===================================================================== -->
     <!-- ZONA 1: BARRA LATERAL RETRÁTIL (ESQUERDA)                             -->
     <!-- ===================================================================== -->
-    <aside id="workspace-sidebar" class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r nexus-border bg-[#0b1020] transition-all duration-300 lg:static lg:translate-x-0">
+    <aside id="workspace-sidebar" class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-[#1e293b] bg-[#0d1324] transition-all duration-300 lg:static lg:translate-x-0">
 
       <!-- Topo: Marca e Recolher -->
-      <div class="flex h-16 shrink-0 items-center justify-between border-b nexus-border px-4">
+      <div class="flex h-16 shrink-0 items-center justify-between border-b border-[#1e293b] px-4">
         <div class="flex items-center gap-3 overflow-hidden">
           <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563eb] to-[#06b6d4] text-white shadow-md shadow-[#2563eb]/25">
             <i data-lucide="cloud-lightning" class="h-5 w-5"></i>
@@ -565,7 +603,7 @@
           </div>
         </div>
 
-        <button type="button" onclick="toggleDesktopSidebar()" title="Recolher / Expandir barra" class="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-[#111931] hover:text-white transition">
+        <button type="button" onclick="toggleDesktopSidebar()" title="Recolher / Expandir barra" class="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-[#131c36] hover:text-white transition">
           <i id="ws-collapse-icon" data-lucide="panel-left-close" class="h-4 w-4"></i>
         </button>
         <button type="button" onclick="toggleMobileDrawer(false)" aria-label="Fechar menu" class="flex lg:hidden h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-white">
@@ -573,13 +611,13 @@
         </button>
       </div>
 
-      <!-- Dropdown Seletor de Perfil / Cofre + Botão "+ Novo Cofre" -->
-      <div class="relative border-b nexus-border p-3 space-y-2">
+      <!-- Perfil Ativo + Botão de Troca + Bloqueio Rápido -->
+      <div class="relative border-b border-[#1e293b] p-3 space-y-2">
         <button
           id="profile-dropdown-trigger"
           type="button"
           onclick="toggleProfileDropdown()"
-          class="sb-center flex w-full items-center justify-between gap-2.5 rounded-2xl border nexus-border bg-[#060913] p-2.5 text-left hover:border-[#06b6d4]/50 transition"
+          class="sb-center flex w-full items-center justify-between gap-2.5 rounded-2xl border border-[#1e293b] bg-[#060913] p-2.5 text-left hover:border-[#06b6d4]/50 transition"
         >
           <div class="flex items-center gap-2.5 min-w-0">
             <span id="active-prof-dot" class="h-3 w-3 shrink-0 rounded-full bg-[#06b6d4] shadow-[0_0_8px_rgba(6,182,212,0.65)]"></span>
@@ -594,19 +632,31 @@
           <i data-lucide="chevrons-up-down" class="sb-hide h-4 w-4 shrink-0 text-slate-400"></i>
         </button>
 
-        <button
-          type="button"
-          onclick="openNewProfileModal()"
-          class="sb-center flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#2563eb]/45 bg-[#2563eb]/15 py-2 px-3 text-xs font-semibold text-blue-300 hover:bg-[#2563eb] hover:text-white transition"
-        >
-          <i data-lucide="shield-plus" class="h-3.5 w-3.5 shrink-0"></i>
-          <span class="sb-hide">+ Novo Cofre</span>
-        </button>
+        <div class="grid grid-cols-2 gap-1.5 sb-hide">
+          <button
+            type="button"
+            onclick="openNewProfileModal()"
+            class="flex items-center justify-center gap-1 rounded-xl border border-[#2563eb]/45 bg-[#2563eb]/15 py-2 px-2 text-[11px] font-semibold text-blue-300 hover:bg-[#2563eb] hover:text-white transition"
+          >
+            <i data-lucide="shield-plus" class="h-3.5 w-3.5 shrink-0"></i>
+            <span>+ Novo Cofre</span>
+          </button>
 
-        <!-- Menu Dropdown -->
-        <div id="profile-dropdown-menu" class="hidden absolute left-3 right-3 top-[4.25rem] z-50 rounded-2xl border nexus-border bg-[#0b1020] p-2 shadow-2xl animate-fade-up">
+          <button
+            type="button"
+            onclick="triggerPanicLock('Bloqueio Rápido Ativado')"
+            title="Trancar sessão e limpar previews (Alt+L)"
+            class="flex items-center justify-center gap-1 rounded-xl border border-[#dc2626]/45 bg-[#dc2626]/15 py-2 px-2 text-[11px] font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition"
+          >
+            <i data-lucide="lock" class="h-3.5 w-3.5 shrink-0"></i>
+            <span>Trancar (Alt+L)</span>
+          </button>
+        </div>
+
+        <!-- Menu Dropdown de Troca de Perfil -->
+        <div id="profile-dropdown-menu" class="hidden absolute left-3 right-3 top-[4.25rem] z-50 rounded-2xl border border-[#1e293b] bg-[#0d1324] p-2 shadow-2xl animate-fade-up">
           <div id="dropdown-profiles-list" class="max-h-52 overflow-y-auto space-y-1"></div>
-          <div class="mt-2 border-t nexus-border pt-2 space-y-1">
+          <div class="mt-2 border-t border-[#1e293b] pt-2 space-y-1">
             <button
               type="button"
               onclick="closeProfileDropdown(); openNewProfileModal();"
@@ -618,10 +668,10 @@
             <button
               type="button"
               onclick="closeProfileDropdown(); openProfileSelectorView();"
-              class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium text-slate-300 hover:bg-[#111931] transition"
+              class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium text-slate-300 hover:bg-[#131c36] transition"
             >
               <i data-lucide="users" class="h-4 w-4 text-slate-400"></i>
-              <span>Tela de Seleção de Perfis</span>
+              <span>Trocar Perfil (Quem está acessando?)</span>
             </button>
           </div>
         </div>
@@ -631,51 +681,59 @@
       <nav class="flex-1 overflow-y-auto p-3 space-y-1" aria-label="Categorias de arquivos">
         <div class="sb-hide px-2.5 pb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Biblioteca</div>
 
-        <button type="button" onclick="setWorkspaceCategory('all')" data-cat="all" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold bg-[#111931] text-white border nexus-border transition">
+        <button type="button" onclick="setWorkspaceCategory('all')" data-cat="all" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold bg-[#131c36] text-white border border-[#1e293b] transition">
           <div class="flex items-center gap-3">
             <i data-lucide="folder-kanban" class="h-4 w-4 text-[#06b6d4] shrink-0"></i>
-            <span class="sb-hide">Todos os Arquivos</span>
+            <span class="sb-hide">Todos</span>
           </div>
           <span id="count-cat-all" class="sb-hide rounded-full bg-[#060913] px-2 py-0.5 font-mono text-[11px] text-slate-300">0</span>
         </button>
 
-        <button type="button" onclick="setWorkspaceCategory('media')" data-cat="media" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#111931]/75 hover:text-white border border-transparent transition">
+        <button type="button" onclick="setWorkspaceCategory('images')" data-cat="images" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c36]/75 hover:text-white border border-transparent transition">
           <div class="flex items-center gap-3">
             <i data-lucide="image" class="h-4 w-4 text-emerald-400 shrink-0"></i>
-            <span class="sb-hide">Mídia & Galeria</span>
+            <span class="sb-hide">Imagens</span>
           </div>
-          <span id="count-cat-media" class="sb-hide rounded-full bg-[#060913]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
+          <span id="count-cat-images" class="sb-hide rounded-full bg-[#060913]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
         </button>
 
-        <button type="button" onclick="setWorkspaceCategory('documents')" data-cat="documents" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#111931]/75 hover:text-white border border-transparent transition">
+        <button type="button" onclick="setWorkspaceCategory('videos')" data-cat="videos" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c36]/75 hover:text-white border border-transparent transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="film" class="h-4 w-4 text-[#dc2626] shrink-0"></i>
+            <span class="sb-hide">Vídeos</span>
+          </div>
+          <span id="count-cat-videos" class="sb-hide rounded-full bg-[#060913]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
+        </button>
+
+        <button type="button" onclick="setWorkspaceCategory('documents')" data-cat="documents" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c36]/75 hover:text-white border border-transparent transition">
           <div class="flex items-center gap-3">
             <i data-lucide="file-archive" class="h-4 w-4 text-[#2563eb] shrink-0"></i>
-            <span class="sb-hide">Documentos & APKs</span>
+            <span class="sb-hide">Documentos</span>
           </div>
           <span id="count-cat-documents" class="sb-hide rounded-full bg-[#060913]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
         </button>
 
-        <button type="button" onclick="setWorkspaceCategory('favorites')" data-cat="favorites" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#111931]/75 hover:text-white border border-transparent transition">
+        <button type="button" onclick="setWorkspaceCategory('audios')" data-cat="audios" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c36]/75 hover:text-white border border-transparent transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="music" class="h-4 w-4 text-violet-400 shrink-0"></i>
+            <span class="sb-hide">Áudios</span>
+          </div>
+          <span id="count-cat-audios" class="sb-hide rounded-full bg-[#060913]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
+        </button>
+
+        <button type="button" onclick="setWorkspaceCategory('favorites')" data-cat="favorites" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c36]/75 hover:text-white border border-transparent transition">
           <div class="flex items-center gap-3">
             <i data-lucide="star" class="h-4 w-4 text-amber-400 shrink-0"></i>
             <span class="sb-hide">Favoritos</span>
           </div>
           <span id="count-cat-favorites" class="sb-hide rounded-full bg-[#060913]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
         </button>
-
-        <button type="button" onclick="setWorkspaceCategory('transfers')" data-cat="transfers" class="ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#111931]/75 hover:text-white border border-transparent transition">
-          <div class="flex items-center gap-3">
-            <i data-lucide="arrow-up-down" class="h-4 w-4 text-[#06b6d4] shrink-0"></i>
-            <span class="sb-hide">Fila de Transferências</span>
-          </div>
-          <span id="count-cat-transfers" class="sb-hide rounded-full bg-[#060913]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
-        </button>
       </nav>
 
-      <!-- Rodapé da Barra Lateral: Conta, Status, Armazenamento e Ações -->
-      <div class="border-t nexus-border bg-[#060913]/75 p-3 space-y-2.5">
+      <!-- Rodapé da Barra Lateral: Conta, Status, Auto-Lock, Sobre e Desconectar -->
+      <div class="border-t border-[#1e293b] bg-[#060913]/80 p-3 space-y-2">
         <!-- Dados do Usuário Autenticado -->
-        <div class="sb-hide flex items-center gap-2.5 rounded-xl border nexus-border bg-[#0b1020] p-2.5">
+        <div class="sb-hide flex items-center gap-2.5 rounded-xl border border-[#1e293b] bg-[#0d1324] p-2.5">
           <div id="sb-user-avatar" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#2563eb] to-[#06b6d4] text-xs font-bold text-white">
             SS
           </div>
@@ -686,32 +744,37 @@
         </div>
 
         <!-- Status Live SSD Sync Ativo -->
-        <div class="sb-center flex items-center gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-3 py-2">
-          <span class="relative flex h-2 w-2 shrink-0">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+        <div class="sb-center flex items-center justify-between gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-3 py-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="relative flex h-2 w-2 shrink-0">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+            </span>
+            <span class="sb-hide text-[11px] font-medium text-emerald-300 truncate">SSD Sync Ativo</span>
+          </div>
+          <span id="sb-storage-used" class="sb-hide font-mono text-[10px] font-semibold text-emerald-200">0 B</span>
+        </div>
+
+        <!-- Seletor de Auto-Lock por Inatividade -->
+        <div class="sb-hide flex items-center justify-between gap-2 rounded-xl border border-[#1e293b] bg-[#0d1324] px-3 py-2 text-[11px]">
+          <span class="flex items-center gap-1.5 text-slate-400">
+            <i data-lucide="timer" class="h-3.5 w-3.5 text-[#06b6d4]"></i>
+            <span>Auto-Lock</span>
           </span>
-          <span class="sb-hide text-[11px] font-medium text-emerald-300 truncate">SSD Sync Ativo</span>
+          <select id="select-autolock" onchange="setAutoLockMinutes(this.value)" aria-label="Auto-Lock por inatividade" class="bg-transparent font-mono font-semibold text-slate-200 focus:outline-none cursor-pointer">
+            <option value="0" class="bg-[#0d1324]">Desativado</option>
+            <option value="1" class="bg-[#0d1324]">1 min</option>
+            <option value="5" selected class="bg-[#0d1324]">5 min</option>
+            <option value="15" class="bg-[#0d1324]">15 min</option>
+          </select>
         </div>
 
-        <!-- Medidor de Armazenamento -->
-        <div class="sb-hide rounded-xl border nexus-border bg-[#0b1020] p-2.5">
-          <div class="flex items-center justify-between text-[11px] mb-1">
-            <span class="text-slate-400">Nuvem SSD</span>
-            <span id="sb-storage-used" class="font-mono font-semibold text-[#06b6d4]">0 B</span>
-          </div>
-          <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#060913]">
-            <div id="sb-storage-bar" class="h-full rounded-full bg-gradient-to-r from-[#2563eb] to-[#06b6d4] transition-all duration-500" style="width: 10%"></div>
-          </div>
-          <div class="mt-1 text-[10px] text-slate-500">Sincronização em Nuvem</div>
-        </div>
-
-        <!-- Sobre & Desconectar -->
+        <!-- Sobre & Desconectar Conta -->
         <div class="grid grid-cols-2 gap-1.5 sb-hide">
           <button
             type="button"
             onclick="openAboutModal()"
-            class="flex items-center justify-center gap-1.5 rounded-xl border nexus-border bg-[#111931] py-2 px-2 text-[11px] font-medium text-slate-300 hover:border-[#06b6d4]/50 hover:text-cyan-300 transition"
+            class="flex items-center justify-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#131c36] py-2 px-2 text-[11px] font-medium text-slate-300 hover:border-[#06b6d4]/50 hover:text-cyan-300 transition"
           >
             <i data-lucide="info" class="h-3.5 w-3.5 text-[#06b6d4]"></i>
             <span>Sobre</span>
@@ -730,14 +793,14 @@
     </aside>
 
     <!-- ===================================================================== -->
-    <!-- COLUNA CENTRAL + GAVETA DIREITA                                       -->
+    <!-- COLUNA CENTRAL + PAINEL DIREITO                                       -->
     <!-- ===================================================================== -->
     <div class="flex flex-1 flex-col min-w-0 overflow-hidden">
 
       <!-- Barra Superior do Workspace -->
-      <header class="flex h-16 shrink-0 items-center justify-between gap-2.5 border-b nexus-border bg-[#0b1020]/90 px-4 lg:px-6 backdrop-blur-md">
+      <header class="flex h-16 shrink-0 items-center justify-between gap-2.5 border-b border-[#1e293b] bg-[#0d1324]/95 px-4 lg:px-6 backdrop-blur-md">
         <div class="flex flex-1 items-center gap-2.5 max-w-xl">
-          <button type="button" onclick="toggleMobileDrawer(true)" aria-label="Abrir menu" class="flex lg:hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border nexus-border bg-[#111931] text-slate-300">
+          <button type="button" onclick="toggleMobileDrawer(true)" aria-label="Abrir menu" class="flex lg:hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#1e293b] bg-[#131c36] text-slate-300">
             <i data-lucide="menu" class="h-5 w-5"></i>
           </button>
 
@@ -748,32 +811,22 @@
               id="ws-search-input"
               type="text"
               placeholder="Buscar arquivos na Nuvem SSD..."
-              class="h-10 w-full rounded-xl border nexus-border bg-[#060913] pl-10 pr-16 text-xs sm:text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/25 transition"
+              class="h-10 w-full rounded-xl border border-[#1e293b] bg-[#060913] pl-10 pr-16 text-xs sm:text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none focus:ring-2 focus:ring-[#06b6d4]/25 transition"
             />
             <div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
               <button id="ws-clear-search" type="button" onclick="clearWorkspaceSearch()" class="hidden p-1 text-slate-400 hover:text-white">
                 <i data-lucide="x" class="h-3.5 w-3.5"></i>
               </button>
-              <kbd class="hidden sm:inline-block rounded border nexus-border bg-[#111931] px-1.5 py-0.5 font-mono text-[10px] text-slate-400">Ctrl+K</kbd>
+              <kbd class="hidden sm:inline-block rounded border border-[#1e293b] bg-[#131c36] px-1.5 py-0.5 font-mono text-[10px] text-slate-400">Ctrl+K</kbd>
             </div>
           </div>
         </div>
 
-        <!-- Controles Direitos: Auto-Lock, Grade/Lista, Upload, Bloqueio Rápido -->
+        <!-- Controles Direitos: Grade/Lista, Atualizar, Enviar Arquivo, Bloqueio Rápido -->
         <div class="flex items-center gap-2">
-          <!-- Temporizador de Auto-Lock por Inatividade -->
-          <div class="hidden xl:flex items-center gap-1.5 rounded-xl border nexus-border bg-[#060913] px-2.5 py-1.5 text-[11px] text-slate-400" title="Tempo de inatividade para bloqueio automático">
-            <i data-lucide="timer" class="h-3.5 w-3.5 text-[#06b6d4]"></i>
-            <select id="select-autolock" onchange="setAutoLockMinutes(this.value)" aria-label="Bloqueio automático por inatividade" class="bg-transparent font-medium text-slate-200 focus:outline-none cursor-pointer">
-              <option value="0" class="bg-[#0b1020]">Auto-Lock: Off</option>
-              <option value="3" class="bg-[#0b1020]">Auto-Lock: 3 min</option>
-              <option value="5" selected class="bg-[#0b1020]">Auto-Lock: 5 min</option>
-            </select>
-          </div>
-
           <!-- Alternador Grade / Lista -->
-          <div class="hidden sm:flex items-center rounded-xl border nexus-border bg-[#060913] p-1">
-            <button id="btn-mode-grid" type="button" onclick="setWorkspaceView('grid')" class="flex items-center gap-1.5 rounded-lg bg-[#111931] px-2.5 py-1.5 text-xs font-medium text-[#06b6d4] transition">
+          <div class="hidden sm:flex items-center rounded-xl border border-[#1e293b] bg-[#060913] p-1">
+            <button id="btn-mode-grid" type="button" onclick="setWorkspaceView('grid')" class="flex items-center gap-1.5 rounded-lg bg-[#131c36] px-2.5 py-1.5 text-xs font-medium text-[#06b6d4] transition">
               <i data-lucide="layout-grid" class="h-3.5 w-3.5"></i>
               <span class="hidden md:inline">Grade</span>
             </button>
@@ -787,24 +840,24 @@
           <button
             type="button"
             onclick="refreshCloudFiles(true)"
-            title="Sincronizar novamente"
-            aria-label="Sincronizar novamente"
-            class="flex h-10 w-10 items-center justify-center rounded-xl border nexus-border bg-[#111931] text-slate-300 hover:border-[#06b6d4]/50 hover:text-cyan-300 transition"
+            title="Sincronizar arquivos"
+            aria-label="Sincronizar arquivos"
+            class="flex h-10 w-10 items-center justify-center rounded-xl border border-[#1e293b] bg-[#131c36] text-slate-300 hover:border-[#06b6d4]/50 hover:text-cyan-300 transition"
           >
             <i id="icon-sync-refresh" data-lucide="refresh-cw" class="h-4 w-4"></i>
           </button>
 
-          <!-- Botão Upload -->
+          <!-- Botão Enviar Arquivo -->
           <button
             type="button"
             onclick="triggerCloudUpload()"
             class="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-3.5 py-2.5 text-xs font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 active:scale-[0.99] transition"
           >
             <i data-lucide="upload-cloud" class="h-4 w-4"></i>
-            <span>Upload</span>
+            <span>Enviar Arquivo</span>
           </button>
 
-          <!-- Botão Bloqueio Rápido / Pânico (Alt+L) -->
+          <!-- Botão Bloqueio Rápido (Alt+L) -->
           <button
             type="button"
             onclick="triggerPanicLock('Bloqueio Rápido Ativado')"
@@ -812,15 +865,15 @@
             class="flex items-center gap-1.5 rounded-xl border border-[#dc2626]/45 bg-[#dc2626]/15 px-3 py-2.5 text-xs font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition"
           >
             <i data-lucide="lock" class="h-4 w-4"></i>
-            <span class="hidden md:inline">Bloqueio Rápido (Alt+L)</span>
+            <span class="hidden xl:inline">Bloqueio Rápido</span>
           </button>
         </div>
       </header>
 
-      <!-- Área Principal + Gaveta de Preview -->
+      <!-- Área Principal + Painel Inspetor -->
       <div class="flex flex-1 overflow-hidden">
 
-        <!-- ZONA 2: ÁREA CENTRAL DE ARQUIVOS -->
+        <!-- ZONA 2: EXPLORADOR CENTRAL DE ARQUIVOS -->
         <main class="flex-1 overflow-y-auto p-4 lg:p-6">
 
           <!-- Cabeçalho da Seção -->
@@ -833,7 +886,7 @@
                 </span>
               </div>
               <p class="mt-1 text-xs text-slate-400">
-                Arraste arquivos para qualquer lugar da tela para enviar ou clique em um item para visualizar.
+                Arraste arquivos para qualquer lugar da janela para enviar ou clique em um item para inspecionar.
               </p>
             </div>
           </div>
@@ -849,17 +902,17 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
-              <button type="button" onclick="batchToggleFavorite()" class="inline-flex items-center gap-1.5 rounded-xl border nexus-border bg-[#0b1020] px-3 py-1.5 text-xs font-medium text-amber-300 hover:bg-[#111931] transition">
+              <button type="button" onclick="batchToggleFavorite()" class="inline-flex items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#0d1324] px-3 py-1.5 text-xs font-medium text-amber-300 hover:bg-[#131c36] transition">
                 <i data-lucide="star" class="h-3.5 w-3.5"></i>
                 <span>Favoritar</span>
               </button>
 
-              <button type="button" onclick="openMoveProfileModal(null)" class="inline-flex items-center gap-1.5 rounded-xl border nexus-border bg-[#0b1020] px-3 py-1.5 text-xs font-medium text-[#06b6d4] hover:bg-[#111931] transition">
+              <button type="button" onclick="openMoveProfileModal(null)" class="inline-flex items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#0d1324] px-3 py-1.5 text-xs font-medium text-[#06b6d4] hover:bg-[#131c36] transition">
                 <i data-lucide="folder-input" class="h-3.5 w-3.5"></i>
-                <span>Mover Perfil/Cofre</span>
+                <span>Mover Cofre</span>
               </button>
 
-              <button type="button" onclick="batchDownloadSelected()" class="inline-flex items-center gap-1.5 rounded-xl border nexus-border bg-[#0b1020] px-3 py-1.5 text-xs font-medium text-emerald-300 hover:bg-[#111931] transition">
+              <button type="button" onclick="batchDownloadSelected()" class="inline-flex items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#0d1324] px-3 py-1.5 text-xs font-medium text-emerald-300 hover:bg-[#131c36] transition">
                 <i data-lucide="download" class="h-3.5 w-3.5"></i>
                 <span>Baixar</span>
               </button>
@@ -873,12 +926,12 @@
             </div>
           </div>
 
-          <!-- Grade, Lista ou Fila de Transferências -->
+          <!-- Grade ou Lista de Arquivos -->
           <div id="ws-files-container"></div>
         </main>
 
-        <!-- ZONA 3: GAVETA DIREITA DE PREVIEW & DETALHES -->
-        <aside id="ws-preview-drawer" class="fixed inset-y-0 right-0 z-40 hidden w-full sm:w-[410px] flex-col border-l nexus-border bg-[#0b1020] shadow-2xl lg:static"></aside>
+        <!-- ZONA 3: PAINEL DIREITO DE INSPETOR & PRÉ-VISUALIZAÇÃO -->
+        <aside id="ws-preview-drawer" class="fixed inset-y-0 right-0 z-40 hidden w-full sm:w-[410px] flex-col border-l border-[#1e293b] bg-[#0d1324] shadow-2xl lg:static"></aside>
 
       </div>
     </div>
@@ -888,44 +941,40 @@
   <!-- MODAL: DESBLOQUEIO DE PERFIL / COFRE POR PIN                            -->
   <!-- ======================================================================= -->
   <div id="modal-pin-unlock" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
-    <div id="modal-pin-card" class="w-full max-w-sm rounded-3xl glass-card p-6 shadow-2xl animate-fade-up">
+    <div id="modal-pin-card" class="w-full max-w-sm rounded-3xl nexus-card p-6 shadow-2xl animate-fade-up">
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-3">
-          <div id="unlock-pin-icon-box" class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#06b6d4]/15 text-[#06b6d4] border border-[#06b6d4]/35">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#06b6d4]/15 text-[#06b6d4] border border-[#06b6d4]/35">
             <i data-lucide="lock" class="h-5 w-5"></i>
           </div>
           <div>
             <h3 id="unlock-pin-title" class="text-base font-bold text-white">Cofre Protegido</h3>
-            <p class="text-xs text-slate-400">Digite seu PIN de 4 dígitos</p>
+            <p id="unlock-pin-subtitle" class="text-xs text-slate-400">Digite o PIN para desbloquear</p>
           </div>
         </div>
-        <button type="button" onclick="closePinUnlockModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#111931] hover:text-white">
+        <button type="button" onclick="closePinUnlockModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#131c36] hover:text-white">
           <i data-lucide="x" class="h-5 w-5"></i>
         </button>
       </div>
 
-      <div class="my-5 flex justify-center gap-3.5">
-        <div id="unlock-dot-0" class="flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-2xl font-bold text-[#06b6d4]"></div>
-        <div id="unlock-dot-1" class="flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-2xl font-bold text-[#06b6d4]"></div>
-        <div id="unlock-dot-2" class="flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-2xl font-bold text-[#06b6d4]"></div>
-        <div id="unlock-dot-3" class="flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-2xl font-bold text-[#06b6d4]"></div>
-      </div>
+      <!-- Caixas dinâmicas de acordo com o tamanho do PIN (4 a 6 dígitos) -->
+      <div id="unlock-dots-row" class="my-5 flex justify-center gap-2.5"></div>
 
       <p id="unlock-pin-error" class="mb-3 min-h-[16px] text-center text-xs font-medium text-[#dc2626]"></p>
 
       <div class="grid grid-cols-3 gap-2">
-        <button type="button" onclick="pressUnlockDigit('1')" class="py-3 rounded-xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">1</button>
-        <button type="button" onclick="pressUnlockDigit('2')" class="py-3 rounded-xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">2</button>
-        <button type="button" onclick="pressUnlockDigit('3')" class="py-3 rounded-xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">3</button>
-        <button type="button" onclick="pressUnlockDigit('4')" class="py-3 rounded-xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">4</button>
-        <button type="button" onclick="pressUnlockDigit('5')" class="py-3 rounded-xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">5</button>
-        <button type="button" onclick="pressUnlockDigit('6')" class="py-3 rounded-xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">6</button>
-        <button type="button" onclick="pressUnlockDigit('7')" class="py-3 rounded-xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">7</button>
-        <button type="button" onclick="pressUnlockDigit('8')" class="py-3 rounded-xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">8</button>
-        <button type="button" onclick="pressUnlockDigit('9')" class="py-3 rounded-xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">9</button>
-        <button type="button" onclick="clearUnlockBuffer()" class="py-3 rounded-xl border nexus-border bg-[#060913] text-xs font-semibold text-slate-400 hover:text-white transition">Limpar</button>
-        <button type="button" onclick="pressUnlockDigit('0')" class="py-3 rounded-xl border nexus-border bg-[#111931] font-mono text-lg font-semibold text-white hover:bg-[#192547] active:scale-95 transition">0</button>
-        <button type="button" onclick="backspaceUnlockBuffer()" aria-label="Apagar" class="flex py-3 items-center justify-center rounded-xl border nexus-border bg-[#060913] text-slate-400 hover:text-white transition">
+        <button type="button" onclick="pressUnlockDigit('1')" class="py-3 rounded-xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">1</button>
+        <button type="button" onclick="pressUnlockDigit('2')" class="py-3 rounded-xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">2</button>
+        <button type="button" onclick="pressUnlockDigit('3')" class="py-3 rounded-xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">3</button>
+        <button type="button" onclick="pressUnlockDigit('4')" class="py-3 rounded-xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">4</button>
+        <button type="button" onclick="pressUnlockDigit('5')" class="py-3 rounded-xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">5</button>
+        <button type="button" onclick="pressUnlockDigit('6')" class="py-3 rounded-xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">6</button>
+        <button type="button" onclick="pressUnlockDigit('7')" class="py-3 rounded-xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">7</button>
+        <button type="button" onclick="pressUnlockDigit('8')" class="py-3 rounded-xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">8</button>
+        <button type="button" onclick="pressUnlockDigit('9')" class="py-3 rounded-xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">9</button>
+        <button type="button" onclick="clearUnlockBuffer()" class="py-3 rounded-xl border border-[#1e293b] bg-[#060913] text-xs font-semibold text-slate-400 hover:text-white transition">Limpar</button>
+        <button type="button" onclick="pressUnlockDigit('0')" class="py-3 rounded-xl border border-[#1e293b] bg-[#131c36] font-mono text-lg font-semibold text-white hover:bg-[#1a274a] active:scale-95 transition">0</button>
+        <button type="button" onclick="backspaceUnlockBuffer()" aria-label="Apagar" class="flex py-3 items-center justify-center rounded-xl border border-[#1e293b] bg-[#060913] text-slate-400 hover:text-white transition">
           <i data-lucide="delete" class="h-5 w-5"></i>
         </button>
       </div>
@@ -936,7 +985,7 @@
   <!-- MODAL: CRIAR NOVO PERFIL / COFRE ADICIONAL                              -->
   <!-- ======================================================================= -->
   <div id="modal-new-profile" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
-    <div class="w-full max-w-md rounded-3xl glass-card p-6 shadow-2xl animate-fade-up">
+    <div class="w-full max-w-md rounded-3xl nexus-card p-6 shadow-2xl animate-fade-up">
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2.5">
           <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2563eb]/20 text-[#06b6d4] border border-[#2563eb]/40">
@@ -944,10 +993,10 @@
           </div>
           <div>
             <h3 class="text-base font-bold text-white">Novo Perfil / Cofre</h3>
-            <p class="text-xs text-slate-400">Crie um espaço adicional com PIN independente</p>
+            <p class="text-xs text-slate-400">Crie um espaço adicional com PIN SHA-256 independente</p>
           </div>
         </div>
-        <button type="button" onclick="closeNewProfileModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#111931] hover:text-white">
+        <button type="button" onclick="closeNewProfileModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#131c36] hover:text-white">
           <i data-lucide="x" class="h-5 w-5"></i>
         </button>
       </div>
@@ -960,14 +1009,14 @@
             type="text"
             maxlength="32"
             placeholder="Ex: Cofre Privado, Trabalho, Galeria..."
-            class="h-11 w-full rounded-xl border nexus-border bg-[#060913] px-3.5 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none"
+            class="h-11 w-full rounded-xl border border-[#1e293b] bg-[#060913] px-3.5 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none"
           />
         </div>
 
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-2">Cor de Destaque</label>
           <div class="flex items-center gap-3">
-            <button type="button" onclick="selectNewProfileColor('cyan')" data-np-swatch="cyan" class="np-swatch h-8 w-8 rounded-full bg-[#06b6d4] ring-2 ring-white ring-offset-2 ring-offset-[#0b1020] transition"></button>
+            <button type="button" onclick="selectNewProfileColor('cyan')" data-np-swatch="cyan" class="np-swatch h-8 w-8 rounded-full bg-[#06b6d4] ring-2 ring-white ring-offset-2 ring-offset-[#0d1324] transition"></button>
             <button type="button" onclick="selectNewProfileColor('blue')" data-np-swatch="blue" class="np-swatch h-8 w-8 rounded-full bg-[#2563eb] opacity-70 hover:opacity-100 transition"></button>
             <button type="button" onclick="selectNewProfileColor('red')" data-np-swatch="red" class="np-swatch h-8 w-8 rounded-full bg-[#dc2626] opacity-70 hover:opacity-100 transition"></button>
             <button type="button" onclick="selectNewProfileColor('emerald')" data-np-swatch="emerald" class="np-swatch h-8 w-8 rounded-full bg-emerald-500 opacity-70 hover:opacity-100 transition"></button>
@@ -975,29 +1024,29 @@
           </div>
         </div>
 
-        <label class="flex items-center justify-between gap-3 rounded-xl border nexus-border bg-[#060913] p-3 cursor-pointer">
+        <label class="flex items-center justify-between gap-3 rounded-xl border border-[#1e293b] bg-[#060913] p-3 cursor-pointer">
           <div class="text-xs">
-            <span class="font-semibold text-white block">Proteger com PIN de 4 dígitos</span>
-            <span class="text-[11px] text-slate-400">Recomendado para cofres privados</span>
+            <span class="font-semibold text-white block">Proteger com PIN (4 a 6 dígitos)</span>
+            <span class="text-[11px] text-slate-400">Criptografado localmente com SHA-256</span>
           </div>
           <input id="np-pin-toggle" type="checkbox" checked onchange="toggleNewProfilePinFields()" class="h-4 w-4 rounded border-slate-600 bg-[#060913] text-[#06b6d4]" />
         </label>
 
         <div id="np-pin-fields" class="grid grid-cols-2 gap-2.5">
           <div>
-            <label for="np-pin-1" class="block text-[11px] text-slate-300 mb-1">PIN (4 dígitos)</label>
-            <input id="np-pin-1" type="password" inputmode="numeric" maxlength="4" placeholder="••••" class="h-10 w-full rounded-xl border nexus-border bg-[#060913] text-center font-mono text-base tracking-widest text-white focus:border-[#06b6d4] focus:outline-none" />
+            <label for="np-pin-1" class="block text-[11px] text-slate-300 mb-1">PIN (4 a 6 dígitos)</label>
+            <input id="np-pin-1" type="password" inputmode="numeric" maxlength="6" placeholder="••••" class="h-10 w-full rounded-xl border border-[#1e293b] bg-[#060913] text-center font-mono text-base tracking-widest text-white focus:border-[#06b6d4] focus:outline-none" />
           </div>
           <div>
             <label for="np-pin-2" class="block text-[11px] text-slate-300 mb-1">Confirmar PIN</label>
-            <input id="np-pin-2" type="password" inputmode="numeric" maxlength="4" placeholder="••••" class="h-10 w-full rounded-xl border nexus-border bg-[#060913] text-center font-mono text-base tracking-widest text-white focus:border-[#06b6d4] focus:outline-none" />
+            <input id="np-pin-2" type="password" inputmode="numeric" maxlength="6" placeholder="••••" class="h-10 w-full rounded-xl border border-[#1e293b] bg-[#060913] text-center font-mono text-base tracking-widest text-white focus:border-[#06b6d4] focus:outline-none" />
           </div>
         </div>
 
         <p id="np-error" class="min-h-[16px] text-xs font-medium text-[#dc2626]"></p>
 
         <div class="flex justify-end gap-2">
-          <button type="button" onclick="closeNewProfileModal()" class="rounded-xl border nexus-border bg-[#111931] px-4 py-2 text-xs font-medium text-slate-300 hover:text-white">
+          <button type="button" onclick="closeNewProfileModal()" class="rounded-xl border border-[#1e293b] bg-[#131c36] px-4 py-2 text-xs font-medium text-slate-300 hover:text-white">
             Cancelar
           </button>
           <button type="button" onclick="saveAdditionalProfile()" class="rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 py-2 text-xs font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 transition">
@@ -1012,7 +1061,7 @@
   <!-- MODAL: MOVER ARQUIVOS PARA OUTRO PERFIL / COFRE                          -->
   <!-- ======================================================================= -->
   <div id="modal-move-profile" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
-    <div class="w-full max-w-sm rounded-3xl glass-card p-6 shadow-2xl animate-fade-up">
+    <div class="w-full max-w-sm rounded-3xl nexus-card p-6 shadow-2xl animate-fade-up">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-base font-bold text-white">Mover para Perfil / Cofre</h3>
         <button type="button" onclick="closeMoveProfileModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -1028,7 +1077,7 @@
   <!-- MODAL: SOBRE O SSD NEXUS                                                -->
   <!-- ======================================================================= -->
   <div id="modal-about" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
-    <div class="w-full max-w-md rounded-3xl glass-card p-6 shadow-2xl animate-fade-up">
+    <div class="w-full max-w-md rounded-3xl nexus-card p-6 shadow-2xl animate-fade-up">
       <div class="flex items-start justify-between">
         <div class="flex items-center gap-3">
           <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#06b6d4] text-white shadow-lg">
@@ -1044,12 +1093,12 @@
         </button>
       </div>
 
-      <div class="mt-5 space-y-3 rounded-2xl border nexus-border bg-[#060913] p-4 text-xs">
-        <div class="flex flex-col gap-1 border-b nexus-border pb-2.5">
+      <div class="mt-5 space-y-3 rounded-2xl border border-[#1e293b] bg-[#060913] p-4 text-xs">
+        <div class="flex flex-col gap-1 border-b border-[#1e293b] pb-2.5">
           <span class="text-slate-400">Créditos de Desenvolvimento</span>
           <span class="font-semibold text-[#06b6d4] text-sm">Desenvolvedor: Josimar Sousa • SSD Soluções 2026</span>
         </div>
-        <div class="flex justify-between border-b nexus-border pb-2">
+        <div class="flex justify-between border-b border-[#1e293b] pb-2">
           <span class="text-slate-400">Motor de Sincronização</span>
           <span class="font-mono text-emerald-400">SSD Sync WebAssembly Local + IndexedDB</span>
         </div>
@@ -1173,6 +1222,7 @@
       // Estado do Modal de Desbloqueio por PIN
       unlockModal: {
         targetProfileId: null,
+        pinLength: 4,
         buffer: ''
       },
 
@@ -1186,9 +1236,6 @@
       thumbnailUrls: {},
       previewUrls: {},
       previewZoom: 1,
-
-      // Fila de transferências
-      transferQueue: [],
 
       // Workspace UI
       category: 'all',
@@ -1287,7 +1334,7 @@
 
       resolveLocalTdClient() {
         if (window.__SSD_TDWEB_LOAD_FAILED) {
-          throw new Error('O arquivo ./tdweb.js não foi encontrado na pasta raiz do site.');
+          throw new Error('O arquivo ./tdweb.js não foi encontrado na pasta raiz do repositório.');
         }
         const TdClient = window.tdweb?.default || window.tdweb;
         if (typeof TdClient !== 'function') {
@@ -1328,17 +1375,17 @@
         const paramsObject = {
           '@type': 'tdlibParameters',
           use_test_dc: false,
-          database_directory: 'ssd_nexus_db',
-          files_directory: 'ssd_nexus_files',
+          database_directory: '/tdlib/db',
+          files_directory: '/tdlib/files',
           use_file_database: true,
           use_chat_info_database: true,
           use_message_database: true,
           use_secret_chats: false,
           api_id: Number(this.apiId),
           api_hash: String(this.apiHash),
-          system_language_code: 'pt',
+          system_language_code: 'pt-BR',
           device_model: 'SSD Nexus Web',
-          system_version: 'Web',
+          system_version: 'Web 2026',
           application_version: '2.0.0',
           enable_storage_optimizer: true,
           ignore_file_names: false
@@ -1353,17 +1400,17 @@
           return await this.send({
             '@type': 'setTdlibParameters',
             use_test_dc: false,
-            database_directory: 'ssd_nexus_db',
-            files_directory: 'ssd_nexus_files',
+            database_directory: '/tdlib/db',
+            files_directory: '/tdlib/files',
             use_file_database: true,
             use_chat_info_database: true,
             use_message_database: true,
             use_secret_chats: false,
             api_id: Number(this.apiId),
             api_hash: String(this.apiHash),
-            system_language_code: 'pt',
+            system_language_code: 'pt-BR',
             device_model: 'SSD Nexus Web',
-            system_version: 'Web',
+            system_version: 'Web 2026',
             application_version: '2.0.0',
             enable_storage_optimizer: true,
             ignore_file_names: false
@@ -1378,10 +1425,13 @@
         });
       }
 
-      async submitPhoneNumber(phoneNumber) {
+      /**
+       * Envio simplificado compatível com tdweb 1.8.0 (sem settings / phoneNumberAuthenticationSettings)
+       */
+      async submitPhoneNumber(fullPhone) {
         return await this.send({
           '@type': 'setAuthenticationPhoneNumber',
-          phone_number: phoneNumber
+          phone_number: fullPhone
         });
       }
 
@@ -1503,11 +1553,11 @@
       state.authStateType = 'init';
       updateInitProgress(
         'Inicializando conexão segura...',
-        'Carregando módulo local SSD Sync WebAssembly (./tdweb.js)',
+        'Carregando motor local SSD Sync WebAssembly (./tdweb.js)',
         25
       );
 
-      // Timeout de segurança de 60 segundos com diagnóstico detalhado
+      // Timeout de segurança de 60 segundos
       state.initTimeoutId = setTimeout(() => {
         const pendingStates = [
           'init',
@@ -1516,7 +1566,7 @@
         ];
         if (pendingStates.includes(state.authStateType)) {
           document.getElementById('auth-init-error-msg').textContent =
-            'O motor WebAssembly excedeu o tempo limite de 60 segundos para responder. Verifique se os arquivos .worker.js, .wasm e .mem estão na mesma pasta do index.html.';
+            'O motor WebAssembly excedeu o tempo limite de 60 segundos para responder. Verifique se os arquivos .worker.js, .wasm e .mem estão na raiz do site.';
           document.getElementById('auth-init-error-detail').textContent =
             `Último estado: ${state.authStateType}`;
           setAuthSubPanel('init-error');
@@ -1537,6 +1587,7 @@
         );
       } catch (err) {
         clearInitSafetyTimeout();
+        console.error('[SSD Nexus Bootstrap Error]', err);
         document.getElementById('auth-init-error-msg').textContent =
           (err && err.message) || 'Não foi possível inicializar o motor local ./tdweb.js.';
         document.getElementById('auth-init-error-detail').textContent =
@@ -1587,10 +1638,11 @@
             await state.syncEngine.applyTdlibParameters();
           } catch (err) {
             clearInitSafetyTimeout();
+            console.error('[SSD Nexus Parameters Error]', err);
             document.getElementById('auth-init-error-msg').textContent =
               'Falha ao enviar parâmetros de configuração ao motor SSD Sync.';
             document.getElementById('auth-init-error-detail').textContent =
-              (err && (err.message || String(err))) || '';
+              `[Erro ${err?.code || 'ERR'}] ${err?.message || JSON.stringify(err)}`;
             setAuthSubPanel('init-error');
           }
           break;
@@ -1606,10 +1658,11 @@
             await state.syncEngine.confirmDatabaseEncryptionKey();
           } catch (err) {
             clearInitSafetyTimeout();
+            console.error('[SSD Nexus DB Key Error]', err);
             document.getElementById('auth-init-error-msg').textContent =
               'Não foi possível validar a chave de criptografia do banco local.';
             document.getElementById('auth-init-error-detail').textContent =
-              (err && (err.message || String(err))) || '';
+              `[Erro ${err?.code || 'ERR'}] ${err?.message || JSON.stringify(err)}`;
             setAuthSubPanel('init-error');
           }
           break;
@@ -1618,6 +1671,7 @@
         case 'authorizationStateWaitPhoneNumber': {
           clearInitSafetyTimeout();
           stopResendCountdown();
+          clearAuthErrorBox('phone');
           setAuthSubPanel('phone');
           const phoneInput = document.getElementById('input-phone');
           if (phoneInput) phoneInput.focus();
@@ -1626,11 +1680,11 @@
 
         case 'authorizationStateWaitCode': {
           clearInitSafetyTimeout();
+          clearAuthErrorBox('code');
           setAuthSubPanel('code');
           document.getElementById('label-sent-phone').textContent = state.formattedPhone || 'Número informado';
           const boxes = document.querySelectorAll('.ssd-code-box');
           boxes.forEach(b => (b.value = ''));
-          document.getElementById('error-code').textContent = '';
           if (boxes[0]) boxes[0].focus();
           startResendCountdown(60);
           break;
@@ -1639,6 +1693,7 @@
         case 'authorizationStateWaitPassword': {
           clearInitSafetyTimeout();
           stopResendCountdown();
+          clearAuthErrorBox('password');
           setAuthSubPanel('password');
           const hint = (authState.password_hint || '').trim();
           document.getElementById('label-password-hint').textContent = hint
@@ -1646,7 +1701,6 @@
             : 'Sua conta possui senha adicional de proteção.';
           const pwdInput = document.getElementById('input-2fa-password');
           pwdInput.value = '';
-          document.getElementById('error-password').textContent = '';
           pwdInput.focus();
           break;
         }
@@ -1669,7 +1723,7 @@
     }
 
     // =========================================================================
-    // 6. INTERAÇÕES DA TELA DE LOGIN (TELEFONE, CÓDIGO 5 DÍGITOS E 2FA)
+    // 6. INTERAÇÕES DA TELA DE LOGIN & EXIBIÇÃO DE ERROS REAIS DO SERVIDOR
     // =========================================================================
     function setAuthSubPanel(panelName, meta = {}) {
       const panels = ['init', 'init-error', 'phone', 'code', 'password'];
@@ -1685,6 +1739,63 @@
           if (bar) bar.style.width = `${meta.pct}%`;
         }
       }
+      refreshIcons();
+    }
+
+    function clearAuthErrorBox(scope) {
+      const box = document.getElementById(`error-${scope}-box`);
+      const rawEl = document.getElementById(`error-${scope}-raw`);
+      const hintEl = document.getElementById(`error-${scope}-hint`);
+      if (box) box.classList.add('hidden');
+      if (rawEl) rawEl.textContent = '';
+      if (hintEl) hintEl.textContent = '';
+    }
+
+    function getFriendlyErrorExplanation(rawMsg) {
+      const upper = String(rawMsg || '').toUpperCase();
+      if (upper.includes('UPDATE_APP_TO_LOGIN')) {
+        return 'O servidor exige uma versão mais recente do cliente para autenticar este número ou conta.';
+      }
+      if (upper.includes('FLOOD_WAIT')) {
+        const match = upper.match(/FLOOD_WAIT_(\d+)/);
+        const secs = match ? `${match[1]} segundos` : 'alguns instantes';
+        return `Muitas tentativas consecutivas detectadas. Aguarde ${secs} antes de solicitar um novo envio.`;
+      }
+      if (upper.includes('API_ID_INVALID')) {
+        return 'As credenciais api_id ou api_hash configuradas no código foram recusadas pelo servidor.';
+      }
+      if (upper.includes('PHONE_NUMBER_INVALID')) {
+        return 'Número de celular inválido. Verifique o código do país (DDI) e o DDD informado.';
+      }
+      if (upper.includes('PHONE_NUMBER_BANNED')) {
+        return 'Este número de telefone possui restrição de acesso nos servidores.';
+      }
+      if (upper.includes('PHONE_CODE_INVALID')) {
+        return 'O código de 5 dígitos digitado está incorreto. Confira os números recebidos.';
+      }
+      if (upper.includes('PHONE_CODE_EXPIRED')) {
+        return 'O código informado expirou. Clique em "Reenviar código" para receber um novo.';
+      }
+      if (upper.includes('PASSWORD_HASH_INVALID')) {
+        return 'A senha de verificação em duas etapas está incorreta.';
+      }
+      return 'Verifique os dados informados e tente novamente.';
+    }
+
+    function showDetailedAuthError(scope, err) {
+      console.error('[SSD Nexus Auth Error]', err);
+      const code = err && err.code !== undefined ? err.code : 'ERR';
+      const msg = err && err.message ? err.message : (typeof err === 'string' ? err : JSON.stringify(err));
+      const formattedRaw = `[Erro ${code}] ${msg}`;
+      const friendlyHint = getFriendlyErrorExplanation(msg);
+
+      const box = document.getElementById(`error-${scope}-box`);
+      const rawEl = document.getElementById(`error-${scope}-raw`);
+      const hintEl = document.getElementById(`error-${scope}-hint`);
+
+      if (rawEl) rawEl.textContent = formattedRaw;
+      if (hintEl) hintEl.textContent = friendlyHint;
+      if (box) box.classList.remove('hidden');
       refreshIcons();
     }
 
@@ -1705,7 +1816,7 @@
       } else {
         e.target.value = digits;
       }
-      document.getElementById('error-phone').textContent = '';
+      clearAuthErrorBox('phone');
     });
 
     phoneInputEl.addEventListener('keydown', (e) => {
@@ -1715,26 +1826,28 @@
     async function handlePhoneSubmit() {
       if (!state.syncEngine) return;
 
-      const errEl = document.getElementById('error-phone');
+      clearAuthErrorBox('phone');
       const btn = document.getElementById('btn-submit-phone');
-      errEl.textContent = '';
 
       const ddi = document.getElementById('select-ddi').value;
       const digits = phoneInputEl.value.replace(/\D/g, '');
       if (digits.length < 8) {
-        errEl.textContent = 'Digite um número de celular válido com DDD.';
+        showDetailedAuthError('phone', {
+          code: 'CLIENT_VALIDATION',
+          message: 'PHONE_NUMBER_INVALID: Digite um número de celular válido com DDD.'
+        });
         phoneInputEl.focus();
         return;
       }
 
-      const fullNumber = `${ddi}${digits}`;
+      const fullPhone = `${ddi}${digits}`;
       state.formattedPhone = `${ddi} ${phoneInputEl.value}`;
 
       btn.disabled = true;
       try {
-        await state.syncEngine.submitPhoneNumber(fullNumber);
+        await state.syncEngine.submitPhoneNumber(fullPhone);
       } catch (err) {
-        errEl.textContent = translateSyncError(err, 'Não foi possível enviar o código para este número.');
+        showDetailedAuthError('phone', err);
       } finally {
         btn.disabled = false;
       }
@@ -1742,6 +1855,7 @@
 
     function handleChangePhoneNumber() {
       stopResendCountdown();
+      clearAuthErrorBox('code');
       setAuthSubPanel('phone');
       phoneInputEl.focus();
     }
@@ -1752,7 +1866,7 @@
       box.addEventListener('input', (e) => {
         const clean = e.target.value.replace(/\D/g, '');
         e.target.value = clean ? clean[0] : '';
-        document.getElementById('error-code').textContent = '';
+        clearAuthErrorBox('code');
 
         if (clean && idx < codeBoxes.length - 1) {
           codeBoxes[idx + 1].focus();
@@ -1797,21 +1911,23 @@
 
     async function handleCodeSubmit() {
       const code = codeBoxes.map(b => b.value).join('');
-      const errEl = document.getElementById('error-code');
       const btn = document.getElementById('btn-verify-code');
 
       if (code.length < 5) {
-        errEl.textContent = 'Preencha todos os 5 dígitos do código.';
+        showDetailedAuthError('code', {
+          code: 'CLIENT_VALIDATION',
+          message: 'PHONE_CODE_INVALID: Preencha todos os 5 dígitos do código.'
+        });
         shakeElement('code-inputs-wrapper');
         return;
       }
 
       btn.disabled = true;
-      errEl.textContent = '';
+      clearAuthErrorBox('code');
       try {
         await state.syncEngine.verifyCode(code);
       } catch (err) {
-        errEl.textContent = translateSyncError(err, 'Código inválido ou expirado. Tente novamente.');
+        showDetailedAuthError('code', err);
         shakeElement('code-inputs-wrapper');
         codeBoxes.forEach(b => (b.value = ''));
         if (codeBoxes[0]) codeBoxes[0].focus();
@@ -1851,13 +1967,13 @@
     }
 
     async function handleResendCode() {
+      clearAuthErrorBox('code');
       try {
         await state.syncEngine.resendCode();
         showToast('Código Reenviado', 'Um novo código de 5 dígitos foi enviado para seu dispositivo.', 'info');
         startResendCountdown(60);
       } catch (err) {
-        document.getElementById('error-code').textContent =
-          translateSyncError(err, 'Aguarde alguns instantes antes de solicitar outro código.');
+        showDetailedAuthError('code', err);
       }
     }
 
@@ -1877,37 +1993,29 @@
 
     async function handlePasswordSubmit() {
       const pwdInput = document.getElementById('input-2fa-password');
-      const errEl = document.getElementById('error-password');
       const btn = document.getElementById('btn-submit-password');
       const pwd = pwdInput.value;
 
       if (!pwd) {
-        errEl.textContent = 'Digite sua senha de verificação em duas etapas.';
+        showDetailedAuthError('password', {
+          code: 'CLIENT_VALIDATION',
+          message: 'PASSWORD_EMPTY: Digite sua senha de verificação em duas etapas.'
+        });
         pwdInput.focus();
         return;
       }
 
       btn.disabled = true;
-      errEl.textContent = '';
+      clearAuthErrorBox('password');
       try {
         await state.syncEngine.verifyPassword(pwd);
       } catch (err) {
-        errEl.textContent = translateSyncError(err, 'Senha incorreta. Verifique e tente novamente.');
+        showDetailedAuthError('password', err);
         shakeElement('input-2fa-password');
         pwdInput.select();
       } finally {
         btn.disabled = false;
       }
-    }
-
-    function translateSyncError(err, fallback) {
-      const raw = (err && (err.message || err.toString())) || '';
-      if (raw.includes('PHONE_NUMBER_INVALID')) return 'Número de telefone inválido.';
-      if (raw.includes('PHONE_CODE_INVALID')) return 'Código de 5 dígitos incorreto.';
-      if (raw.includes('PHONE_CODE_EXPIRED')) return 'Este código expirou. Solicite um novo código.';
-      if (raw.includes('PASSWORD_HASH_INVALID')) return 'Senha de verificação incorreta.';
-      if (raw.includes('FLOOD_WAIT')) return 'Muitas tentativas recentes. Aguarde alguns segundos.';
-      return fallback;
     }
 
     // =========================================================================
@@ -1934,6 +2042,7 @@
           openProfileSelectorView();
         }
       } catch (err) {
+        console.error('[SSD Nexus getMe Error]', err);
         showToast('Erro de Sincronização', 'Não foi possível carregar os dados da conta.', 'danger');
       }
     }
@@ -1985,7 +2094,7 @@
     }
 
     // =========================================================================
-    // 8. ASSISTENTE DE ONBOARDING (2 PASSOS: PERFIL + PIN SHA-256)
+    // 8. ASSISTENTE DE ONBOARDING (2 PASSOS: PERFIL + PIN SHA-256 4 A 6 DÍGITOS)
     // =========================================================================
     function startOnboardingWizard(defaultName) {
       state.onboarding = {
@@ -2016,7 +2125,7 @@
         btn.classList.toggle('ring-2', active);
         btn.classList.toggle('ring-white', active);
         btn.classList.toggle('ring-offset-2', active);
-        btn.classList.toggle('ring-offset-[#0b1020]', active);
+        btn.classList.toggle('ring-offset-[#0d1324]', active);
         btn.classList.toggle('opacity-65', !active);
       });
     }
@@ -2040,6 +2149,7 @@
           name: state.onboarding.name,
           color: state.onboarding.color,
           pinHash: null,
+          pinLength: 0,
           createdAt: Date.now()
         };
         state.profiles.push(profile);
@@ -2070,65 +2180,93 @@
 
     function updateOnboardingPinUI() {
       const isConfirm = state.onboarding.stage === 'confirm';
+      const targetLen = isConfirm ? state.onboarding.firstPin.length : 6;
+
       document.getElementById('onb-pin-heading').textContent = isConfirm
-        ? 'Confirme seu PIN de 4 dígitos'
-        : 'Crie seu PIN de 4 dígitos';
+        ? `Confirme seu PIN (${targetLen} dígitos)`
+        : 'Crie seu PIN (4 a 6 dígitos)';
       document.getElementById('onb-pin-subheading').textContent = isConfirm
         ? 'Digite novamente o mesmo código para confirmar.'
-        : 'Escolha 4 dígitos para proteger o acesso ao seu perfil.';
+        : 'Digite de 4 a 6 números e toque no botão abaixo.';
+      document.getElementById('btn-onb-confirm-pin-label').textContent = isConfirm
+        ? 'Confirmar e Criar Perfil'
+        : 'Avançar para Confirmação';
       document.getElementById('onb-pin-error').textContent = '';
 
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 6; i++) {
         const dot = document.getElementById(`onb-dot-${i}`);
+        if (isConfirm && i >= targetLen) {
+          dot.classList.add('hidden');
+          continue;
+        }
+        dot.classList.remove('hidden');
+
         if (i < state.onboarding.buffer.length) {
           dot.textContent = '•';
-          dot.className = 'flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-[#06b6d4] bg-[#06b6d4]/15 font-mono text-2xl font-bold text-[#06b6d4] transition';
+          dot.className = 'flex h-13 w-11 py-3 items-center justify-center rounded-2xl border-2 border-[#06b6d4] bg-[#06b6d4]/15 font-mono text-xl font-bold text-[#06b6d4] transition';
+        } else if (i >= 4 && !isConfirm) {
+          dot.textContent = '';
+          dot.className = 'flex h-13 w-11 py-3 items-center justify-center rounded-2xl border border-dashed border-slate-700/70 bg-[#060913]/60 font-mono text-xl font-bold text-[#06b6d4] transition';
         } else {
           dot.textContent = '';
-          dot.className = 'flex h-14 w-12 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-2xl font-bold text-[#06b6d4] transition';
+          dot.className = 'flex h-13 w-11 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-xl font-bold text-[#06b6d4] transition';
         }
       }
     }
 
     async function handleOnboardingPinDigit(digit) {
-      if (state.onboarding.buffer.length >= 4) return;
+      const maxLen = state.onboarding.stage === 'confirm' ? state.onboarding.firstPin.length : 6;
+      if (state.onboarding.buffer.length >= maxLen) return;
       state.onboarding.buffer += digit;
       updateOnboardingPinUI();
 
-      if (state.onboarding.buffer.length === 4) {
+      if (state.onboarding.stage === 'confirm' && state.onboarding.buffer.length === state.onboarding.firstPin.length) {
         await new Promise(r => setTimeout(r, 150));
-        if (state.onboarding.stage === 'create') {
-          state.onboarding.firstPin = state.onboarding.buffer;
-          state.onboarding.buffer = '';
-          state.onboarding.stage = 'confirm';
-          updateOnboardingPinUI();
-        } else {
-          if (state.onboarding.buffer !== state.onboarding.firstPin) {
-            shakeElement('onb-pin-dots-container');
-            state.onboarding.stage = 'create';
-            state.onboarding.firstPin = '';
-            state.onboarding.buffer = '';
-            updateOnboardingPinUI();
-            document.getElementById('onb-pin-error').textContent = 'Os PINs não coincidem. Crie novamente.';
-            return;
-          }
-
-          const pinHash = await sha256Hex(state.onboarding.buffer);
-          const profile = {
-            id: 'prof_' + Date.now(),
-            name: state.onboarding.name,
-            color: state.onboarding.color,
-            pinHash: pinHash,
-            createdAt: Date.now()
-          };
-          state.profiles.push(profile);
-          saveAccountProfiles();
-          state.unlockedProfileIds.add(profile.id);
-
-          showToast('Perfil Protegido Criado', 'Seu PIN de segurança foi salvo com criptografia SHA-256.', 'success');
-          await enterWorkspace(profile.id);
-        }
+        await submitOnboardingPinStep();
       }
+    }
+
+    async function submitOnboardingPinStep() {
+      const errEl = document.getElementById('onb-pin-error');
+      if (state.onboarding.stage === 'create') {
+        if (state.onboarding.buffer.length < 4 || state.onboarding.buffer.length > 6) {
+          errEl.textContent = 'O PIN deve conter entre 4 e 6 dígitos.';
+          shakeElement('onb-pin-dots-container');
+          return;
+        }
+        state.onboarding.firstPin = state.onboarding.buffer;
+        state.onboarding.buffer = '';
+        state.onboarding.stage = 'confirm';
+        updateOnboardingPinUI();
+        return;
+      }
+
+      if (state.onboarding.buffer !== state.onboarding.firstPin) {
+        shakeElement('onb-pin-dots-container');
+        state.onboarding.stage = 'create';
+        state.onboarding.firstPin = '';
+        state.onboarding.buffer = '';
+        updateOnboardingPinUI();
+        errEl.textContent = 'Os PINs não coincidem. Crie novamente.';
+        return;
+      }
+
+      const pinLength = state.onboarding.buffer.length;
+      const pinHash = await sha256Hex(state.onboarding.buffer);
+      const profile = {
+        id: 'prof_' + Date.now(),
+        name: state.onboarding.name,
+        color: state.onboarding.color,
+        pinHash: pinHash,
+        pinLength: pinLength,
+        createdAt: Date.now()
+      };
+      state.profiles.push(profile);
+      saveAccountProfiles();
+      state.unlockedProfileIds.add(profile.id);
+
+      showToast('Perfil Protegido Criado', 'Seu PIN de segurança foi salvo com criptografia SHA-256.', 'success');
+      await enterWorkspace(profile.id);
     }
 
     function backspaceOnboardingPin() {
@@ -2159,12 +2297,13 @@
         const palette = ACCENT_PALETTE[prof.color] || ACCENT_PALETTE.cyan;
         const isProtected = Boolean(prof.pinHash);
         const isUnlocked = !isProtected || state.unlockedProfileIds.has(prof.id);
+        const len = prof.pinLength || 4;
 
         return `
           <button
             type="button"
             onclick="handleProfileCardClick('${prof.id}')"
-            class="group flex flex-col justify-between rounded-3xl glass-card p-6 text-left hover:border-[#06b6d4]/55 hover:bg-[#111931]/95 transition-all shadow-xl animate-fade-up"
+            class="group flex flex-col justify-between rounded-3xl nexus-card p-6 text-left hover:border-[#06b6d4]/55 hover:bg-[#131c36]/95 transition-all shadow-xl animate-fade-up"
           >
             <div>
               <div class="flex items-start justify-between gap-3 mb-5">
@@ -2172,7 +2311,7 @@
                   <i data-lucide="${isProtected ? (isUnlocked ? 'unlock' : 'lock') : 'folder-check'}" class="h-6 w-6"></i>
                 </div>
                 <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-semibold ${isProtected ? (isUnlocked ? 'border-emerald-500/35 bg-emerald-500/15 text-emerald-300' : 'border-[#06b6d4]/40 bg-[#06b6d4]/15 text-[#06b6d4]') : 'border-[#2563eb]/40 bg-[#2563eb]/15 text-blue-300'}">
-                  ${isProtected ? (isUnlocked ? 'DESBLOQUEADO' : 'COFRE PIN') : 'ACESSO DIRETO'}
+                  ${isProtected ? (isUnlocked ? 'DESBLOQUEADO' : `PIN ${len} DÍGITOS`) : 'ACESSO DIRETO'}
                 </span>
               </div>
 
@@ -2181,11 +2320,11 @@
                 <h3 class="text-lg font-bold text-white group-hover:text-[#06b6d4] transition truncate">${escapeHtml(prof.name)}</h3>
               </div>
               <p class="mt-1.5 text-xs text-slate-400">
-                ${isProtected ? 'Protegido por PIN de 4 dígitos' : 'Ambiente sem bloqueio por PIN'}
+                ${isProtected ? `Protegido por PIN de ${len} dígitos (SHA-256)` : 'Ambiente sem bloqueio por PIN'}
               </p>
             </div>
 
-            <div class="mt-6 flex items-center justify-between border-t nexus-border pt-3.5 text-xs">
+            <div class="mt-6 flex items-center justify-between border-t border-[#1e293b] pt-3.5 text-xs">
               <span class="text-slate-400">${isUnlocked ? 'Pronto para abrir' : 'Toque para desbloquear'}</span>
               <span class="inline-flex items-center gap-1 font-semibold ${palette.text} group-hover:translate-x-0.5 transition-transform">
                 <span>Entrar</span>
@@ -2213,10 +2352,13 @@
       const prof = state.profiles.find(p => p.id === profileId);
       if (!prof) return;
 
+      const pinLen = prof.pinLength || 4;
       state.unlockModal.targetProfileId = profileId;
+      state.unlockModal.pinLength = pinLen;
       state.unlockModal.buffer = '';
 
       document.getElementById('unlock-pin-title').textContent = prof.name;
+      document.getElementById('unlock-pin-subtitle').textContent = `Digite seu PIN de ${pinLen} dígitos`;
       document.getElementById('unlock-pin-error').textContent = '';
       renderUnlockDots();
 
@@ -2235,32 +2377,36 @@
     }
 
     function renderUnlockDots() {
-      for (let i = 0; i < 4; i++) {
-        const dot = document.getElementById(`unlock-dot-${i}`);
-        if (i < state.unlockModal.buffer.length) {
-          dot.textContent = '•';
-          dot.className = 'flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-[#06b6d4] bg-[#06b6d4]/15 font-mono text-2xl font-bold text-[#06b6d4]';
-        } else {
-          dot.textContent = '';
-          dot.className = 'flex h-13 w-12 py-3 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-2xl font-bold text-[#06b6d4]';
-        }
+      const len = state.unlockModal.pinLength || 4;
+      const row = document.getElementById('unlock-dots-row');
+      let html = '';
+      for (let i = 0; i < len; i++) {
+        const filled = i < state.unlockModal.buffer.length;
+        html += `
+          <div class="flex h-13 w-11 py-3 items-center justify-center rounded-2xl border-2 ${filled ? 'border-[#06b6d4] bg-[#06b6d4]/15' : 'border-slate-700 bg-[#060913]'} font-mono text-xl font-bold text-[#06b6d4]">
+            ${filled ? '•' : ''}
+          </div>
+        `;
       }
+      row.innerHTML = html;
     }
 
     async function pressUnlockDigit(digit) {
-      if (state.unlockModal.buffer.length >= 4) return;
+      const len = state.unlockModal.pinLength || 4;
+      if (state.unlockModal.buffer.length >= len) return;
       state.unlockModal.buffer += digit;
       document.getElementById('unlock-pin-error').textContent = '';
       renderUnlockDots();
 
-      if (state.unlockModal.buffer.length === 4) {
+      if (state.unlockModal.buffer.length === len) {
         await new Promise(r => setTimeout(r, 120));
         await verifyUnlockModalPin();
       }
     }
 
     async function verifyUnlockModalPin() {
-      if (state.unlockModal.buffer.length < 4) return;
+      const len = state.unlockModal.pinLength || 4;
+      if (state.unlockModal.buffer.length < len) return;
       const prof = state.profiles.find(p => p.id === state.unlockModal.targetProfileId);
       if (!prof) return;
 
@@ -2320,7 +2466,7 @@
         btn.classList.toggle('ring-2', active);
         btn.classList.toggle('ring-white', active);
         btn.classList.toggle('ring-offset-2', active);
-        btn.classList.toggle('ring-offset-[#0b1020]', active);
+        btn.classList.toggle('ring-offset-[#0d1324]', active);
         btn.classList.toggle('opacity-70', !active);
       });
     }
@@ -2341,17 +2487,19 @@
       }
 
       let pinHash = null;
+      let pinLength = 0;
       if (usePin) {
         const p1 = document.getElementById('np-pin-1').value.replace(/\D/g, '');
         const p2 = document.getElementById('np-pin-2').value.replace(/\D/g, '');
-        if (p1.length !== 4) {
-          errEl.textContent = 'O PIN deve conter exatamente 4 dígitos.';
+        if (p1.length < 4 || p1.length > 6) {
+          errEl.textContent = 'O PIN deve conter entre 4 e 6 dígitos.';
           return;
         }
         if (p1 !== p2) {
           errEl.textContent = 'Os dois PINs digitados não coincidem.';
           return;
         }
+        pinLength = p1.length;
         pinHash = await sha256Hex(p1);
       }
 
@@ -2360,6 +2508,7 @@
         name,
         color: state.newProfileColor,
         pinHash,
+        pinLength,
         createdAt: Date.now()
       };
 
@@ -2367,7 +2516,7 @@
       saveAccountProfiles();
       state.unlockedProfileIds.add(newProf.id);
       closeNewProfileModal();
-      showToast('Perfil Criado', `${name} pronto para uso.`, 'success');
+      showToast('Cofre Criado', `${name} protegido e pronto para uso.`, 'success');
       await enterWorkspace(newProf.id);
     }
 
@@ -2439,7 +2588,7 @@
           <button
             type="button"
             onclick="switchWorkspaceProfile('${p.id}')"
-            class="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition ${isCurrent ? 'bg-[#111931] text-white font-semibold' : 'text-slate-300 hover:bg-[#111931]/75 hover:text-white'}"
+            class="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition ${isCurrent ? 'bg-[#131c36] text-white font-semibold' : 'text-slate-300 hover:bg-[#131c36]/75 hover:text-white'}"
           >
             <div class="flex items-center gap-2.5 min-w-0">
               <span class="h-2.5 w-2.5 shrink-0 rounded-full ${palette.dot}"></span>
@@ -2482,7 +2631,7 @@
     }
 
     // =========================================================================
-    // 11. LEITURA DE ARQUIVOS REAIS DA NUVEM PESSOAL
+    // 11. LEITURA DE ARQUIVOS REAIS DA NUVEM PESSOAL (MENSAGENS SALVAS)
     // =========================================================================
     async function refreshCloudFiles(notify = false) {
       if (!state.syncEngine || !state.user) return;
@@ -2588,7 +2737,7 @@
           thumbFileId: smallest && smallest.photo ? smallest.photo.id : null,
           name,
           ext: 'JPG',
-          category: 'media',
+          category: 'images',
           mimeType: 'image/jpeg',
           sizeBytes: largest.photo ? largest.photo.size : 0,
           dimensions: `${largest.width} × ${largest.height} px`,
@@ -2608,8 +2757,7 @@
           thumbFileId: thumbObj ? thumbObj.id : null,
           name: fileName,
           ext: (fileName.split('.').pop() || 'MP4').toUpperCase(),
-          category: 'media',
-          isVideo: true,
+          category: 'videos',
           mimeType: vid.mime_type || 'video/mp4',
           sizeBytes: fileObj.size || 0,
           dimensions: `${vid.width || 1920} × ${vid.height || 1080}`,
@@ -2629,7 +2777,7 @@
           thumbFileId: null,
           name: fileName,
           ext: (fileName.split('.').pop() || 'AUDIO').toUpperCase(),
-          category: 'media',
+          category: 'audios',
           mimeType: aud.mime_type || 'audio/mpeg',
           sizeBytes: fileObj.size || 0,
           duration: aud.duration || 0,
@@ -2643,13 +2791,14 @@
 
     function classifyExtension(fileName, mime = '') {
       const ext = (fileName.split('.').pop() || '').toLowerCase();
-      if (
-        ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'mp4', 'mkv', 'webm', 'mov', 'avi', 'mp3', 'wav', 'ogg', 'm4a'].includes(ext) ||
-        mime.startsWith('image/') ||
-        mime.startsWith('video/') ||
-        mime.startsWith('audio/')
-      ) {
-        return 'media';
+      if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext) || mime.startsWith('image/')) {
+        return 'images';
+      }
+      if (['mp4', 'mkv', 'webm', 'mov', 'avi'].includes(ext) || mime.startsWith('video/')) {
+        return 'videos';
+      }
+      if (['mp3', 'wav', 'ogg', 'm4a', 'flac', 'aac'].includes(ext) || mime.startsWith('audio/')) {
+        return 'audios';
       }
       return 'documents';
     }
@@ -2673,8 +2822,10 @@
     }
 
     // =========================================================================
-    // 12. UPLOAD DE ARQUIVOS REAIS & FILA DE TRANSFERÊNCIAS
+    // 12. UPLOAD DE ARQUIVOS REAIS (DRAG & DROP + SELETOR)
     // =========================================================================
+    const activeUploadToasts = new Map();
+
     function triggerCloudUpload() {
       document.getElementById('cloud-file-picker').click();
     }
@@ -2690,22 +2841,7 @@
       if (!state.syncEngine || !state.user) return;
 
       for (const rawFile of fileList) {
-        const transferId = 'tr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-        const transferItem = {
-          id: transferId,
-          fileId: null,
-          name: rawFile.name,
-          sizeBytes: rawFile.size,
-          direction: 'upload',
-          progress: 5,
-          status: 'sending'
-        };
-        state.transferQueue.unshift(transferItem);
-        renderWorkspaceSidebarCounts();
-        if (state.category === 'transfers') renderWorkspaceFiles();
-
         const toastEl = createUploadProgressToast(rawFile.name);
-
         try {
           const sentMsg = await state.syncEngine.uploadBlobDocument(state.user.id, rawFile);
           if (sentMsg && sentMsg.id) {
@@ -2714,40 +2850,34 @@
 
             const docFile = sentMsg.content && sentMsg.content.document && sentMsg.content.document.document;
             if (docFile && docFile.id) {
-              transferItem.fileId = docFile.id;
-              transferItem.toastEl = toastEl;
+              activeUploadToasts.set(docFile.id, { toastEl, name: rawFile.name });
+            } else {
+              removeProgressToast(toastEl);
             }
           }
         } catch (err) {
-          transferItem.status = 'error';
           removeProgressToast(toastEl);
           showToast('Falha no Upload', `Não foi possível enviar ${rawFile.name}.`, 'danger');
-          renderWorkspaceSidebarCounts();
-          if (state.category === 'transfers') renderWorkspaceFiles();
         }
       }
     }
 
     function onCloudFileUpdated(fileObj) {
       if (!fileObj) return;
-      const transfer = state.transferQueue.find(t => t.fileId === fileObj.id && t.status === 'sending');
-      if (transfer && fileObj.remote) {
-        const total = fileObj.size || transfer.sizeBytes || 1;
+      const entry = activeUploadToasts.get(fileObj.id);
+      if (entry && fileObj.remote) {
+        const total = fileObj.size || 1;
         const uploaded = fileObj.remote.uploaded_size || 0;
         const pct = fileObj.remote.is_uploading_completed
           ? 100
           : Math.min(99, Math.round((uploaded / total) * 100));
 
-        transfer.progress = pct;
-        updateUploadProgressToast(transfer.toastEl, pct);
-        if (state.category === 'transfers') renderWorkspaceFiles();
+        updateUploadProgressToast(entry.toastEl, pct);
 
         if (fileObj.remote.is_uploading_completed) {
-          transfer.status = 'completed';
-          transfer.progress = 100;
-          setTimeout(() => removeProgressToast(transfer.toastEl), 1200);
-          showToast('Arquivo Sincronizado', `${transfer.name} salvo na Nuvem SSD.`, 'success');
-          renderWorkspaceSidebarCounts();
+          activeUploadToasts.delete(fileObj.id);
+          setTimeout(() => removeProgressToast(entry.toastEl), 1100);
+          showToast('Arquivo Sincronizado', `${entry.name} salvo na Nuvem SSD.`, 'success');
           refreshCloudFiles(false);
         }
       }
@@ -2794,15 +2924,19 @@
     });
 
     // =========================================================================
-    // 13. RENDERIZAÇÃO DA GRADE, LISTA, FILA DE TRANSFERÊNCIAS & MULTI-SELEÇÃO
+    // 13. RENDERIZAÇÃO DA GRADE, LISTA & MULTI-SELEÇÃO
     // =========================================================================
     function getProfileVisibleFiles() {
       let items = state.cloudFiles.filter(f => state.fileAssignments[f.messageId] === state.activeProfileId);
 
-      if (state.category === 'media') {
-        items = items.filter(f => f.category === 'media');
+      if (state.category === 'images') {
+        items = items.filter(f => f.category === 'images');
+      } else if (state.category === 'videos') {
+        items = items.filter(f => f.category === 'videos');
       } else if (state.category === 'documents') {
         items = items.filter(f => f.category === 'documents');
+      } else if (state.category === 'audios') {
+        items = items.filter(f => f.category === 'audios');
       } else if (state.category === 'favorites') {
         items = items.filter(f => state.favoriteIds.has(f.messageId));
       }
@@ -2818,30 +2952,25 @@
     function renderWorkspaceSidebarCounts() {
       const profItems = state.cloudFiles.filter(f => state.fileAssignments[f.messageId] === state.activeProfileId);
       document.getElementById('count-cat-all').textContent = profItems.length;
-      document.getElementById('count-cat-media').textContent = profItems.filter(f => f.category === 'media').length;
+      document.getElementById('count-cat-images').textContent = profItems.filter(f => f.category === 'images').length;
+      document.getElementById('count-cat-videos').textContent = profItems.filter(f => f.category === 'videos').length;
       document.getElementById('count-cat-documents').textContent = profItems.filter(f => f.category === 'documents').length;
+      document.getElementById('count-cat-audios').textContent = profItems.filter(f => f.category === 'audios').length;
       document.getElementById('count-cat-favorites').textContent = profItems.filter(f => state.favoriteIds.has(f.messageId)).length;
-      document.getElementById('count-cat-transfers').textContent = state.transferQueue.length;
 
-      const totalBytes = state.cloudFiles.reduce((acc, f) => acc + (f.sizeBytes || 0), 0);
+      const totalBytes = profItems.reduce((acc, f) => acc + (f.sizeBytes || 0), 0);
       document.getElementById('sb-storage-used').textContent = formatFileSize(totalBytes);
-      const barPct = Math.min(100, Math.max(8, Math.round((totalBytes / (5 * 1024 * 1024 * 1024)) * 100)));
-      document.getElementById('sb-storage-bar').style.width = barPct + '%';
     }
 
     function getVisualMetaForFile(file) {
-      const isVideo = file.isVideo || (file.mimeType && file.mimeType.startsWith('video/'));
-      if (isVideo) {
+      if (file.category === 'videos') {
         return { icon: 'film', color: 'text-[#dc2626]', badge: 'bg-[#dc2626]/15 text-rose-300 border-[#dc2626]/40', bg: 'from-[#dc2626]/15 to-[#060913]' };
       }
-      if (file.category === 'media') {
-        const isAudio = file.mimeType && file.mimeType.startsWith('audio/');
-        return {
-          icon: isAudio ? 'music' : 'image',
-          color: 'text-emerald-400',
-          badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-          bg: 'from-emerald-500/15 to-[#060913]'
-        };
+      if (file.category === 'images') {
+        return { icon: 'image', color: 'text-emerald-400', badge: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30', bg: 'from-emerald-500/15 to-[#060913]' };
+      }
+      if (file.category === 'audios') {
+        return { icon: 'music', color: 'text-violet-400', badge: 'bg-violet-500/15 text-violet-300 border-violet-500/35', bg: 'from-violet-500/15 to-[#060913]' };
       }
       if (file.ext === 'APK') {
         return { icon: 'package', color: 'text-amber-400', badge: 'bg-amber-500/15 text-amber-300 border-amber-500/35', bg: 'from-amber-500/15 to-[#060913]' };
@@ -2851,67 +2980,18 @@
 
     function renderWorkspaceFiles() {
       const container = document.getElementById('ws-files-container');
-
-      // Aba Fila de Transferências
-      if (state.category === 'transfers') {
-        updateBatchActionBar();
-        if (state.transferQueue.length === 0) {
-          container.innerHTML = `
-            <div class="flex flex-col items-center justify-center rounded-3xl border border-dashed nexus-border bg-[#0b1020]/60 py-16 px-4 text-center animate-fade-up">
-              <div class="mb-3.5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#111931] text-[#06b6d4]">
-                <i data-lucide="arrow-up-down" class="h-7 w-7"></i>
-              </div>
-              <h3 class="text-base font-bold text-white">Nenhuma transferência recente</h3>
-              <p class="mt-1.5 max-w-sm text-xs text-slate-400">
-                Os envios e downloads realizados nesta sessão aparecem aqui com progresso em tempo real.
-              </p>
-            </div>
-          `;
-          refreshIcons();
-          return;
-        }
-
-        container.innerHTML = `
-          <div class="space-y-3 animate-fade-up">
-            ${state.transferQueue.map(tr => `
-              <div class="rounded-2xl border nexus-border bg-[#0b1020] p-4 flex items-center justify-between gap-4">
-                <div class="flex items-center gap-3 min-w-0 flex-1">
-                  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#2563eb]/15 text-[#06b6d4]">
-                    <i data-lucide="${tr.status === 'completed' ? 'check-circle-2' : (tr.status === 'error' ? 'alert-circle' : 'upload-cloud')}" class="h-5 w-5"></i>
-                  </div>
-                  <div class="min-w-0 flex-1">
-                    <div class="flex items-center justify-between gap-2">
-                      <span class="truncate text-xs font-semibold text-white">${escapeHtml(tr.name)}</span>
-                      <span class="font-mono text-xs font-bold ${tr.status === 'completed' ? 'text-emerald-400' : (tr.status === 'error' ? 'text-[#dc2626]' : 'text-[#06b6d4]')}">${tr.progress}%</span>
-                    </div>
-                    <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#060913]">
-                      <div class="h-full rounded-full ${tr.status === 'error' ? 'bg-[#dc2626]' : 'bg-gradient-to-r from-[#2563eb] to-[#06b6d4]'} transition-all" style="width: ${tr.progress}%"></div>
-                    </div>
-                    <div class="mt-1 text-[11px] text-slate-400">
-                      ${formatFileSize(tr.sizeBytes)} • ${tr.status === 'completed' ? 'Sincronizado' : (tr.status === 'error' ? 'Falha no envio' : 'Enviando para Nuvem SSD...')}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        `;
-        refreshIcons();
-        return;
-      }
-
       const items = getProfileVisibleFiles();
       updateBatchActionBar();
 
       if (items.length === 0) {
         container.innerHTML = `
-          <div class="flex flex-col items-center justify-center rounded-3xl border border-dashed nexus-border bg-[#0b1020]/60 py-16 px-4 text-center animate-fade-up">
-            <div class="mb-3.5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#111931] text-[#06b6d4]">
+          <div class="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[#1e293b] bg-[#0d1324]/70 py-16 px-4 text-center animate-fade-up">
+            <div class="mb-3.5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#131c36] text-[#06b6d4]">
               <i data-lucide="cloud-upload" class="h-7 w-7"></i>
             </div>
-            <h3 class="text-base font-bold text-white">Nenhum arquivo neste espaço</h3>
+            <h3 class="text-base font-bold text-white">Nenhum arquivo neste cofre</h3>
             <p class="mt-1.5 max-w-sm text-xs text-slate-400 leading-relaxed">
-              Envie documentos, fotos, vídeos ou APKs para sincronizá-los com segurança na sua Nuvem SSD.
+              Arraste arquivos para esta janela ou clique no botão abaixo para sincronizar com sua Nuvem SSD.
             </p>
             <button
               type="button"
@@ -2942,12 +3022,12 @@
               return `
                 <div
                   onclick="handleFileCardClick(event, ${file.messageId})"
-                  class="group relative flex flex-col overflow-hidden rounded-2xl border ${isPreviewing ? 'border-[#06b6d4] ring-2 ring-[#06b6d4]/25 bg-[#111931]' : (isSelected ? 'border-[#06b6d4]/75 bg-[#111931]/90' : 'nexus-border bg-[#0b1020] hover:border-slate-600 hover:bg-[#111931]/80')} cursor-pointer transition-all animate-fade-up"
+                  class="group relative flex flex-col overflow-hidden rounded-2xl border ${isPreviewing ? 'border-[#06b6d4] ring-2 ring-[#06b6d4]/25 bg-[#131c36]' : (isSelected ? 'border-[#06b6d4]/75 bg-[#131c36]/90' : 'border-[#1e293b] bg-[#0d1324] hover:border-slate-600 hover:bg-[#131c36]/80')} cursor-pointer transition-all animate-fade-up"
                 >
-                  <div class="relative h-32 w-full border-b nexus-border bg-gradient-to-br ${meta.bg} flex items-center justify-center overflow-hidden">
+                  <div class="relative h-32 w-full border-b border-[#1e293b] bg-gradient-to-br ${meta.bg} flex items-center justify-center overflow-hidden">
                     ${thumbUrl
                       ? `<img src="${thumbUrl}" alt="${escapeHtml(file.name)}" class="h-full w-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition duration-300" />`
-                      : `<div class="flex h-12 w-12 items-center justify-center rounded-2xl border nexus-border bg-[#060913]/85 ${meta.color} shadow-md">
+                      : `<div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#1e293b] bg-[#060913]/90 ${meta.color} shadow-md">
                            <i data-lucide="${meta.icon}" class="h-6 w-6"></i>
                          </div>`
                     }
@@ -2957,7 +3037,7 @@
                       type="button"
                       onclick="toggleSelectFile(event, ${file.messageId})"
                       aria-label="Selecionar arquivo"
-                      class="absolute left-2.5 top-2.5 flex h-6 w-6 items-center justify-center rounded-lg border ${isSelected ? 'border-[#06b6d4] bg-[#06b6d4] text-slate-950' : 'border-white/25 bg-[#060913]/75 text-transparent group-hover:text-slate-300'} backdrop-blur-md transition"
+                      class="absolute left-2.5 top-2.5 flex h-6 w-6 items-center justify-center rounded-lg border ${isSelected ? 'border-[#06b6d4] bg-[#06b6d4] text-slate-950' : 'border-white/25 bg-[#060913]/80 text-transparent group-hover:text-slate-300'} backdrop-blur-md transition"
                     >
                       <i data-lucide="check" class="h-3.5 w-3.5"></i>
                     </button>
@@ -2967,7 +3047,7 @@
                       type="button"
                       onclick="toggleFavoriteFile(event, ${file.messageId})"
                       aria-label="Favoritar"
-                      class="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-lg border nexus-border bg-[#060913]/75 backdrop-blur-md ${isFav ? 'text-amber-400' : 'text-slate-400 hover:text-white'} transition"
+                      class="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-lg border border-[#1e293b] bg-[#060913]/80 backdrop-blur-md ${isFav ? 'text-amber-400' : 'text-slate-400 hover:text-white'} transition"
                     >
                       <i data-lucide="star" class="h-3.5 w-3.5 ${isFav ? 'fill-amber-400' : ''}"></i>
                     </button>
@@ -2993,13 +3073,13 @@
         `;
       } else {
         container.innerHTML = `
-          <div class="overflow-hidden rounded-2xl border nexus-border bg-[#0b1020] animate-fade-up">
+          <div class="overflow-hidden rounded-2xl border border-[#1e293b] bg-[#0d1324] animate-fade-up">
             <div class="overflow-x-auto">
               <table class="w-full text-left border-collapse">
                 <thead>
-                  <tr class="border-b nexus-border bg-[#060913] text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  <tr class="border-b border-[#1e293b] bg-[#060913] text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                     <th class="py-3 pl-4 pr-2 w-10">
-                      <button type="button" onclick="selectAllVisible()" aria-label="Selecionar todos" class="flex h-5 w-5 items-center justify-center rounded border nexus-border bg-[#111931] text-slate-300 hover:border-[#06b6d4]">
+                      <button type="button" onclick="selectAllVisible()" aria-label="Selecionar todos" class="flex h-5 w-5 items-center justify-center rounded border border-[#1e293b] bg-[#131c36] text-slate-300 hover:border-[#06b6d4]">
                         <i data-lucide="check" class="h-3 w-3"></i>
                       </button>
                     </th>
@@ -3010,7 +3090,7 @@
                     <th class="py-3 pr-4 text-right">Favorito</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-white/5 text-xs">
+                <tbody class="divide-y divide-[#1e293b]/70 text-xs">
                   ${items.map(file => {
                     const meta = getVisualMetaForFile(file);
                     const isSelected = state.selectedIds.has(file.messageId);
@@ -3020,7 +3100,7 @@
                     return `
                       <tr
                         onclick="handleFileCardClick(event, ${file.messageId})"
-                        class="cursor-pointer transition ${isPreviewing ? 'bg-[#06b6d4]/15' : (isSelected ? 'bg-[#06b6d4]/10' : 'hover:bg-[#111931]')}"
+                        class="cursor-pointer transition ${isPreviewing ? 'bg-[#06b6d4]/15' : (isSelected ? 'bg-[#06b6d4]/10' : 'hover:bg-[#131c36]')}"
                       >
                         <td class="py-3 pl-4 pr-2">
                           <button
@@ -3092,7 +3172,7 @@
     function updateBatchActionBar() {
       const bar = document.getElementById('ws-batch-bar');
       const count = state.selectedIds.size;
-      if (count === 0 || state.category === 'transfers') {
+      if (count === 0) {
         bar.classList.add('hidden');
         bar.classList.remove('flex');
         return;
@@ -3108,7 +3188,7 @@
           <div class="inline-flex items-center gap-1.5 rounded-xl border border-[#dc2626]/45 bg-[#dc2626]/15 px-2.5 py-1">
             <span class="text-[11px] font-medium text-rose-200">Excluir ${count}?</span>
             <button type="button" onclick="confirmBatchDeleteAction()" class="rounded bg-[#dc2626] px-2 py-0.5 text-[11px] font-bold text-white hover:bg-red-500">Sim</button>
-            <button type="button" onclick="cancelBatchDeleteAction()" class="rounded bg-[#111931] px-2 py-0.5 text-[11px] text-slate-300">Não</button>
+            <button type="button" onclick="cancelBatchDeleteAction()" class="rounded bg-[#131c36] px-2 py-0.5 text-[11px] text-slate-300">Não</button>
           </div>
         `;
       } else {
@@ -3202,11 +3282,11 @@
       const listEl = document.getElementById('move-profiles-list');
       const qty = singleMessageId ? 1 : state.selectedIds.size;
 
-      document.getElementById('move-modal-desc').textContent = `Mover ${qty} arquivo(s) para:`;
+      document.getElementById('move-modal-desc').textContent = `Vincular ${qty} arquivo(s) ao cofre:`;
 
       if (otherProfiles.length === 0) {
         listEl.innerHTML = `
-          <div class="rounded-2xl border nexus-border bg-[#060913] p-4 text-center text-xs text-slate-400">
+          <div class="rounded-2xl border border-[#1e293b] bg-[#060913] p-4 text-center text-xs text-slate-400">
             Crie outro perfil ou cofre no menu lateral para organizar arquivos separadamente.
           </div>
         `;
@@ -3217,7 +3297,7 @@
             <button
               type="button"
               onclick="executeMoveToProfile('${p.id}')"
-              class="flex w-full items-center justify-between rounded-2xl border nexus-border bg-[#060913] p-3 text-left hover:border-[#06b6d4]/50 hover:bg-[#111931] transition"
+              class="flex w-full items-center justify-between rounded-2xl border border-[#1e293b] bg-[#060913] p-3 text-left hover:border-[#06b6d4]/50 hover:bg-[#131c36] transition"
             >
               <div class="flex items-center gap-3">
                 <span class="h-3 w-3 rounded-full ${palette.dot}"></span>
@@ -3261,11 +3341,11 @@
       closeMoveProfileModal();
       renderWorkspaceSidebarCounts();
       renderWorkspaceFiles();
-      showToast('Movido com Sucesso', `${targets.length} item(ns) movido(s) para ${dest.name}.`, 'success');
+      showToast('Movido com Sucesso', `${targets.length} item(ns) vinculados a ${dest.name}.`, 'success');
     }
 
     // =========================================================================
-    // 14. GAVETA DIREITA DE PREVIEW (PLAYER HTML5, ZOOM DE IMAGEM & METADADOS)
+    // 14. PAINEL DIREITO DE INSPETOR & PRÉ-VISUALIZAÇÃO
     // =========================================================================
     async function openPreviewDrawer(messageId) {
       const file = state.cloudFiles.find(f => f.messageId === messageId);
@@ -3350,7 +3430,7 @@
               style="transform: scale(${state.previewZoom});"
               class="max-h-60 max-w-full rounded-xl object-contain transition-transform duration-200"
             />
-            <div class="absolute bottom-2.5 right-2.5 flex items-center gap-1 rounded-xl border nexus-border bg-[#0b1020]/90 px-2 py-1 backdrop-blur-md">
+            <div class="absolute bottom-2.5 right-2.5 flex items-center gap-1 rounded-xl border border-[#1e293b] bg-[#0d1324]/90 px-2 py-1 backdrop-blur-md">
               <button type="button" onclick="adjustPreviewZoom(-0.25)" aria-label="Reduzir zoom" class="p-1 text-slate-300 hover:text-white">
                 <i data-lucide="zoom-out" class="h-3.5 w-3.5"></i>
               </button>
@@ -3370,8 +3450,8 @@
         `;
       } else if (mediaUrl && file.mimeType.startsWith('audio/')) {
         previewStageHtml = `
-          <div class="p-5 flex flex-col items-center gap-3 bg-gradient-to-b from-emerald-500/10 to-[#060913]">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-400">
+          <div class="p-5 flex flex-col items-center gap-3 bg-gradient-to-b from-violet-500/10 to-[#060913]">
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/15 text-violet-400">
               <i data-lucide="music" class="h-6 w-6"></i>
             </div>
             <audio src="${mediaUrl}" controls class="w-full h-10"></audio>
@@ -3380,7 +3460,7 @@
       } else {
         previewStageHtml = `
           <div class="flex h-44 flex-col items-center justify-center gap-2 p-4 bg-gradient-to-b ${meta.bg}">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl border nexus-border bg-[#060913] ${meta.color}">
+            <div class="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#1e293b] bg-[#060913] ${meta.color}">
               <i data-lucide="${meta.icon}" class="h-7 w-7"></i>
             </div>
             <span class="font-mono text-xs text-slate-300">${escapeHtml(file.ext)} • ${formatFileSize(file.sizeBytes)}</span>
@@ -3389,44 +3469,44 @@
       }
 
       drawer.innerHTML = `
-        <div class="flex h-16 shrink-0 items-center justify-between border-b nexus-border px-5">
+        <div class="flex h-16 shrink-0 items-center justify-between border-b border-[#1e293b] px-5">
           <div class="flex items-center gap-2 min-w-0">
             <span class="rounded border px-1.5 py-0.5 font-mono text-[10px] font-semibold ${meta.badge}">${escapeHtml(file.ext)}</span>
             <span class="truncate text-xs font-bold text-white" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
           </div>
-          <button type="button" onclick="closePreviewDrawer(true)" aria-label="Fechar prévia" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#111931] hover:text-white">
+          <button type="button" onclick="closePreviewDrawer(true)" aria-label="Fechar prévia" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#131c36] hover:text-white">
             <i data-lucide="x" class="h-5 w-5"></i>
           </button>
         </div>
 
         <div class="flex-1 overflow-y-auto p-5 space-y-5">
-          <div class="overflow-hidden rounded-2xl border nexus-border bg-[#060913]">
+          <div class="overflow-hidden rounded-2xl border border-[#1e293b] bg-[#060913]">
             ${previewStageHtml}
           </div>
 
           <!-- Metadados do Arquivo -->
-          <div class="rounded-2xl border nexus-border bg-[#060913] p-4 space-y-2.5 text-xs">
-            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Detalhes do Arquivo</div>
-            <div class="flex justify-between border-b nexus-border pb-2">
+          <div class="rounded-2xl border border-[#1e293b] bg-[#060913] p-4 space-y-2.5 text-xs">
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Inspetor de Arquivo</div>
+            <div class="flex justify-between border-b border-[#1e293b] pb-2">
               <span class="text-slate-400">Tamanho</span>
               <span class="font-mono font-semibold text-[#06b6d4]">${formatFileSize(file.sizeBytes)}</span>
             </div>
-            <div class="flex justify-between border-b nexus-border pb-2">
-              <span class="text-slate-400">Tipo MIME</span>
+            <div class="flex justify-between border-b border-[#1e293b] pb-2">
+              <span class="text-slate-400">Tipo</span>
               <span class="font-mono text-slate-300 truncate max-w-[180px]">${escapeHtml(file.mimeType)}</span>
             </div>
             ${file.dimensions ? `
-              <div class="flex justify-between border-b nexus-border pb-2">
+              <div class="flex justify-between border-b border-[#1e293b] pb-2">
                 <span class="text-slate-400">Dimensões</span>
                 <span class="font-mono text-slate-300">${file.dimensions}</span>
               </div>
             ` : ''}
-            <div class="flex justify-between border-b nexus-border pb-2">
-              <span class="text-slate-400">Perfil / Cofre</span>
+            <div class="flex justify-between border-b border-[#1e293b] pb-2">
+              <span class="text-slate-400">Cofre Vinculado</span>
               <span class="font-medium text-slate-200">${prof ? escapeHtml(prof.name) : 'Nuvem SSD'}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-slate-400">Sincronizado em</span>
+              <span class="text-slate-400">Data</span>
               <span class="text-slate-300">${file.date}</span>
             </div>
           </div>
@@ -3439,14 +3519,14 @@
               class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] py-2.5 px-4 text-xs font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 transition"
             >
               <i data-lucide="download" class="h-4 w-4"></i>
-              <span>Baixar no Dispositivo</span>
+              <span>Baixar Arquivo</span>
             </button>
 
             <div class="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onclick="toggleFavoriteFile(event, ${file.messageId})"
-                class="flex items-center justify-center gap-1.5 rounded-xl border nexus-border bg-[#111931] py-2.5 px-3 text-xs font-medium text-slate-200 hover:text-white transition"
+                class="flex items-center justify-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#131c36] py-2.5 px-3 text-xs font-medium text-slate-200 hover:text-white transition"
               >
                 <i data-lucide="star" class="h-4 w-4 ${isFav ? 'text-amber-400 fill-amber-400' : 'text-slate-400'}"></i>
                 <span>${isFav ? 'Favoritado' : 'Favoritar'}</span>
@@ -3455,10 +3535,10 @@
               <button
                 type="button"
                 onclick="openMoveProfileModal(${file.messageId})"
-                class="flex items-center justify-center gap-1.5 rounded-xl border nexus-border bg-[#111931] py-2.5 px-3 text-xs font-medium text-[#06b6d4] hover:text-white transition"
+                class="flex items-center justify-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#131c36] py-2.5 px-3 text-xs font-medium text-[#06b6d4] hover:text-white transition"
               >
                 <i data-lucide="folder-input" class="h-4 w-4"></i>
-                <span>Mover Perfil</span>
+                <span>Mover Cofre</span>
               </button>
             </div>
 
@@ -3466,7 +3546,7 @@
               <div class="rounded-xl border border-[#dc2626]/45 bg-[#dc2626]/12 p-3 text-center space-y-2 animate-fade-up">
                 <p class="text-xs font-medium text-rose-200">Excluir este arquivo da Nuvem SSD?</p>
                 <div class="flex gap-2">
-                  <button type="button" onclick="cancelSingleDelete()" class="flex-1 rounded-lg bg-[#111931] py-1.5 text-xs text-slate-300">Cancelar</button>
+                  <button type="button" onclick="cancelSingleDelete()" class="flex-1 rounded-lg bg-[#131c36] py-1.5 text-xs text-slate-300">Cancelar</button>
                   <button type="button" onclick="confirmSingleDeleteAction(${file.messageId})" class="flex-1 rounded-lg bg-[#dc2626] py-1.5 text-xs font-bold text-white">Excluir</button>
                 </div>
               </div>
@@ -3499,7 +3579,7 @@
       const file = state.cloudFiles.find(f => f.messageId === messageId);
       if (!file) return;
 
-      showToast('Preparando Download', `Baixando ${file.name}...`, 'info');
+      showToast('Preparando Download', `Transferindo ${file.name}...`, 'info');
       const blobUrl = await fetchCloudFileBlobUrl(file);
       if (!blobUrl) {
         showToast('Erro no Download', 'Não foi possível transferir o arquivo agora.', 'danger');
@@ -3512,7 +3592,7 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast('Download Concluído', `${file.name} salvo no seu dispositivo.`, 'success');
+      showToast('Download Concluído', `${file.name} salvo no dispositivo.`, 'success');
     }
 
     function askSingleDelete(messageId) {
@@ -3544,18 +3624,19 @@
 
       const titles = {
         all: 'Todos os Arquivos',
-        media: 'Mídia & Galeria',
-        documents: 'Documentos & APKs',
-        favorites: 'Favoritos',
-        transfers: 'Fila de Transferências'
+        images: 'Imagens',
+        videos: 'Vídeos',
+        documents: 'Documentos',
+        audios: 'Áudios',
+        favorites: 'Favoritos'
       };
       document.getElementById('ws-category-title').textContent = titles[cat] || 'Todos os Arquivos';
 
       document.querySelectorAll('.ws-cat-btn').forEach(btn => {
         const active = btn.dataset.cat === cat;
         btn.className = active
-          ? 'ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold bg-[#111931] text-white border nexus-border transition'
-          : 'ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#111931]/75 hover:text-white border border-transparent transition';
+          ? 'ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold bg-[#131c36] text-white border border-[#1e293b] transition'
+          : 'ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#131c36]/75 hover:text-white border border-transparent transition';
       });
 
       renderWorkspaceFiles();
@@ -3567,10 +3648,10 @@
       const gridBtn = document.getElementById('btn-mode-grid');
       const listBtn = document.getElementById('btn-mode-list');
       if (mode === 'grid') {
-        gridBtn.className = 'flex items-center gap-1.5 rounded-lg bg-[#111931] px-2.5 py-1.5 text-xs font-medium text-[#06b6d4] transition';
+        gridBtn.className = 'flex items-center gap-1.5 rounded-lg bg-[#131c36] px-2.5 py-1.5 text-xs font-medium text-[#06b6d4] transition';
         listBtn.className = 'flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition';
       } else {
-        listBtn.className = 'flex items-center gap-1.5 rounded-lg bg-[#111931] px-2.5 py-1.5 text-xs font-medium text-[#06b6d4] transition';
+        listBtn.className = 'flex items-center gap-1.5 rounded-lg bg-[#131c36] px-2.5 py-1.5 text-xs font-medium text-[#06b6d4] transition';
         gridBtn.className = 'flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-400 hover:text-white transition';
       }
       renderWorkspaceFiles();
@@ -3663,14 +3744,13 @@
       }, { passive: true });
     });
 
-    // Desconectar (logOut)
+    // Desconectar Conta (logOut)
     async function handleLogout() {
       revokeAllObjectUrls();
       closeProfileDropdown();
       closePreviewDrawer(false);
       state.unlockedProfileIds.clear();
       state.cloudFiles = [];
-      state.transferQueue = [];
       state.selectedIds.clear();
 
       if (state.syncEngine) {
@@ -3734,6 +3814,9 @@
         } else if (e.key === 'Backspace') {
           e.preventDefault();
           backspaceOnboardingPin();
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          submitOnboardingPinStep();
         }
         return;
       }
@@ -3816,10 +3899,10 @@
     function showToast(title, subtitle = '', tone = 'info') {
       const stack = document.getElementById('toast-stack');
       const palette = {
-        info: 'border-[#06b6d4]/45 bg-[#0b1020]/95 text-[#06b6d4]',
-        success: 'border-emerald-500/45 bg-[#0b1020]/95 text-emerald-300',
-        warning: 'border-[#2563eb]/45 bg-[#0b1020]/95 text-blue-300',
-        danger: 'border-[#dc2626]/45 bg-[#0b1020]/95 text-[#dc2626]'
+        info: 'border-[#06b6d4]/45 bg-[#0d1324]/95 text-[#06b6d4]',
+        success: 'border-emerald-500/45 bg-[#0d1324]/95 text-emerald-300',
+        warning: 'border-[#2563eb]/45 bg-[#0d1324]/95 text-blue-300',
+        danger: 'border-[#dc2626]/45 bg-[#0d1324]/95 text-[#dc2626]'
       };
       const icons = {
         info: 'info',
@@ -3851,7 +3934,7 @@
     function createUploadProgressToast(fileName) {
       const stack = document.getElementById('toast-stack');
       const card = document.createElement('div');
-      card.className = 'pointer-events-auto rounded-2xl border border-[#06b6d4]/45 bg-[#0b1020]/95 p-3.5 shadow-2xl backdrop-blur-xl animate-fade-up';
+      card.className = 'pointer-events-auto rounded-2xl border border-[#06b6d4]/45 bg-[#0d1324]/95 p-3.5 shadow-2xl backdrop-blur-xl animate-fade-up';
       card.innerHTML = `
         <div class="flex items-center justify-between gap-2 mb-1.5">
           <span class="truncate text-xs font-semibold text-white max-w-[210px]">Enviando ${escapeHtml(fileName)}</span>
