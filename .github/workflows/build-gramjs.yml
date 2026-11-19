@@ -1,0 +1,152 @@
+name: Build GramJS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-gramjs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar GramJS e compilador Webpack
+        run: |
+          mkdir -p /tmp/gramjs-build
+          cd /tmp/gramjs-build
+          npm init -y
+          npm install telegram webpack webpack-cli buffer process crypto-browserify stream-browserify os-browserify path-browserify util events assert constants-browserify timers-browserify vm-browserify browserify-zlib
+
+      - name: Gerar bundle ./gramjs.js para navegador
+        run: |
+          cd /tmp/gramjs-build
+
+          cat << 'EOF' > entry.js
+          const telegram = require('telegram');
+          const { StringSession } = require('telegram/sessions');
+          const { CustomFile } = require('telegram/client/uploads');
+          const { Buffer } = require('buffer');
+
+          const bundle = {
+            ...telegram,
+            TelegramClient: telegram.TelegramClient,
+            Api: telegram.Api,
+            Logger: telegram.Logger,
+            sessions: {
+              ...(telegram.sessions || {}),
+              StringSession,
+            },
+            StringSession,
+            CustomFile,
+            client: {
+              ...(telegram.client || {}),
+              uploads: { CustomFile },
+            },
+            Buffer,
+          };
+
+          if (typeof window !== 'undefined') {
+            window.Buffer = Buffer;
+            window.telegram = bundle;
+            window.gramjs = bundle;
+            window.GramJS = bundle;
+            window.CustomFile = CustomFile;
+          }
+
+          module.exports = bundle;
+          EOF
+
+          cat << 'EOF' > webpack.config.js
+          const webpack = require('webpack');
+
+          module.exports = {
+            mode: 'production',
+            target: 'web',
+            entry: './entry.js',
+            output: {
+              path: process.env.GITHUB_WORKSPACE,
+              filename: 'gramjs.js',
+              library: {
+                name: 'telegram',
+                type: 'umd',
+              },
+              globalObject: 'this',
+            },
+            module: {
+              rules: [
+                {
+                  test: /\.m?js$/,
+                  resolve: {
+                    fullySpecified: false,
+                  },
+                },
+              ],
+            },
+            resolve: {
+              extensions: ['.js', '.mjs', '.json'],
+              fallback: {
+                buffer: require.resolve('buffer/'),
+                crypto: require.resolve('crypto-browserify'),
+                stream: require.resolve('stream-browserify'),
+                os: require.resolve('os-browserify/browser'),
+                path: require.resolve('path-browserify'),
+                util: require.resolve('util/'),
+                events: require.resolve('events/'),
+                assert: require.resolve('assert/'),
+                constants: require.resolve('constants-browserify'),
+                timers: require.resolve('timers-browserify'),
+                vm: require.resolve('vm-browserify'),
+                zlib: require.resolve('browserify-zlib'),
+                process: require.resolve('process/browser.js'),
+                fs: false,
+                net: false,
+                tls: false,
+                dns: false,
+                dgram: false,
+                http: false,
+                https: false,
+                child_process: false,
+                readline: false,
+                module: false,
+              },
+            },
+            plugins: [
+              new webpack.NormalModuleReplacementPlugin(/^node:/, (resource) => {
+                resource.request = resource.request.replace(/^node:/, '');
+              }),
+              new webpack.ProvidePlugin({
+                Buffer: ['buffer', 'Buffer'],
+                process: 'process/browser.js',
+              }),
+            ],
+            performance: {
+              hints: false,
+            },
+          };
+          EOF
+
+          npx webpack --config webpack.config.js
+
+      - name: Salvar gramjs.js na raiz do repositório
+        run: |
+          ls -lh gramjs.js
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gramjs.js
+          if ! git diff --staged --quiet; then
+            git commit -m "Build automático: adicionar gramjs.js atualizado"
+            git push
+          else
+            echo "gramjs.js já está atualizado."
+          fi
