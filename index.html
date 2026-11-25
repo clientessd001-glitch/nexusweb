@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="ssd-cols-3">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
@@ -13,14 +13,16 @@
       --bg-card: #161F32;
       --bg-hover: #1E293B;
       --border: rgba(148, 163, 184, 0.16);
-      --border-strong: rgba(56, 189, 248, 0.42);
+      --border-strong: rgba(56, 189, 248, 0.38);
       --text: #F8FAFC;
       --muted: #94A3B8;
       --accent: #38BDF8;
-      --accent-2: #2563EB;
+      --accent-dark: #0284C7;
       --danger: #EF4444;
       --success: #10B981;
-      --shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
+      --gold: #F59E0B;
+      --radius: 16px;
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
     }
 
     * {
@@ -47,55 +49,73 @@
 
     .hidden { display: none !important; }
 
-    /* ---------- BUTTONS & INPUTS ---------- */
-    .btn {
-      display: inline-flex;
+    /* ---------- AUTH SCREEN ---------- */
+    #authScreen {
+      position: fixed;
+      inset: 0;
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      border: none;
-      border-radius: 12px;
-      padding: 13px 16px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.12s, opacity 0.15s, background 0.15s;
+      padding: 20px;
+      overflow-y: auto;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(56, 189, 248, 0.16), transparent 45%),
+        radial-gradient(circle at 82% 88%, rgba(239, 68, 68, 0.12), transparent 45%),
+        var(--bg);
+      z-index: 50;
     }
 
-    .btn:active { transform: scale(0.97); }
-    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
-
-    .btn-primary {
+    .auth-card {
       width: 100%;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #FFFFFF;
-      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
-    }
-
-    .btn-outline-accent {
-      width: 100%;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.42);
-      color: #7DD3FC;
-    }
-
-    .btn-secondary {
-      background: var(--bg-hover);
+      max-width: 420px;
+      background: rgba(17, 24, 39, 0.94);
       border: 1px solid var(--border);
-      color: var(--text);
+      border-radius: 22px;
+      padding: 26px 22px;
+      box-shadow: var(--shadow);
+      text-align: center;
     }
 
-    .btn-danger {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #FCA5A5;
-    }
-
-    .btn-ghost {
-      background: transparent;
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
       color: var(--accent);
-      padding: 8px 10px;
-      font-size: 13px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .brand-logo {
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 14px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #0F172A, #1E293B);
+      border: 2px solid var(--accent);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 28px rgba(56, 189, 248, 0.25);
+    }
+
+    .auth-title {
+      margin: 0 0 6px;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .auth-sub {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.45;
     }
 
     .field-group {
@@ -105,7 +125,7 @@
 
     .field-label {
       display: block;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--muted);
       margin-bottom: 6px;
@@ -130,6 +150,49 @@
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16);
     }
 
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s, opacity 0.15s, background 0.15s;
+    }
+
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #38BDF8, #2563EB);
+      color: #FFFFFF;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-secondary {
+      background: var(--bg-hover);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.16);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--accent);
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
     .alert-box {
       text-align: left;
       padding: 12px 14px;
@@ -148,214 +211,38 @@
       color: #BAE6FD;
     }
 
-    /* ---------- 1. AUTH SCREEN (SEMPRE PEDE CÓDIGO NA INSTALAÇÃO) ---------- */
-    #authScreen {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      background:
-        radial-gradient(circle at 18% 12%, rgba(56, 189, 248, 0.16), transparent 45%),
-        radial-gradient(circle at 82% 88%, rgba(239, 68, 68, 0.12), transparent 45%),
-        var(--bg);
-      z-index: 60;
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 420px;
-      background: rgba(17, 24, 39, 0.96);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 24px 20px;
-      box-shadow: var(--shadow);
-      text-align: center;
-      margin: auto;
-    }
-
-    .brand-logo {
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 12px;
-      border-radius: 18px;
-      background: linear-gradient(145deg, #0F172A, #1E293B);
-      border: 2px solid var(--accent);
-      display: grid;
-      place-items: center;
-      box-shadow: 0 0 26px rgba(56, 189, 248, 0.25);
-    }
-
-    .brand-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 13px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-
-    .auth-title {
-      margin: 0 0 6px;
-      font-size: 23px;
-      font-weight: 800;
-    }
-
-    .auth-sub {
-      margin: 0 0 18px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-
-    .divider-or {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 14px 0;
-      color: var(--muted);
-      font-size: 11.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .divider-or::before,
-    .divider-or::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
     .auth-footer {
-      margin-top: 16px;
-      padding-top: 12px;
+      margin-top: 18px;
+      padding-top: 14px;
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 11px;
+      font-size: 11.5px;
       color: var(--muted);
     }
 
-    /* ---------- 2. PROFILE HUB SCREEN (JÁ TENHO PERFIL / RESTAURAR) ---------- */
-    #profilesScreen {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      background:
-        radial-gradient(circle at 20% 15%, rgba(56, 189, 248, 0.14), transparent 48%),
-        var(--bg);
-      z-index: 55;
-    }
-
-    .profiles-card {
-      width: 100%;
-      max-width: 460px;
-      background: rgba(17, 24, 39, 0.96);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 22px 20px;
-      box-shadow: var(--shadow);
-      margin: auto;
-    }
-
-    .profile-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 310px;
-      overflow-y: auto;
-      margin: 14px 0;
-      padding-right: 2px;
-    }
-
-    .profile-tile {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 13px 14px;
-      border-radius: 14px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      cursor: pointer;
-      text-align: left;
-      transition: border-color 0.15s, transform 0.12s;
-    }
-
-    .profile-tile:hover,
-    .profile-tile:active {
-      border-color: var(--accent);
-      transform: scale(0.99);
-    }
-
-    .profile-tile-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: #0B1120;
-      border: 1px solid var(--border-strong);
-      display: grid;
-      place-items: center;
-      font-size: 19px;
-      flex-shrink: 0;
-    }
-
-    .profile-tile-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .profile-tile-name {
-      font-size: 15px;
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .profile-tile-sub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    /* ---------- 3. WORKSPACE LAYOUT ---------- */
+    /* ---------- WORKSPACE LAYOUT ---------- */
     #appScreen {
       display: grid;
       grid-template-columns: 270px 1fr 310px;
       width: 100%;
-      height: 100dvh;
+      height: 100%;
       overflow: hidden;
     }
 
+    /* Sidebar (Vaults) */
     .sidebar {
       background: var(--bg-elev);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       height: 100%;
-      min-height: 0;
       z-index: 30;
     }
 
     .sidebar-head {
-      padding: 15px 16px;
+      padding: 16px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -373,7 +260,7 @@
 
     .sidebar-brand span {
       color: var(--accent);
-      font-size: 10.5px;
+      font-size: 11px;
       display: block;
       font-weight: 700;
       letter-spacing: 0.08em;
@@ -381,9 +268,7 @@
 
     .vault-list {
       flex: 1;
-      min-height: 0;
       overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
       padding: 12px;
       display: flex;
       flex-direction: column;
@@ -394,11 +279,12 @@
       display: flex;
       align-items: center;
       gap: 11px;
-      padding: 11px 12px;
+      padding: 12px;
       border-radius: 13px;
       border: 1px solid transparent;
       background: rgba(255, 255, 255, 0.02);
       cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
     }
 
     .vault-item:hover { background: var(--bg-hover); }
@@ -414,12 +300,17 @@
       display: grid;
       place-items: center;
       font-size: 17px;
-      background: #0B1120;
+      font-weight: 800;
+      background: linear-gradient(135deg, #1E293B, #0F172A);
       border: 1px solid var(--border);
       flex-shrink: 0;
     }
 
-    .vault-meta { min-width: 0; flex: 1; }
+    .vault-meta {
+      min-width: 0;
+      flex: 1;
+    }
+
     .vault-name {
       font-size: 14px;
       font-weight: 700;
@@ -427,7 +318,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .vault-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+    .vault-sub {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
 
     .sidebar-foot {
       padding: 12px;
@@ -437,12 +333,11 @@
       gap: 8px;
     }
 
-    /* Main Pane */
+    /* Main Workspace */
     .main-pane {
       display: flex;
       flex-direction: column;
       height: 100%;
-      min-height: 0;
       min-width: 0;
       position: relative;
       background: var(--bg);
@@ -452,10 +347,10 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 12px 14px;
-      background: rgba(17, 24, 39, 0.94);
+      padding: 12px 16px;
+      background: rgba(17, 24, 39, 0.92);
       border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
+      backdrop-filter: blur(10px);
     }
 
     .icon-btn {
@@ -469,13 +364,18 @@
       place-items: center;
       cursor: pointer;
       flex-shrink: 0;
-      font-size: 17px;
+      font-size: 18px;
     }
 
     .icon-btn:active { transform: scale(0.95); }
+
     #mobileMenuBtn { display: none; }
 
-    .topbar-title-wrap { min-width: 0; flex: 1; }
+    .topbar-title-wrap {
+      min-width: 0;
+      flex: 1;
+    }
+
     .topbar-title {
       font-size: 16px;
       font-weight: 800;
@@ -483,14 +383,17 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .topbar-sub { font-size: 11.5px; color: var(--muted); }
+
+    .topbar-sub {
+      font-size: 11.5px;
+      color: var(--muted);
+    }
 
     .toolbar {
-      padding: 10px 14px 8px;
+      padding: 12px 16px 8px;
       display: flex;
       flex-direction: column;
-      gap: 9px;
-      flex-shrink: 0;
+      gap: 10px;
     }
 
     .search-row {
@@ -501,7 +404,7 @@
 
     .search-input {
       flex: 1;
-      padding: 10px 13px;
+      padding: 11px 14px;
       border-radius: 12px;
       border: 1px solid var(--border);
       background: var(--bg-elev);
@@ -512,26 +415,19 @@
 
     .search-input:focus { border-color: var(--accent); }
 
-    .filter-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
     .chips {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       overflow-x: auto;
+      padding-bottom: 4px;
       scrollbar-width: none;
-      flex: 1;
     }
     .chips::-webkit-scrollbar { display: none; }
 
     .chip {
-      padding: 6px 12px;
+      padding: 7px 13px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 700;
       background: var(--bg-elev);
       border: 1px solid var(--border);
@@ -547,43 +443,14 @@
       color: var(--accent);
     }
 
-    .col-switcher {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      padding: 3px;
-      border-radius: 999px;
-      background: var(--bg-elev);
-      border: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .col-btn {
-      width: 28px;
-      height: 26px;
-      border-radius: 999px;
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      font-size: 11.5px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .col-btn.active {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #fff;
-    }
-
-    /* Progress Banner */
+    /* Upload Progress Bar */
     .progress-banner {
-      margin: 0 14px 8px;
+      margin: 0 16px 8px;
       padding: 10px 14px;
       border-radius: 12px;
       background: rgba(56, 189, 248, 0.12);
       border: 1px solid rgba(56, 189, 248, 0.35);
       font-size: 12.5px;
-      flex-shrink: 0;
     }
 
     .progress-track {
@@ -591,76 +458,55 @@
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.1);
       overflow: hidden;
-      margin-top: 6px;
+      margin-top: 7px;
     }
 
     .progress-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      background: linear-gradient(90deg, #38BDF8, #2563EB);
       transition: width 0.2s;
     }
 
-    /* Scrollable Gallery */
+    /* Files Grid */
     .files-scroll {
       flex: 1;
-      min-height: 0;
       overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding: 8px 14px 100px;
+      padding: 8px 16px 96px;
     }
 
     .files-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    html.ssd-cols-2 .files-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 11px;
-    }
-
-    html.ssd-cols-3 .files-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    html.ssd-cols-4 .files-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 5px;
+      grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+      gap: 12px;
     }
 
     .file-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 13px;
+      border-radius: 15px;
       overflow: hidden;
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      min-width: 0;
+      transition: border-color 0.15s, transform 0.12s;
     }
 
     .file-card:active { transform: scale(0.98); }
     .file-card.selected {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.22);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
     }
 
     .file-thumb {
       width: 100%;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 4 / 3;
       background: #0B1120;
       display: grid;
       place-items: center;
       overflow: hidden;
       position: relative;
-      font-size: 28px;
-    }
-
-    html.ssd-cols-2 .file-thumb {
-      aspect-ratio: 4 / 3;
+      font-size: 32px;
     }
 
     .file-thumb img {
@@ -672,70 +518,70 @@
 
     .file-ext-badge {
       position: absolute;
-      top: 6px;
-      right: 6px;
-      padding: 2px 6px;
+      top: 8px;
+      right: 8px;
+      padding: 3px 7px;
       border-radius: 6px;
-      background: rgba(9, 13, 22, 0.82);
+      background: rgba(9, 13, 22, 0.8);
       border: 1px solid var(--border);
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
       color: var(--accent);
     }
 
-    .file-info { padding: 7px 8px; }
+    .file-info {
+      padding: 10px 11px;
+    }
+
     .file-name {
-      font-size: 11.5px;
+      font-size: 13px;
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .file-meta {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--muted);
-      margin-top: 2px;
+      margin-top: 3px;
       display: flex;
       justify-content: space-between;
     }
 
-    html.ssd-cols-4 .file-info { padding: 4px 5px; }
-    html.ssd-cols-4 .file-name { font-size: 9.5px; }
-    html.ssd-cols-4 .file-meta,
-    html.ssd-cols-4 .file-ext-badge { display: none; }
-
     .empty-state {
       text-align: center;
-      padding: 48px 18px;
+      padding: 56px 20px;
       color: var(--muted);
     }
-    .empty-state .emoji { font-size: 44px; margin-bottom: 10px; }
-    .empty-state h3 { margin: 0 0 6px; color: var(--text); font-size: 16.5px; }
-    .empty-state p { margin: 0; font-size: 13px; line-height: 1.5; }
 
-    /* Cloud Upload FAB */
-    .fab-cloud {
+    .empty-state .emoji { font-size: 46px; margin-bottom: 10px; }
+    .empty-state h3 { margin: 0 0 6px; color: var(--text); font-size: 17px; }
+    .empty-state p { margin: 0; font-size: 13.5px; line-height: 1.5; }
+
+    /* FAB Upload */
+    .fab-upload {
       position: absolute;
-      right: 16px;
+      right: 18px;
       bottom: 20px;
-      height: 54px;
-      padding: 0 18px 0 15px;
+      height: 56px;
+      padding: 0 20px;
       border-radius: 999px;
-      border: 1.5px solid rgba(125, 211, 252, 0.72);
-      background: linear-gradient(135deg, #0EA5E9, #2563EB);
-      color: #FFFFFF;
-      font-size: 14px;
+      border: none;
+      background: linear-gradient(135deg, #38BDF8, #2563EB);
+      color: #fff;
+      font-size: 15px;
       font-weight: 800;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 12px 28px rgba(14, 165, 233, 0.45);
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45);
       cursor: pointer;
       z-index: 20;
     }
 
-    .fab-cloud:active { transform: scale(0.95); }
+    .fab-upload:active { transform: scale(0.95); }
 
     /* Inspector Panel */
     .inspector {
@@ -744,7 +590,6 @@
       display: flex;
       flex-direction: column;
       height: 100%;
-      min-height: 0;
       padding: 16px;
       overflow-y: auto;
       z-index: 35;
@@ -803,7 +648,7 @@
       margin-top: auto;
     }
 
-    /* Modals & Drawers */
+    /* Overlay & Modals */
     .drawer-backdrop {
       position: fixed;
       inset: 0;
@@ -815,7 +660,7 @@
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.74);
+      background: rgba(0, 0, 0, 0.72);
       backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
@@ -836,8 +681,18 @@
       box-shadow: var(--shadow);
     }
 
-    .modal-title { margin: 0 0 6px; font-size: 18px; font-weight: 800; }
-    .modal-sub { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .modal-title {
+      margin: 0 0 6px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .modal-sub {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
 
     .tab-switch {
       display: grid;
@@ -892,34 +747,29 @@
       background: rgba(56, 189, 248, 0.14);
     }
 
-    /* Fullscreen Lightbox (Images + Videos) */
+    /* Fullscreen Lightbox */
     #lightbox {
       position: fixed;
       inset: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #000000;
+      background: rgba(5, 8, 15, 0.97);
       z-index: 9999;
       display: flex;
       flex-direction: column;
     }
 
     .lb-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
       padding: 12px 14px;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
-      z-index: 3;
+      background: rgba(17, 24, 39, 0.9);
+      border-bottom: 1px solid var(--border);
+      z-index: 2;
     }
 
     .lb-title {
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 700;
       white-space: nowrap;
       overflow: hidden;
@@ -935,8 +785,6 @@
 
     .lb-stage {
       flex: 1;
-      width: 100%;
-      height: 100%;
       position: relative;
       overflow: hidden;
       display: flex;
@@ -946,40 +794,32 @@
     }
 
     #lbImg {
-      max-width: 100vw;
-      max-height: 100vh;
-      width: 100%;
-      height: 100%;
+      max-width: 96%;
+      max-height: 92%;
       object-fit: contain;
       transform-origin: center center;
+      transition: transform 0.08s ease-out;
       will-change: transform;
-    }
-
-    #lbVideo {
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain;
-      background: #000000;
     }
 
     .lb-status {
       position: absolute;
-      bottom: 24px;
+      bottom: 18px;
       left: 50%;
       transform: translateX(-50%);
-      padding: 8px 15px;
+      padding: 7px 14px;
       border-radius: 999px;
-      background: rgba(17, 24, 39, 0.92);
-      border: 1px solid var(--border-strong);
-      font-size: 12.5px;
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid var(--border);
+      font-size: 12px;
       color: var(--accent);
-      z-index: 4;
     }
 
+    /* Toast */
     #toast {
       position: fixed;
       left: 50%;
-      bottom: 86px;
+      bottom: 84px;
       transform: translateX(-50%);
       background: #1E293B;
       border: 1px solid var(--border-strong);
@@ -994,9 +834,15 @@
       text-align: center;
     }
 
+    /* ---------- MOBILE RESPONSIVE (<= 900px) ---------- */
     @media (max-width: 900px) {
-      #appScreen { grid-template-columns: 1fr; }
-      #mobileMenuBtn { display: grid; }
+      #appScreen {
+        grid-template-columns: 1fr;
+      }
+
+      #mobileMenuBtn {
+        display: grid;
+      }
 
       .sidebar {
         position: fixed;
@@ -1009,7 +855,10 @@
         transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
         box-shadow: var(--shadow);
       }
-      .sidebar.open { transform: translateX(0); }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
 
       .inspector {
         position: fixed;
@@ -1024,26 +873,34 @@
         border-radius: 22px 22px 0 0;
         transform: translateY(110%);
         transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1);
-        box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.65);
+        box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.6);
       }
-      .inspector.open { transform: translateY(0); }
+
+      .inspector.open {
+        transform: translateY(0);
+      }
+
+      .files-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- ================= 1. AUTH SCREEN ================= -->
+  <!-- ================= AUTH SCREEN ================= -->
   <section id="authScreen">
     <div class="auth-card">
       <div class="brand-logo">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
           <path d="m13 11-2 4h3l-2 4" stroke="#F8FAFC" stroke-width="2.1"/>
         </svg>
       </div>
       <div class="brand-badge">SSD SYNC • NEXUSCLOUD</div>
       <h1 class="auth-title">Conectar Nuvem SSD</h1>
-      <p class="auth-sub">Toda nova instalação valida seu código de segurança antes de acessar ou restaurar seus cofres privados.</p>
+      <p class="auth-sub">Entre com seu número para acessar seus cofres privados sincronizados com a Web e Android.</p>
 
       <div id="engineErrorBox" class="alert-box hidden"></div>
       <div id="authStatusBox" class="alert-box alert-info hidden"></div>
@@ -1061,19 +918,13 @@
         <button id="saveApiBtn" class="btn btn-secondary" style="width:100%;">Salvar Credenciais API</button>
       </div>
 
-      <!-- Step 1: Phone + Já tenho perfil -->
+      <!-- Step 1: Phone -->
       <div id="stepPhone">
         <div class="field-group">
           <label class="field-label" for="phoneInput">Número com DDI (+55)</label>
           <input id="phoneInput" class="input" type="tel" placeholder="+55 85 99999-9999" autocomplete="tel" />
         </div>
         <button id="sendCodeBtn" class="btn btn-primary">Enviar Código de Acesso</button>
-
-        <div class="divider-or">ou</div>
-
-        <button id="restoreProfileBtn" class="btn btn-outline-accent">
-          ☁️ Já tenho perfil • Restaurar da Nuvem
-        </button>
       </div>
 
       <!-- Step 2: Code -->
@@ -1106,25 +957,7 @@
     </div>
   </section>
 
-  <!-- ================= 2. PROFILE HUB SCREEN ================= -->
-  <section id="profilesScreen" class="hidden">
-    <div class="profiles-card">
-      <div style="text-align:center;">
-        <div class="brand-badge">PERFIS SINCRONIZADOS</div>
-        <h2 class="auth-title" style="font-size:21px;">Meus Perfis na Nuvem</h2>
-        <p class="auth-sub" id="profilesSubText">Selecione um perfil existente ou restaure da nuvem sem precisar criar outro.</p>
-      </div>
-
-      <div id="profileHubList" class="profile-grid"></div>
-
-      <div style="display:flex;flex-direction:column;gap:9px;margin-top:12px;">
-        <button id="hubRescanBtn" class="btn btn-outline-accent">↻ Já tenho perfil • Buscar na Nuvem</button>
-        <button id="hubCreateNewBtn" class="btn btn-primary">+ Criar Novo Perfil / Cofre</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= 3. WORKSPACE SCREEN ================= -->
+  <!-- ================= WORKSPACE SCREEN ================= -->
   <section id="appScreen" class="hidden">
     <div id="drawerBackdrop" class="drawer-backdrop hidden"></div>
 
@@ -1135,7 +968,7 @@
           <div style="width:36px;height:36px;border-radius:10px;background:#090D16;border:1.5px solid var(--accent);display:grid;place-items:center;">⚡</div>
           <div>
             SSD Nexus
-            <span>NEXUSCLOUD v2.4</span>
+            <span>NEXUSCLOUD v2.1</span>
           </div>
         </div>
         <button id="closeSidebarBtn" class="icon-btn" style="width:34px;height:34px;font-size:15px;" title="Fechar">✕</button>
@@ -1145,7 +978,6 @@
 
       <div class="sidebar-foot">
         <button id="openNewVaultBtn" class="btn btn-primary">+ Novo Cofre / Vincular</button>
-        <button id="switchProfileBtn" class="btn btn-outline-accent" style="padding:10px;font-size:12.5px;">👥 Trocar / Restaurar Perfil</button>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
           <button id="aboutBtn" class="btn btn-secondary" style="padding:10px;font-size:12.5px;">Sobre</button>
           <button id="logoutBtn" class="btn btn-danger" style="padding:10px;font-size:12.5px;">Sair</button>
@@ -1168,19 +1000,12 @@
         <div class="search-row">
           <input id="searchInput" class="search-input" type="search" placeholder="Buscar arquivos neste cofre..." />
         </div>
-        <div class="filter-bar">
-          <div class="chips" id="filterChips">
-            <button class="chip active" data-filter="all">Todos</button>
-            <button class="chip" data-filter="image">Imagens</button>
-            <button class="chip" data-filter="video">Vídeos</button>
-            <button class="chip" data-filter="doc">Docs</button>
-            <button class="chip" data-filter="audio">Áudio</button>
-          </div>
-          <div class="col-switcher" id="colSwitcher" title="Colunas da grade">
-            <button type="button" class="col-btn" data-cols="2">2</button>
-            <button type="button" class="col-btn active" data-cols="3">3</button>
-            <button type="button" class="col-btn" data-cols="4">4</button>
-          </div>
+        <div class="chips" id="filterChips">
+          <button class="chip active" data-filter="all">Todos</button>
+          <button class="chip" data-filter="image">Imagens</button>
+          <button class="chip" data-filter="video">Vídeos</button>
+          <button class="chip" data-filter="doc">Documentos</button>
+          <button class="chip" data-filter="audio">Áudio</button>
         </div>
       </div>
 
@@ -1194,22 +1019,15 @@
         <div id="emptyState" class="empty-state hidden">
           <div class="emoji">🔐</div>
           <h3>Cofre 100% isolado e vazio</h3>
-          <p>Toque na <strong>nuvem de Upload</strong> no canto inferior direito para enviar fotos, vídeos ou documentos.</p>
+          <p>Toque no botão <strong>+ Enviar</strong> abaixo para guardar fotos, vídeos ou documentos neste cofre privado.</p>
         </div>
       </div>
 
       <input id="fileUploadInput" type="file" multiple class="hidden" />
-      <button id="fabUploadBtn" class="fab-cloud" title="Enviar para a nuvem">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-          <path d="M12 16V10"/>
-          <path d="m9.5 12.5 2.5-2.5 2.5 2.5"/>
-        </svg>
-        <span>Upload</span>
-      </button>
+      <button id="fabUploadBtn" class="fab-upload">＋ Enviar</button>
     </main>
 
-    <!-- Inspector Panel -->
+    <!-- Inspector Panel / Mobile Sheet -->
     <aside id="inspector" class="inspector">
       <div class="inspector-head">
         <strong style="font-size:15px;">Detalhes do Arquivo</strong>
@@ -1219,7 +1037,7 @@
       <div id="inspectorEmpty" class="empty-state" style="padding:36px 12px;">
         <div class="emoji">📁</div>
         <h3>Nenhum selecionado</h3>
-        <p>Toque em qualquer foto, vídeo ou arquivo para visualizar em tela cheia ou baixar.</p>
+        <p>Toque em qualquer arquivo para visualizar detalhes, ampliar ou baixar.</p>
       </div>
 
       <div id="inspectorContent" class="hidden" style="display:flex;flex-direction:column;flex:1;">
@@ -1231,8 +1049,8 @@
           <div class="meta-row"><span>Tipo</span><span id="metaType">-</span></div>
         </div>
         <div class="inspector-actions">
-          <button id="btnOpenFullscreen" class="btn btn-primary hidden">⛶ Tela Cheia</button>
-          <button id="btnDownloadFile" class="btn btn-secondary">⬇ Baixar Arquivo</button>
+          <button id="btnZoomImage" class="btn btn-primary hidden">🔍 Aumentar Imagem</button>
+          <button id="btnDownloadFile" class="btn btn-secondary">⬇ Baixar para o Celular</button>
           <button id="btnDeleteFile" class="btn btn-danger">🗑 Excluir do Cofre</button>
         </div>
       </div>
@@ -1243,7 +1061,7 @@
   <div id="vaultModal" class="modal-backdrop hidden">
     <div class="modal-card">
       <h2 class="modal-title">Cofres Privados Isolados</h2>
-      <p class="modal-sub">Cada cofre cria um canal privado exclusivo e sincroniza automaticamente entre Web e Android.</p>
+      <p class="modal-sub">Cada cofre usa um canal privado exclusivo e sincroniza automaticamente entre Web e Android.</p>
 
       <div class="tab-switch">
         <button id="tabCreateVault" class="tab-btn active">Criar Novo</button>
@@ -1252,8 +1070,8 @@
 
       <div id="panelCreateVault">
         <div class="field-group">
-          <label class="field-label" for="newVaultName">Nome do Perfil / Cofre</label>
-          <input id="newVaultName" class="input" type="text" placeholder="Ex: Pessoal, Documentos, Trabalho" />
+          <label class="field-label" for="newVaultName">Nome do Cofre</label>
+          <input id="newVaultName" class="input" type="text" placeholder="Ex: Documentos, Pessoal, Trabalho" />
         </div>
       </div>
 
@@ -1285,7 +1103,7 @@
   <div id="pinModal" class="modal-backdrop hidden">
     <div class="modal-card">
       <h2 class="modal-title" id="pinModalTitle">Cofre Protegido</h2>
-      <p class="modal-sub">Digite o PIN para abrir este cofre privado.</p>
+      <p class="modal-sub">Digite o PIN para descriptografar e abrir este cofre.</p>
       <div id="pinErrorMsg" class="alert-box hidden">PIN incorreto. Tente novamente.</div>
       <div class="field-group">
         <input id="unlockPinInput" class="input" type="password" inputmode="numeric" placeholder="Digite o PIN" style="text-align:center;font-size:20px;letter-spacing:0.25em;" />
@@ -1300,9 +1118,9 @@
   <!-- ================= MODAL: ABOUT ================= -->
   <div id="aboutModal" class="modal-backdrop hidden">
     <div class="modal-card" style="text-align:center;">
-      <div class="brand-badge">SSD NEXUS • NEXUSCLOUD</div>
-      <h2 class="modal-title">SSD NexusCloud v2.4</h2>
-      <p class="modal-sub">Nuvem privada com cofres isolados por canal exclusivo, PIN SHA-256 e restauração automática entre Web e Android.</p>
+      <div class="brand-badge">SSD NEXUS • ANDROID</div>
+      <h2 class="modal-title">SSD NexusCloud v2.1</h2>
+      <p class="modal-sub">Armazenamento pessoal criptografado em nuvem com cofres isolados por canal privado, PIN SHA-256 e sincronização instantânea Web + Android.</p>
       <div style="padding:14px;border-radius:12px;background:#0B1120;border:1px solid var(--border);margin-bottom:16px;font-size:13.5px;line-height:1.6;">
         <strong style="color:var(--accent);">Desenvolvedor:</strong><br/>
         Josimar Sousa e SSD Soluções 2026
@@ -1311,23 +1129,21 @@
     </div>
   </div>
 
-  <!-- ================= FULLSCREEN LIGHTBOX (FOTOS + VÍDEOS) ================= -->
+  <!-- ================= FULLSCREEN LIGHTBOX ================= -->
   <div id="lightbox" class="hidden">
     <div class="lb-bar">
-      <div class="lb-title" id="lbTitle">Tela Cheia</div>
+      <div class="lb-title" id="lbTitle">Imagem</div>
       <div class="lb-controls">
         <button id="lbZoomOut" class="icon-btn" style="width:36px;height:36px;">−</button>
         <button id="lbZoomReset" class="icon-btn" style="width:36px;height:36px;font-size:12px;font-weight:800;">1x</button>
         <button id="lbZoomIn" class="icon-btn" style="width:36px;height:36px;">＋</button>
-        <button id="lbRotate" class="icon-btn" style="width:36px;height:36px;" title="Girar tela">↻</button>
-        <button id="lbDownload" class="icon-btn" style="width:36px;height:36px;" title="Baixar">⬇</button>
-        <button id="lbClose" class="icon-btn" style="width:36px;height:36px;" title="Fechar">✕</button>
+        <button id="lbDownload" class="icon-btn" style="width:36px;height:36px;">⬇</button>
+        <button id="lbClose" class="icon-btn" style="width:36px;height:36px;">✕</button>
       </div>
     </div>
     <div id="lbStage" class="lb-stage">
-      <img id="lbImg" class="hidden" alt="Visualização em tela cheia" />
-      <video id="lbVideo" class="hidden" controls playsinline autoplay></video>
-      <div id="lbStatus" class="lb-status hidden">Carregando mídia em alta resolução...</div>
+      <img id="lbImg" alt="Visualização em tela cheia" />
+      <div id="lbStatus" class="lb-status hidden">Carregando resolução completa...</div>
     </div>
   </div>
 
@@ -1340,8 +1156,7 @@
         API: "ssd_nexus_api_cfg_v2",
         SESSION: "ssd_nexus_gramjs_session_v2",
         VAULTS: "ssd_nexus_vaults_cache_v2",
-        ACTIVE_VAULT: "ssd_nexus_active_vault_v2",
-        GRID_COLS: "ssd_nexus_grid_cols"
+        ACTIVE_VAULT: "ssd_nexus_active_vault_v2"
       };
 
       const DEFAULT_API = {
@@ -1349,6 +1164,7 @@
         apiHash: "b18441a1ff607e10a989891a5462e627"
       };
 
+      // State
       let tgLib = null;
       let client = null;
       let vaults = [];
@@ -1358,19 +1174,20 @@
       let selectedFile = null;
       let activeFilter = "all";
       let thumbCache = new Map();
-      let mediaUrlCache = new Map();
+      let fullImgCache = new Map();
       let cloudSyncMsgId = null;
-      let restoreIntentMode = false;
 
+      // Auth promise resolvers
       let phoneCodeResolver = null;
       let passwordResolver = null;
 
+      // Modal states
       let vaultModalMode = "create";
       let selectedLinkChannel = null;
       let pendingUnlockVault = null;
 
       // Lightbox transform state
-      let lbScale = 1, lbX = 0, lbY = 0, lbRot = 0;
+      let lbScale = 1, lbX = 0, lbY = 0;
       let isDragging = false, dragStartX = 0, dragStartY = 0;
       let lastTouchDist = 0, lastTapTime = 0;
 
@@ -1398,12 +1215,6 @@
 
       function saveApiConfig(apiId, apiHash) {
         localStorage.setItem(STORAGE_KEYS.API, JSON.stringify({ apiId: Number(apiId), apiHash: String(apiHash).trim() }));
-      }
-
-      function normalizeChannelId(raw) {
-        if (raw === null || raw === undefined) return "";
-        const str = typeof raw === "object" && raw.value !== undefined ? String(raw.value) : String(raw);
-        return str.replace(/^-100/, "").replace(/^-/, "").trim();
       }
 
       async function sha256(text) {
@@ -1435,24 +1246,7 @@
         return window.Buffer || (tgLib && tgLib.Buffer) || null;
       }
 
-      function escapeHtml(str) {
-        return String(str || "").replace(/[&<>"']/g, (m) => ({
-          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-        }[m]));
-      }
-
-      // ---------- GRID COLUMNS (2 | 3 | 4) ----------
-      function applyGridCols(cols) {
-        const num = ["2", "3", "4"].includes(String(cols)) ? String(cols) : "3";
-        document.documentElement.classList.remove("ssd-cols-2", "ssd-cols-3", "ssd-cols-4");
-        document.documentElement.classList.add("ssd-cols-" + num);
-        try { localStorage.setItem(STORAGE_KEYS.GRID_COLS, num); } catch (_) {}
-        $("colSwitcher").querySelectorAll(".col-btn").forEach(btn => {
-          btn.classList.toggle("active", btn.dataset.cols === num);
-        });
-      }
-
-      // ---------- ANDROID BACK HANDLER ----------
+      // ---------- ANDROID BACK BUTTON HANDLER ----------
       window.handleAndroidBack = function () {
         if (!$("lightbox").classList.contains("hidden")) {
           closeLightbox();
@@ -1520,23 +1314,15 @@
       }
 
       async function boot() {
-        applyGridCols(localStorage.getItem(STORAGE_KEYS.GRID_COLS) || "3");
-
-        // Se estiver rodando dentro do APK Android, o APK já desenha a nuvem flutuante
-        if (window.AndroidBridge) {
-          $("fabUploadBtn").classList.add("hidden");
-        }
-
         tgLib = detectGramJS();
         const cfg = getApiConfig();
         $("apiIdInput").value = cfg.apiId;
         $("apiHashInput").value = cfg.apiHash;
 
         if (!tgLib) {
-          $("engineErrorBox").innerHTML = "<strong>Motor gramjs.js não encontrado.</strong><br>Certifique-se de que o arquivo <code>gramjs.js</code> está na mesma pasta do <code>index.html</code>.";
+          $("engineErrorBox").innerHTML = "<strong>Motor gramjs.js não carregado.</strong><br>Verifique se o build baixou o arquivo <code>assets/gramjs.js</code> corretamente.";
           $("engineErrorBox").classList.remove("hidden");
           $("sendCodeBtn").disabled = true;
-          $("restoreProfileBtn").disabled = true;
           return;
         }
 
@@ -1546,12 +1332,12 @@
           try {
             await connectClient(savedSession);
             if (await client.checkAuthorization()) {
-              await onAuthenticated();
+              enterWorkspace();
               return;
             }
           } catch (err) {
             console.error(err);
-            setAuthStatus("Sessão expirada. Confirme seu número e código.", true);
+            setAuthStatus("Sessão expirada. Faça login novamente.", true);
           }
         }
       }
@@ -1567,22 +1353,14 @@
         await client.connect();
       }
 
-      async function startPhoneLogin(isRestoreFlow = false) {
-        restoreIntentMode = isRestoreFlow;
+      async function startPhoneLogin() {
         const phone = $("phoneInput").value.trim();
         if (!phone || phone.length < 8) {
-          setAuthStatus(
-            isRestoreFlow
-              ? "Digite o número da sua conta acima para receber o código e restaurar seus perfis."
-              : "Informe o número completo com DDI (ex: +5585999999999).",
-            true
-          );
-          $("phoneInput").focus();
+          setAuthStatus("Informe o número completo com DDI (ex: +5585999999999).", true);
           return;
         }
 
         $("sendCodeBtn").disabled = true;
-        $("restoreProfileBtn").disabled = true;
         setAuthStatus("Conectando aos servidores seguros...");
 
         try {
@@ -1592,7 +1370,7 @@
             phoneCode: async () => {
               $("stepPhone").classList.add("hidden");
               $("stepCode").classList.remove("hidden");
-              setAuthStatus("Código de 5 dígitos enviado. Digite abaixo para continuar.");
+              setAuthStatus("Código enviado para seu Telegram. Digite abaixo.");
               return await new Promise((resolve) => { phoneCodeResolver = resolve; });
             },
             password: async () => {
@@ -1604,43 +1382,35 @@
             onError: (err) => {
               setAuthStatus("Erro: " + (err.message || err), true);
               $("sendCodeBtn").disabled = false;
-              $("restoreProfileBtn").disabled = false;
             }
-          }).then(async () => {
+          }).then(() => {
             const sessionStr = client.session.save();
             localStorage.setItem(STORAGE_KEYS.SESSION, sessionStr);
             setAuthStatus("");
-            await onAuthenticated();
+            enterWorkspace();
           }).catch((err) => {
             setAuthStatus("Falha na autenticação: " + (err.message || err), true);
             $("sendCodeBtn").disabled = false;
-            $("restoreProfileBtn").disabled = false;
           });
         } catch (err) {
           setAuthStatus("Erro ao conectar: " + (err.message || err), true);
           $("sendCodeBtn").disabled = false;
-          $("restoreProfileBtn").disabled = false;
         }
       }
 
-      // ---------- DUAL CLOUD SYNC (#SSD_NEXUS_VAULTS_V2 + PRIVATE CHANNELS) ----------
-      async function syncVaultsFromCloud() {
-        const mergedMap = new Map();
+      // ---------- VAULTS & CLOUD SYNC (#SSD_NEXUS_VAULTS_V2) ----------
+      async function enterWorkspace() {
+        $("authScreen").classList.add("hidden");
+        $("appScreen").classList.remove("hidden");
+        await syncVaultsFromCloud();
+      }
 
+      async function syncVaultsFromCloud() {
+        $("activeVaultSub").textContent = "Sincronizando cofres na nuvem...";
         try {
           const localCached = JSON.parse(localStorage.getItem(STORAGE_KEYS.VAULTS) || "[]");
-          if (Array.isArray(localCached)) {
-            localCached.forEach(v => {
-              const cid = normalizeChannelId(v.channelId);
-              if (cid) mergedMap.set(cid, { ...v, channelId: cid });
-            });
-          }
-        } catch (_) {}
+          vaults = Array.isArray(localCached) ? localCached : [];
 
-        let indexChanged = false;
-
-        // 1. Ler índice #SSD_NEXUS_VAULTS_V2 nas Mensagens Salvas
-        try {
           const msgs = await client.getMessages("me", { search: VAULT_SYNC_TAG, limit: 10 });
           if (msgs && msgs.length > 0) {
             const latest = msgs.find(m => m.message && m.message.includes(VAULT_SYNC_TAG));
@@ -1649,50 +1419,29 @@
               const rawJson = latest.message.replace(VAULT_SYNC_TAG, "").trim();
               const parsed = JSON.parse(rawJson);
               if (Array.isArray(parsed)) {
-                parsed.forEach(v => {
-                  const cid = normalizeChannelId(v.channelId);
-                  if (cid) {
-                    mergedMap.set(cid, { ...v, channelId: cid });
-                  }
-                });
+                vaults = parsed;
+                localStorage.setItem(STORAGE_KEYS.VAULTS, JSON.stringify(vaults));
               }
             }
           }
         } catch (e) {
-          console.warn("Aviso ao ler índice de cofres:", e);
+          console.warn("Erro ao sincronizar cofres:", e);
         }
 
-        // 2. Escanear canais privados criados anteriormente (SSD Nexus / NexusCloud)
-        try {
-          const dialogs = await client.getDialogs({ limit: 100 });
-          dialogs.forEach(d => {
-            if (!d.isChannel || !d.entity) return;
-            const title = String(d.title || "").trim();
-            const cid = normalizeChannelId(d.entity.id);
-            if (!cid) return;
-
-            if (!mergedMap.has(cid) && /^(SSD Nexus|NexusCloud|Cofre\s+SSD)/i.test(title)) {
-              const cleanName = title.replace(/^(SSD Nexus|NexusCloud)\s*[•:-]\s*/i, "").trim() || title;
-              mergedMap.set(cid, {
-                id: "v_" + cid,
-                name: cleanName,
-                channelId: cid,
-                pinHash: ""
-              });
-              indexChanged = true;
-            }
-          });
-        } catch (e) {
-          console.warn("Aviso ao escanear canais da conta:", e);
+        if (vaults.length === 0) {
+          // Ensure a clean default view prompting creation or saved messages
+          renderVaultList();
+          $("activeVaultTitle").textContent = "Crie seu 1º Cofre";
+          $("activeVaultSub").textContent = "Cada cofre nasce zerado em canal privado";
+          $("filesGrid").innerHTML = "";
+          $("emptyState").classList.remove("hidden");
+          return;
         }
 
-        vaults = Array.from(mergedMap.values());
-        localStorage.setItem(STORAGE_KEYS.VAULTS, JSON.stringify(vaults));
-
-        if (indexChanged && vaults.length > 0) {
-          await saveVaultsToCloud();
-        }
-        return vaults;
+        renderVaultList();
+        const savedActiveId = localStorage.getItem(STORAGE_KEYS.ACTIVE_VAULT);
+        const target = vaults.find(v => String(v.id) === String(savedActiveId)) || vaults[0];
+        selectVault(target);
       }
 
       async function saveVaultsToCloud() {
@@ -1710,74 +1459,11 @@
             const sent = await client.sendMessage("me", { message: payload });
             if (sent && sent.id) cloudSyncMsgId = sent.id;
           } catch (err) {
-            console.error("Erro ao salvar índice na nuvem:", err);
+            console.error("Erro ao salvar índice de cofres na nuvem:", err);
           }
         }
       }
 
-      // ---------- POST-AUTH ROUTING & PROFILE HUB ----------
-      async function onAuthenticated() {
-        $("authScreen").classList.add("hidden");
-        await syncVaultsFromCloud();
-
-        // Se clicou em "Já tenho perfil" ou tem múltiplos perfis, abre o Hub de Perfis
-        if (restoreIntentMode || vaults.length > 1 || vaults.length === 0) {
-          openProfileHub();
-          return;
-        }
-
-        const savedActiveId = localStorage.getItem(STORAGE_KEYS.ACTIVE_VAULT);
-        const target = vaults.find(v => String(v.id) === String(savedActiveId)) || vaults[0];
-        enterWorkspaceWithVault(target);
-      }
-
-      function openProfileHub() {
-        $("appScreen").classList.add("hidden");
-        $("profilesScreen").classList.remove("hidden");
-        renderProfileHub();
-      }
-
-      function renderProfileHub() {
-        const box = $("profileHubList");
-        box.innerHTML = "";
-
-        if (vaults.length === 0) {
-          $("profilesSubText").textContent = "Nenhum cofre sincronizado encontrado automaticamente. Toque em 'Buscar na Nuvem' ou crie seu primeiro perfil.";
-          box.innerHTML = `<div class="empty-state" style="padding:24px 10px;"><div class="emoji">☁️</div><h3>Nenhum perfil listado</h3><p>Se você já criou um canal no celular, toque em <strong>Criar Novo Perfil / Cofre → Vincular Existente</strong>.</p></div>`;
-          return;
-        }
-
-        $("profilesSubText").textContent = `${vaults.length} perfil(is) restaurado(s) da sua nuvem. Toque para abrir:`;
-        vaults.forEach(v => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "profile-tile";
-          const hasPin = Boolean(v.pinHash);
-          btn.innerHTML = `
-            <div class="profile-tile-icon">${hasPin ? "🔒" : "⚡"}</div>
-            <div class="profile-tile-info">
-              <div class="profile-tile-name">${escapeHtml(v.name)}</div>
-              <div class="profile-tile-sub">${hasPin ? "Protegido por PIN SHA-256" : "Cofre privado sincronizado"}</div>
-            </div>
-            <span style="color:var(--accent);font-weight:800;">Entrar →</span>
-          `;
-          btn.addEventListener("click", () => {
-            enterWorkspaceWithVault(v);
-          });
-          box.appendChild(btn);
-        });
-      }
-
-      function enterWorkspaceWithVault(vault) {
-        $("profilesScreen").classList.add("hidden");
-        $("appScreen").classList.remove("hidden");
-        renderVaultList();
-        if (vault) {
-          selectVault(vault);
-        }
-      }
-
-      // ---------- WORKSPACE & VAULTS ----------
       function renderVaultList() {
         const list = $("vaultList");
         list.innerHTML = "";
@@ -1811,8 +1497,6 @@
           setTimeout(() => $("unlockPinInput").focus(), 120);
           return;
         }
-        $("profilesScreen").classList.add("hidden");
-        $("appScreen").classList.remove("hidden");
         activeVault = vault;
         localStorage.setItem(STORAGE_KEYS.ACTIVE_VAULT, vault.id);
         renderVaultList();
@@ -1822,15 +1506,20 @@
       }
 
       async function resolveVaultEntity(vault) {
-        const cleanId = normalizeChannelId(vault.channelId);
-        if (cleanId) {
+        if (vault.channelId) {
           const dialogs = await client.getDialogs({ limit: 100 });
-          const match = dialogs.find(d => d.entity && normalizeChannelId(d.entity.id) === cleanId);
+          const match = dialogs.find(d => {
+            const ent = d.entity;
+            if (!ent) return false;
+            const rawId = String(ent.id || "").replace(/^-100/, "");
+            const targetId = String(vault.channelId).replace(/^-100/, "");
+            return rawId === targetId;
+          });
           if (match) return match.inputEntity || match.entity;
           try {
-            return await client.getEntity(BigInt("-100" + cleanId));
+            return await client.getEntity(BigInt("-100" + String(vault.channelId).replace(/^-100/, "")));
           } catch (_) {
-            return await client.getInputEntity(BigInt("-100" + cleanId));
+            return await client.getInputEntity(Number(vault.channelId));
           }
         }
         return "me";
@@ -1845,7 +1534,7 @@
 
         try {
           const entity = await resolveVaultEntity(activeVault);
-          const messages = await client.getMessages(entity, { limit: 120 });
+          const messages = await client.getMessages(entity, { limit: 100 });
           currentFiles = messages
             .filter(m => m.media && (m.photo || m.document))
             .map(parseMessageFile);
@@ -1878,15 +1567,13 @@
           size = Number(msg.document.size || 0);
           const attrs = msg.document.attributes || [];
           const fileAttr = attrs.find(a => a.fileName);
-          const isVideoAttr = attrs.some(a => a.className === "DocumentAttributeVideo" || typeof a.duration === "number" && a.w && a.h);
-
           if (fileAttr && fileAttr.fileName) name = fileAttr.fileName;
-          else if (mime.startsWith("video/") || isVideoAttr) name = `video_${msg.id}.mp4`;
+          else if (mime.startsWith("video/")) name = `video_${msg.id}.mp4`;
           else if (mime.startsWith("audio/")) name = `audio_${msg.id}.mp3`;
           else if (mime.startsWith("image/")) name = `imagem_${msg.id}.png`;
 
           if (mime.startsWith("image/")) kind = "image";
-          else if (mime.startsWith("video/") || isVideoAttr) kind = "video";
+          else if (mime.startsWith("video/")) kind = "video";
           else if (mime.startsWith("audio/")) kind = "audio";
           else kind = "doc";
         }
@@ -1931,7 +1618,7 @@
           card.addEventListener("click", () => selectFile(f));
           grid.appendChild(card);
 
-          if (f.kind === "image" || f.kind === "video") {
+          if (f.kind === "image") {
             loadThumbnail(f);
           }
         });
@@ -1943,25 +1630,22 @@
         if (!container) return;
 
         if (thumbCache.has(key)) {
-          applyThumbUrl(container, thumbCache.get(key), file);
+          applyThumbUrl(container, thumbCache.get(key), file.ext);
           return;
         }
         try {
           const data = await client.downloadMedia(file.msg, { thumb: 1 });
           if (!data || !data.length) return;
-          const blob = new Blob([data], { type: "image/jpeg" });
+          const blob = new Blob([data], { type: file.mime || "image/jpeg" });
           const url = URL.createObjectURL(blob);
           thumbCache.set(key, url);
           const freshContainer = document.getElementById(`thumb-${file.id}`);
-          if (freshContainer) applyThumbUrl(freshContainer, url, file);
+          if (freshContainer) applyThumbUrl(freshContainer, url, file.ext);
         } catch (_) {}
       }
 
-      function applyThumbUrl(container, url, file) {
-        const playOverlay = file.kind === "video"
-          ? `<div style="position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,0.28);font-size:26px;">▶️</div>`
-          : "";
-        container.innerHTML = `<img src="${url}" alt="thumb" />${playOverlay}<span class="file-ext-badge">${escapeHtml(file.ext)}</span>`;
+      function applyThumbUrl(container, url, ext) {
+        container.innerHTML = `<img src="${url}" alt="thumb" /><span class="file-ext-badge">${escapeHtml(ext)}</span>`;
       }
 
       function resetInspector() {
@@ -1981,20 +1665,14 @@
 
         const preview = $("inspectorPreview");
         const key = `${activeVault.id}_${file.id}`;
-
-        if (file.kind === "image" || file.kind === "video") {
-          $("btnOpenFullscreen").classList.remove("hidden");
-          $("btnOpenFullscreen").textContent = file.kind === "video" ? "▶️ Assistir em Tela Cheia" : "⛶ Ampliar em Tela Cheia";
-          const url = mediaUrlCache.get(key) || thumbCache.get(key);
-          const badge = file.kind === "video" ? `<div style="position:absolute;font-size:34px;">▶️</div>` : "";
-          preview.style.position = "relative";
-          preview.innerHTML = url
-            ? `<img src="${url}" alt="preview" />${badge}`
-            : `<div style="font-size:46px;">${file.kind === "video" ? "🎬" : "🖼️"}</div>`;
-          preview.onclick = () => openFullscreenMedia(file);
+        if (file.kind === "image") {
+          $("btnZoomImage").classList.remove("hidden");
+          const url = fullImgCache.get(key) || thumbCache.get(key);
+          preview.innerHTML = url ? `<img src="${url}" alt="preview" />` : `<div style="font-size:44px;">🖼️</div>`;
+          preview.onclick = () => openLightbox(file);
         } else {
-          $("btnOpenFullscreen").classList.add("hidden");
-          const icon = file.kind === "audio" ? "🎵" : "📄";
+          $("btnZoomImage").classList.add("hidden");
+          const icon = file.kind === "video" ? "🎬" : file.kind === "audio" ? "🎵" : "📄";
           preview.innerHTML = `<div style="font-size:48px;">${icon}</div>`;
           preview.onclick = null;
         }
@@ -2005,7 +1683,7 @@
       // ---------- UPLOAD ----------
       async function handleFileUpload(fileList) {
         if (!activeVault) {
-          showToast("Selecione ou crie um cofre primeiro.");
+          showToast("Crie ou selecione um cofre primeiro.");
           return;
         }
         const files = Array.from(fileList || []);
@@ -2019,24 +1697,17 @@
         try {
           const entity = await resolveVaultEntity(activeVault);
           const BufferImpl = getBufferImpl();
-          const CustomFileClass = tgLib.client && tgLib.client.uploads ? tgLib.client.uploads.CustomFile : null;
 
           for (let i = 0; i < files.length; i++) {
             const f = files[i];
             text.textContent = `Enviando (${i + 1}/${files.length}): ${f.name}`;
             fill.style.width = "5%";
 
-            const arrayBuf = await f.arrayBuffer();
-            const uint8 = new Uint8Array(arrayBuf);
-            let filePayload;
-
-            if (CustomFileClass) {
-              filePayload = new CustomFileClass(f.name, f.size, "", BufferImpl ? BufferImpl.from(uint8) : uint8);
-            } else if (BufferImpl) {
-              filePayload = BufferImpl.from(uint8);
+            let filePayload = f;
+            if (BufferImpl) {
+              const arrayBuf = await f.arrayBuffer();
+              filePayload = BufferImpl.from(new Uint8Array(arrayBuf));
               filePayload.name = f.name;
-            } else {
-              filePayload = f;
             }
 
             await client.sendFile(entity, {
@@ -2050,7 +1721,7 @@
             });
           }
 
-          showToast(`${files.length} arquivo(s) enviado(s) com sucesso!`);
+          showToast(`${files.length} arquivo(s) salvo(s) no cofre!`);
           await loadVaultFiles();
         } catch (err) {
           console.error(err);
@@ -2062,7 +1733,7 @@
         }
       }
 
-      // ---------- DOWNLOAD ----------
+      // ---------- DOWNLOAD (NATIVE ANDROID BRIDGE + WEB FALLBACK) ----------
       function uint8ToBase64(bytes) {
         let binary = "";
         const chunk = 0x8000;
@@ -2094,10 +1765,11 @@
           const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
           fill.style.width = "100%";
 
+          // Android APK native Downloads/SSD Nexus bridge
           if (window.AndroidBridge && typeof window.AndroidBridge.startFileSave === "function") {
             const transferId = "dl_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
             const started = window.AndroidBridge.startFileSave(transferId, file.name, file.mime);
-            if (!started) throw new Error("Falha ao salvar em Downloads.");
+            if (!started) throw new Error("Falha ao abrir arquivo em Downloads.");
 
             const CHUNK_SIZE = 256 * 1024;
             for (let offset = 0; offset < bytes.length; offset += CHUNK_SIZE) {
@@ -2105,11 +1777,12 @@
               const ok = window.AndroidBridge.appendFileChunk(transferId, uint8ToBase64(slice));
               if (!ok) {
                 window.AndroidBridge.cancelFileSave(transferId);
-                throw new Error("Erro ao gravar arquivo.");
+                throw new Error("Erro ao gravar bloco do arquivo.");
               }
             }
             window.AndroidBridge.finishFileSave(transferId);
           } else {
+            // Browser fallback
             const blob = new Blob([bytes], { type: file.mime });
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
@@ -2144,98 +1817,51 @@
         }
       }
 
-      // ---------- FULLSCREEN LIGHTBOX (FOTOS + VÍDEOS) ----------
+      // ---------- FULLSCREEN LIGHTBOX (ZOOM / PAN / PINCH) ----------
       function applyLbTransform() {
-        $("lbImg").style.transform = `translate(${lbX}px, ${lbY}px) scale(${lbScale}) rotate(${lbRot}deg)`;
+        $("lbImg").style.transform = `translate(${lbX}px, ${lbY}px) scale(${lbScale})`;
         $("lbZoomReset").textContent = `${lbScale.toFixed(1).replace(/\.0$/, "")}x`;
       }
 
       function resetLbTransform() {
-        lbScale = 1; lbX = 0; lbY = 0; lbRot = 0;
+        lbScale = 1; lbX = 0; lbY = 0;
         applyLbTransform();
       }
 
-      async function openFullscreenMedia(file) {
+      async function openLightbox(file) {
         if (!file) return;
-        const isVideo = file.kind === "video";
         $("lbTitle").textContent = file.name;
         $("lightbox").classList.remove("hidden");
         resetLbTransform();
 
-        if (window.AndroidBridge && typeof window.AndroidBridge.setFullscreen === "function") {
-          window.AndroidBridge.setFullscreen(true);
-        }
-
-        const lbImg = $("lbImg");
-        const lbVideo = $("lbVideo");
-        lbVideo.pause();
-        lbVideo.removeAttribute("src");
-
-        if (isVideo) {
-          lbImg.classList.add("hidden");
-          lbVideo.classList.remove("hidden");
-          $("lbZoomOut").classList.add("hidden");
-          $("lbZoomReset").classList.add("hidden");
-          $("lbZoomIn").classList.add("hidden");
-        } else {
-          lbVideo.classList.add("hidden");
-          lbImg.classList.remove("hidden");
-          $("lbZoomOut").classList.remove("hidden");
-          $("lbZoomReset").classList.remove("hidden");
-          $("lbZoomIn").classList.remove("hidden");
-        }
-
         const key = `${activeVault.id}_${file.id}`;
-        const cachedFull = mediaUrlCache.get(key);
+        const cachedFull = fullImgCache.get(key);
         const cachedThumb = thumbCache.get(key);
 
         if (cachedFull) {
-          if (isVideo) lbVideo.src = cachedFull;
-          else lbImg.src = cachedFull;
+          $("lbImg").src = cachedFull;
           $("lbStatus").classList.add("hidden");
           return;
         }
 
-        if (!isVideo && cachedThumb) {
-          lbImg.src = cachedThumb;
-        }
-
-        $("lbStatus").textContent = isVideo ? "Carregando vídeo em tela cheia..." : "Carregando resolução completa...";
+        if (cachedThumb) $("lbImg").src = cachedThumb;
+        $("lbStatus").textContent = "Carregando resolução completa...";
         $("lbStatus").classList.remove("hidden");
 
         try {
-          const data = await client.downloadMedia(file.msg, {
-            progressCallback: (rec, tot) => {
-              if (tot) {
-                const pct = Math.min(99, Math.round((Number(rec) / Number(tot)) * 100));
-                $("lbStatus").textContent = `Carregando (${pct}%)...`;
-              }
-            }
-          });
+          const data = await client.downloadMedia(file.msg, {});
           if (data && data.length) {
-            const blob = new Blob([data], { type: file.mime || (isVideo ? "video/mp4" : "image/jpeg") });
+            const blob = new Blob([data], { type: file.mime || "image/jpeg" });
             const url = URL.createObjectURL(blob);
-            mediaUrlCache.set(key, url);
-            if (isVideo) {
-              lbVideo.src = url;
-              lbVideo.play().catch(() => {});
-            } else {
-              lbImg.src = url;
-            }
+            fullImgCache.set(key, url);
+            $("lbImg").src = url;
           }
-        } catch (err) {
-          showToast("Erro ao carregar mídia: " + (err.message || err));
-        }
+        } catch (_) {}
         $("lbStatus").classList.add("hidden");
       }
 
       function closeLightbox() {
-        $("lbVideo").pause();
-        $("lbVideo").removeAttribute("src");
         $("lightbox").classList.add("hidden");
-        if (window.AndroidBridge && typeof window.AndroidBridge.setFullscreen === "function") {
-          window.AndroidBridge.setFullscreen(false);
-        }
       }
 
       // ---------- CREATE / LINK VAULT MODAL ----------
@@ -2244,7 +1870,7 @@
         box.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:10px;">Buscando canais privados da conta...</div>`;
         selectedLinkChannel = null;
         try {
-          const dialogs = await client.getDialogs({ limit: 100 });
+          const dialogs = await client.getDialogs({ limit: 80 });
           const channels = dialogs.filter(d => d.isChannel && d.entity);
           if (!channels.length) {
             box.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:10px;">Nenhum canal encontrado.</div>`;
@@ -2252,7 +1878,7 @@
           }
           box.innerHTML = "";
           channels.forEach((d) => {
-            const cid = normalizeChannelId(d.entity.id);
+            const cid = String(d.entity.id).replace(/^-100/, "");
             const btn = document.createElement("button");
             btn.type = "button";
             btn.className = "channel-opt";
@@ -2262,7 +1888,7 @@
               btn.classList.add("selected");
               selectedLinkChannel = { id: cid, title: d.title || "Cofre" };
               if (!$("linkVaultName").value.trim()) {
-                $("linkVaultName").value = d.title.replace(/^(SSD Nexus|NexusCloud)\s*[•:-]\s*/i, "");
+                $("linkVaultName").value = d.title.replace(/^SSD Nexus\s*[•-]\s*/i, "");
               }
             });
             box.appendChild(btn);
@@ -2294,17 +1920,15 @@
             }));
             const createdChat = res.chats && res.chats[0];
             if (!createdChat) throw new Error("Canal não retornado pelo servidor.");
-            const channelId = normalizeChannelId(createdChat.id);
-            newVault = { id: "v_" + channelId, name, channelId, pinHash };
+            const channelId = String(createdChat.id).replace(/^-100/, "");
+            newVault = { id: "v_" + Date.now(), name, channelId, pinHash };
           } else {
             if (!selectedLinkChannel) {
               showToast("Selecione um canal na lista.");
               return;
             }
             const name = $("linkVaultName").value.trim() || selectedLinkChannel.title;
-            const cid = normalizeChannelId(selectedLinkChannel.id);
-            vaults = vaults.filter(v => normalizeChannelId(v.channelId) !== cid);
-            newVault = { id: "v_" + cid, name, channelId: cid, pinHash };
+            newVault = { id: "v_" + Date.now(), name, channelId: selectedLinkChannel.id, pinHash };
           }
 
           vaults.push(newVault);
@@ -2318,10 +1942,16 @@
           selectVault(newVault);
         } catch (err) {
           console.error(err);
-          showToast("Erro ao salvar cofre: " + (err.message || err));
+          showToast("Erro ao criar cofre: " + (err.message || err));
         } finally {
           $("confirmVaultModalBtn").disabled = false;
         }
+      }
+
+      function escapeHtml(str) {
+        return String(str || "").replace(/[&<>"']/g, (m) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[m]));
       }
 
       // ---------- EVENT LISTENERS ----------
@@ -2332,9 +1962,7 @@
         showToast("Credenciais API salvas.");
       });
 
-      $("sendCodeBtn").addEventListener("click", () => startPhoneLogin(false));
-      $("restoreProfileBtn").addEventListener("click", () => startPhoneLogin(true));
-
+      $("sendCodeBtn").addEventListener("click", startPhoneLogin);
       $("verifyCodeBtn").addEventListener("click", () => {
         const code = $("codeInput").value.trim();
         if (code && phoneCodeResolver) {
@@ -2353,31 +1981,14 @@
         }
       });
 
-      // Profile Hub events
-      $("hubRescanBtn").addEventListener("click", async () => {
-        showToast("Buscando perfis na nuvem...");
-        await syncVaultsFromCloud();
-        renderProfileHub();
-      });
-      $("hubCreateNewBtn").addEventListener("click", () => {
-        $("vaultModal").classList.remove("hidden");
-      });
-      $("switchProfileBtn").addEventListener("click", () => {
-        closeSidebar();
-        openProfileHub();
-      });
-
-      // Workspace navigation
       $("mobileMenuBtn").addEventListener("click", openSidebar);
       $("closeSidebarBtn").addEventListener("click", closeSidebar);
       $("closeInspectorBtn").addEventListener("click", closeInspector);
       $("drawerBackdrop").addEventListener("click", () => { closeSidebar(); closeInspector(); });
 
-      $("syncBtn").addEventListener("click", async () => {
-        showToast("Sincronizando nuvem...");
-        await syncVaultsFromCloud();
-        renderVaultList();
-        if (activeVault) await loadVaultFiles();
+      $("syncBtn").addEventListener("click", () => {
+        showToast("Sincronizando...");
+        syncVaultsFromCloud();
       });
 
       $("searchInput").addEventListener("input", renderFiles);
@@ -2390,21 +2001,10 @@
         renderFiles();
       });
 
-      $("colSwitcher").addEventListener("click", (e) => {
-        const btn = e.target.closest(".col-btn");
-        if (!btn) return;
-        applyGridCols(btn.dataset.cols);
-      });
-
-      // Reliable multi-file upload
-      $("fabUploadBtn").addEventListener("click", () => {
-        const inp = $("fileUploadInput");
-        inp.value = "";
-        inp.click();
-      });
+      $("fabUploadBtn").addEventListener("click", () => $("fileUploadInput").click());
       $("fileUploadInput").addEventListener("change", (e) => handleFileUpload(e.target.files));
 
-      $("btnOpenFullscreen").addEventListener("click", () => openFullscreenMedia(selectedFile));
+      $("btnZoomImage").addEventListener("click", () => openLightbox(selectedFile));
       $("btnDownloadFile").addEventListener("click", () => downloadFile(selectedFile));
       $("btnDeleteFile").addEventListener("click", () => deleteFile(selectedFile));
 
@@ -2471,19 +2071,10 @@
         applyLbTransform();
       });
       $("lbZoomReset").addEventListener("click", resetLbTransform);
-      $("lbRotate").addEventListener("click", () => {
-        if (window.AndroidBridge && typeof window.AndroidBridge.toggleOrientation === "function") {
-          window.AndroidBridge.toggleOrientation();
-        } else {
-          lbRot = (lbRot + 90) % 360;
-          applyLbTransform();
-        }
-      });
       $("lbDownload").addEventListener("click", () => downloadFile(selectedFile));
 
       const stage = $("lbStage");
       stage.addEventListener("wheel", (e) => {
-        if ($("lbImg").classList.contains("hidden")) return;
         e.preventDefault();
         lbScale = Math.max(1, Math.min(5, lbScale + (e.deltaY < 0 ? 0.25 : -0.25)));
         if (lbScale === 1) { lbX = 0; lbY = 0; }
@@ -2491,7 +2082,7 @@
       }, { passive: false });
 
       stage.addEventListener("mousedown", (e) => {
-        if (lbScale <= 1 || $("lbImg").classList.contains("hidden")) return;
+        if (lbScale <= 1) return;
         isDragging = true;
         dragStartX = e.clientX - lbX;
         dragStartY = e.clientY - lbY;
@@ -2505,7 +2096,6 @@
       window.addEventListener("mouseup", () => { isDragging = false; });
 
       stage.addEventListener("touchstart", (e) => {
-        if ($("lbImg").classList.contains("hidden")) return;
         if (e.touches.length === 2) {
           lastTouchDist = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
@@ -2527,7 +2117,6 @@
       }, { passive: true });
 
       stage.addEventListener("touchmove", (e) => {
-        if ($("lbImg").classList.contains("hidden")) return;
         if (e.touches.length === 2 && lastTouchDist > 0) {
           const dist = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
