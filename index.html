@@ -77,7 +77,7 @@
   <input type="file" id="cloud-file-picker" multiple class="hidden" />
 
   <!-- ======================================================================= -->
-  <!-- TELA 1: AUTENTICAÇÃO (CONECTAR NUVEM SSD)                               -->
+  <!-- TELA 1: AUTENTICAÇÃO (NÚMERO +55 E CÓDIGO)                              -->
   <!-- ======================================================================= -->
   <section id="view-auth" class="min-h-screen w-full flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-y-auto">
     <div class="pointer-events-none fixed -top-36 left-1/2 -translate-x-1/2 h-96 w-[38rem] rounded-full bg-[#2563eb]/15 blur-3xl"></div>
@@ -95,11 +95,11 @@
         </span>
         <h1 class="text-2xl font-bold tracking-tight text-white">Conectar Nuvem SSD</h1>
         <p class="mt-1.5 text-xs text-slate-400 leading-relaxed">
-          Autentique sua conta SSD Sync para gerenciar arquivos e restaurar seus cofres privados protegidos por PIN.
+          Informe seu número para receber o código de verificação e configurar o cofre exclusivo deste aparelho.
         </p>
       </div>
 
-      <!-- Conectando (com botão de escape imediato) -->
+      <!-- Conectando -->
       <div id="auth-panel-init" class="py-5 text-center space-y-4">
         <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2563eb]/15 border border-[#2563eb]/35 text-[#06b6d4]">
           <i data-lucide="loader-2" class="h-6 w-6 animate-spin"></i>
@@ -120,27 +120,19 @@
         </div>
       </div>
 
-      <!-- Diagnóstico de Erro de Conexão / Bundle -->
+      <!-- Diagnóstico de Erro de Bundle -->
       <div id="auth-panel-init-error" class="hidden py-4 text-left space-y-4 animate-fade-up">
         <div class="rounded-2xl border border-[#dc2626]/45 bg-[#dc2626]/12 p-4 space-y-2.5">
           <div class="flex items-start gap-3">
             <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#dc2626]/20 text-[#dc2626] border border-[#dc2626]/40">
-              <i id="auth-init-error-icon" data-lucide="package-x" class="h-5 w-5"></i>
+              <i data-lucide="package-x" class="h-5 w-5"></i>
             </div>
             <div class="min-w-0">
               <h2 id="auth-init-error-title" class="text-sm font-bold text-white">Motor SSD Sync local ausente</h2>
               <p id="auth-init-error-msg" class="mt-1 text-xs text-slate-300 leading-relaxed">
-                O arquivo <span class="font-mono text-[#06b6d4]">./gramjs.js</span> ainda não foi gerado neste repositório.
+                O arquivo <span class="font-mono text-[#06b6d4]">./gramjs.js</span> não foi encontrado neste repositório.
               </p>
             </div>
-          </div>
-          <div id="auth-init-error-steps" class="rounded-xl border border-[#1e293b] bg-[#060913]/90 p-3 text-xs text-slate-300 space-y-1.5">
-            <p class="font-semibold text-[#06b6d4]">Como resolver em 1 minuto:</p>
-            <ol class="list-decimal list-inside space-y-1 text-[11px] text-slate-300">
-              <li>Acesse a aba <strong class="text-white">Actions</strong> do seu repositório no GitHub.</li>
-              <li>Selecione o workflow <strong class="text-white">Build GramJS</strong> e clique em <strong class="text-white">Run workflow</strong>.</li>
-              <li>Aguarde o deploy e recarregue esta página com <kbd class="rounded bg-[#111827] border border-[#1e293b] px-1.5 py-0.5 font-mono text-[10px] text-cyan-300">Ctrl+Shift+R</kbd>.</li>
-            </ol>
           </div>
           <p id="auth-init-error-detail" class="font-mono text-[11px] text-rose-300/90 break-words"></p>
         </div>
@@ -150,7 +142,7 @@
         </button>
       </div>
 
-      <!-- Entrada de Telefone (+55 com asteriscos visuais no DDD e número) -->
+      <!-- Entrada de Telefone (+55 com asteriscos visuais) -->
       <div id="auth-panel-phone" class="hidden space-y-4 animate-fade-up">
         <div>
           <label for="input-phone" class="block text-xs font-medium text-slate-300 mb-2">Número de Celular</label>
@@ -176,20 +168,9 @@
           </div>
         </div>
 
-        <button id="btn-submit-phone" type="button" onclick="handlePhoneSubmit(false)" class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 text-sm font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 disabled:opacity-50 transition">
+        <button id="btn-submit-phone" type="button" onclick="handlePhoneSubmit()" class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 text-sm font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 disabled:opacity-50 transition">
           <span id="btn-submit-phone-label">Receber Código de Acesso</span>
-          <i id="btn-submit-phone-icon" data-lucide="arrow-right" class="h-4 w-4"></i>
-        </button>
-
-        <div class="relative flex items-center py-1">
-          <div class="flex-grow border-t border-[#1e293b]"></div>
-          <span class="mx-3 shrink text-[10px] font-semibold uppercase tracking-wider text-slate-500">ou</span>
-          <div class="flex-grow border-t border-[#1e293b]"></div>
-        </div>
-
-        <button id="btn-restore-phone" type="button" onclick="handlePhoneSubmit(true)" class="flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-[#06b6d4]/40 bg-[#06b6d4]/10 px-4 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4]/20 disabled:opacity-50 transition">
-          <i data-lucide="cloud-download" class="h-4 w-4"></i>
-          <span>Já tenho perfil • Restaurar da Nuvem</span>
+          <i data-lucide="arrow-right" class="h-4 w-4"></i>
         </button>
       </div>
 
@@ -201,7 +182,7 @@
             <button type="button" onclick="handleChangePhoneNumber()" class="font-medium text-blue-400 hover:text-cyan-300 underline underline-offset-2 transition">Alterar número</button>
           </div>
           <p class="text-xs text-slate-300 leading-relaxed">
-            O código de 5 dígitos foi enviado para as notificações do aplicativo ativo do <strong class="text-white">SSD Sync</strong> (ou via SMS).
+            Digite o código de 5 dígitos enviado para o seu aplicativo <strong class="text-white">SSD Sync</strong> (ou via SMS).
           </p>
         </div>
 
@@ -244,7 +225,7 @@
           </div>
           <div>
             <h2 class="text-xs font-bold text-white">Verificação em Duas Etapas</h2>
-            <p class="text-xs text-slate-300 mt-0.5">Sua conta SSD Sync exige sua senha adicional de proteção.</p>
+            <p class="text-xs text-slate-300 mt-0.5">Sua conta exige sua senha adicional de proteção.</p>
           </div>
         </div>
 
@@ -281,161 +262,174 @@
   </section>
 
   <!-- ======================================================================= -->
-  <!-- TELA 2A: ASSISTENTE DE PRIMEIRO PERFIL / COFRE PIN                      -->
+  <!-- TELA 2: CONFIGURAÇÃO DO PERFIL DESTE APARELHO (CRIAR OU JÁ TENHO: MS/CP)-->
   <!-- ======================================================================= -->
-  <section id="view-onboarding" class="hidden min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 relative overflow-y-auto">
+  <section id="view-setup" class="hidden min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 relative overflow-y-auto">
     <div class="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 h-96 w-[36rem] rounded-full bg-[#2563eb]/15 blur-3xl"></div>
 
     <div class="w-full max-w-md rounded-3xl nexus-glass p-6 sm:p-8 shadow-2xl relative z-10 animate-fade-up">
-      <div class="mb-6 flex items-center justify-between gap-2">
-        <span id="onb-step-badge" class="rounded-lg bg-[#06b6d4]/15 border border-[#06b6d4]/35 px-2.5 py-1 font-mono text-[11px] font-semibold text-[#06b6d4]">PASSO 1 DE 2</span>
-        <div class="flex items-center gap-3">
-          <button type="button" onclick="openNewProfileModal('link')" class="text-xs font-semibold text-[#06b6d4] hover:underline">Vincular Canal Existente</button>
-          <button type="button" onclick="handleLogout()" class="text-xs text-slate-400 hover:text-[#dc2626] transition">Sair</button>
-        </div>
+      <div class="mb-5 flex items-center justify-between gap-2">
+        <span class="rounded-lg bg-[#06b6d4]/15 border border-[#06b6d4]/35 px-2.5 py-1 font-mono text-[11px] font-semibold text-[#06b6d4]">PERFIL DESTE APARELHO</span>
+        <button type="button" onclick="handleLogout()" class="text-xs text-slate-400 hover:text-[#dc2626] transition">Desconectar</button>
       </div>
 
-      <div id="onb-step-1" class="space-y-5">
+      <!-- Passo A: Escolher Criar Perfil ou Já tenho perfil -->
+      <div id="setup-choice-panel" class="space-y-4">
         <div>
-          <h1 class="text-2xl font-bold text-white">Configure seu Primeiro Cofre</h1>
+          <h1 class="text-2xl font-bold text-white">Configurar Acesso</h1>
           <p class="mt-1 text-xs text-slate-400 leading-relaxed">
-            Criaremos um canal privado exclusivo e individual na sua Nuvem SSD protegido por um PIN local criptografado via SHA-256.
+            Escolha se deseja criar um novo perfil ou conectar um perfil já existente. Este aparelho ficará vinculado somente a ele.
           </p>
         </div>
 
-        <div>
-          <label for="onb-profile-name" class="block text-xs font-medium text-slate-300 mb-1.5">Nome do Perfil / Cofre</label>
-          <input id="onb-profile-name" type="text" maxlength="32" placeholder="Ex: Cofre Principal, Pessoal, Trabalho..." class="h-12 w-full rounded-2xl border border-[#1e293b] bg-[#060913] px-4 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none transition" />
-          <p id="onb-name-error" class="mt-1.5 min-h-[16px] text-xs text-[#dc2626]"></p>
-        </div>
-
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-2.5">Cor do Avatar</label>
-          <div class="flex items-center gap-3.5">
-            <button type="button" onclick="selectOnboardingColor('cyan')" data-swatch="cyan" aria-label="Ciano" class="onb-swatch h-9 w-9 rounded-full bg-[#06b6d4] ring-2 ring-white ring-offset-2 ring-offset-[#0d1324] transition"></button>
-            <button type="button" onclick="selectOnboardingColor('blue')" data-swatch="blue" aria-label="Azul" class="onb-swatch h-9 w-9 rounded-full bg-[#2563eb] opacity-65 hover:opacity-100 transition"></button>
-            <button type="button" onclick="selectOnboardingColor('red')" data-swatch="red" aria-label="Vermelho" class="onb-swatch h-9 w-9 rounded-full bg-[#dc2626] opacity-65 hover:opacity-100 transition"></button>
-            <button type="button" onclick="selectOnboardingColor('emerald')" data-swatch="emerald" aria-label="Esmeralda" class="onb-swatch h-9 w-9 rounded-full bg-emerald-500 opacity-65 hover:opacity-100 transition"></button>
-            <button type="button" onclick="selectOnboardingColor('violet')" data-swatch="violet" aria-label="Violeta" class="onb-swatch h-9 w-9 rounded-full bg-violet-500 opacity-65 hover:opacity-100 transition"></button>
+        <button type="button" onclick="openSetupForm('create')" class="group flex w-full items-center gap-4 rounded-2xl border border-[#06b6d4]/45 bg-[#06b6d4]/10 p-4 text-left hover:bg-[#06b6d4]/20 transition">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563eb] to-[#06b6d4] text-white shadow-lg">
+            <i data-lucide="user-plus" class="h-6 w-6"></i>
           </div>
-        </div>
-
-        <div class="rounded-2xl border border-[#06b6d4]/30 bg-[#06b6d4]/10 p-3.5 flex items-center gap-3">
-          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#06b6d4]/20 text-[#06b6d4]">
-            <i data-lucide="shield-check" class="h-5 w-5"></i>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-bold text-white">Criar Novo Perfil</div>
+            <div class="text-xs text-slate-300 mt-0.5">Configure um novo cofre em CP (Canal Privado) ou MS (Mensagens Salvas) com PIN.</div>
           </div>
-          <div class="text-xs">
-            <span class="block font-semibold text-white">Perfil 100% Individual + PIN SHA-256</span>
-            <span class="block text-[11px] text-slate-300 mt-0.5">Cada perfil é isolado e nunca acessa arquivos de outro perfil.</span>
-          </div>
-        </div>
+          <i data-lucide="chevron-right" class="h-5 w-5 text-[#06b6d4] shrink-0"></i>
+        </button>
 
-        <button type="button" onclick="completeOnboardingStep1()" class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 text-sm font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 transition">
-          <span>Definir PIN de Segurança</span>
-          <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        <button type="button" onclick="openSetupForm('existing')" class="group flex w-full items-center gap-4 rounded-2xl border border-[#1e293b] bg-[#060913] p-4 text-left hover:border-[#06b6d4]/50 hover:bg-[#111827] transition">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#111827] border border-[#1e293b] text-[#06b6d4]">
+            <i data-lucide="cloud-download" class="h-6 w-6"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-bold text-white">Já tenho perfil</div>
+            <div class="text-xs text-slate-400 mt-0.5">Vincule seu cofre existente em CP (Canal Privado) ou MS (Mensagens Salvas).</div>
+          </div>
+          <i data-lucide="chevron-right" class="h-5 w-5 text-slate-400 group-hover:text-[#06b6d4] shrink-0"></i>
         </button>
       </div>
 
-      <div id="onb-step-2" class="hidden space-y-5">
-        <div class="flex items-center justify-between gap-2">
+      <!-- Passo B: Formulário Criar / Já tenho perfil com escolha MS ou CP -->
+      <div id="setup-form-panel" class="hidden space-y-4 animate-fade-up">
+        <div class="flex items-center justify-between">
           <div>
-            <h2 id="onb-pin-heading" class="text-xl font-bold text-white">Crie seu PIN (4 a 6 dígitos)</h2>
-            <p id="onb-pin-subheading" class="mt-1 text-xs text-slate-400">Use o teclado numérico ou físico e toque em Avançar.</p>
+            <h2 id="setup-form-title" class="text-xl font-bold text-white">Criar Novo Perfil</h2>
+            <p id="setup-form-sub" class="text-xs text-slate-400 mt-0.5">Defina o tipo de armazenamento e o PIN deste aparelho.</p>
           </div>
-          <button type="button" onclick="backToOnboardingStep1()" class="rounded-xl border border-[#1e293b] bg-[#060913] px-3 py-1.5 text-xs text-slate-300 hover:text-white shrink-0">Voltar</button>
+          <button type="button" onclick="backToSetupChoice()" class="rounded-xl border border-[#1e293b] bg-[#060913] px-3 py-1.5 text-xs text-slate-300 hover:text-white shrink-0">Voltar</button>
         </div>
 
-        <div id="onb-pin-dots-container" class="my-4 flex justify-center gap-2.5">
-          <div id="onb-dot-0" class="flex h-12 w-11 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-xl font-bold text-[#06b6d4]"></div>
-          <div id="onb-dot-1" class="flex h-12 w-11 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-xl font-bold text-[#06b6d4]"></div>
-          <div id="onb-dot-2" class="flex h-12 w-11 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-xl font-bold text-[#06b6d4]"></div>
-          <div id="onb-dot-3" class="flex h-12 w-11 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-xl font-bold text-[#06b6d4]"></div>
-          <div id="onb-dot-4" class="flex h-12 w-11 items-center justify-center rounded-2xl border border-dashed border-slate-700/70 bg-[#060913]/60 font-mono text-xl font-bold text-[#06b6d4]"></div>
-          <div id="onb-dot-5" class="flex h-12 w-11 items-center justify-center rounded-2xl border border-dashed border-slate-700/70 bg-[#060913]/60 font-mono text-xl font-bold text-[#06b6d4]"></div>
+        <!-- Seletor MS ou CP -->
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-2">Tipo de Armazenamento</label>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button id="btn-storage-cp" type="button" onclick="selectSetupStorage('CP')" class="flex flex-col items-start rounded-2xl border-2 border-[#06b6d4] bg-[#06b6d4]/15 p-3 text-left transition">
+              <div class="flex items-center gap-1.5 text-xs font-bold text-white">
+                <i data-lucide="shield" class="h-4 w-4 text-[#06b6d4]"></i>
+                <span>CP • Canal Privado</span>
+              </div>
+              <span class="mt-1 text-[10px] text-slate-300">Cofre isolado em canal exclusivo</span>
+            </button>
+            <button id="btn-storage-ms" type="button" onclick="selectSetupStorage('MS')" class="flex flex-col items-start rounded-2xl border-2 border-[#1e293b] bg-[#060913] p-3 text-left hover:border-slate-600 transition">
+              <div class="flex items-center gap-1.5 text-xs font-bold text-slate-200">
+                <i data-lucide="bookmark" class="h-4 w-4 text-blue-400"></i>
+                <span>MS • Mensagens Salvas</span>
+              </div>
+              <span class="mt-1 text-[10px] text-slate-400">Usa suas Mensagens Salvas</span>
+            </button>
+          </div>
         </div>
 
-        <p id="onb-pin-error" class="min-h-[16px] text-center text-xs font-medium text-[#dc2626]"></p>
-
-        <div class="grid grid-cols-3 gap-2">
-          <button type="button" onclick="handleOnboardingPinDigit('1')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">1</button>
-          <button type="button" onclick="handleOnboardingPinDigit('2')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">2</button>
-          <button type="button" onclick="handleOnboardingPinDigit('3')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">3</button>
-          <button type="button" onclick="handleOnboardingPinDigit('4')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">4</button>
-          <button type="button" onclick="handleOnboardingPinDigit('5')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">5</button>
-          <button type="button" onclick="handleOnboardingPinDigit('6')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">6</button>
-          <button type="button" onclick="handleOnboardingPinDigit('7')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">7</button>
-          <button type="button" onclick="handleOnboardingPinDigit('8')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">8</button>
-          <button type="button" onclick="handleOnboardingPinDigit('9')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">9</button>
-          <button type="button" onclick="clearOnboardingPinBuffer()" class="py-3 rounded-2xl border border-[#1e293b] bg-[#060913] text-xs font-semibold text-slate-400 hover:text-white transition">Limpar</button>
-          <button type="button" onclick="handleOnboardingPinDigit('0')" class="py-3 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">0</button>
-          <button type="button" onclick="backspaceOnboardingPin()" aria-label="Apagar" class="flex py-3 items-center justify-center rounded-2xl border border-[#1e293b] bg-[#060913] text-slate-400 hover:text-white transition">
-            <i data-lucide="delete" class="h-5 w-5"></i>
-          </button>
+        <!-- Seletor de Canal Existente (só aparece quando modo = existing e tipo = CP) -->
+        <div id="setup-existing-cp-box" class="hidden space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-medium text-slate-300">Selecione seu Canal Privado (CP)</label>
+            <button type="button" onclick="loadExistingChannelsForSetup()" class="text-[11px] text-[#06b6d4] hover:underline">Atualizar</button>
+          </div>
+          <select id="setup-cp-select" onchange="onSetupChannelPicked(this.value)" class="h-11 w-full rounded-xl border border-[#1e293b] bg-[#060913] px-3 text-xs text-white focus:border-[#06b6d4] focus:outline-none">
+            <option value="">Buscando canais privados...</option>
+          </select>
         </div>
 
-        <button id="btn-onb-confirm-pin" type="button" onclick="submitOnboardingPinStep()" class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 text-sm font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 disabled:opacity-50 transition">
-          <i data-lucide="check-circle-2" class="h-4 w-4"></i>
-          <span id="btn-onb-confirm-pin-label">Avançar para Confirmação</span>
+        <div>
+          <label for="setup-profile-name" class="block text-xs font-medium text-slate-300 mb-1.5">Nome do Perfil</label>
+          <input id="setup-profile-name" type="text" maxlength="32" placeholder="Ex: Meu Cofre, Pessoal, Trabalho..." class="h-11 w-full rounded-xl border border-[#1e293b] bg-[#060913] px-3.5 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-2">Cor do Avatar</label>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="selectSetupColor('cyan')" data-setup-swatch="cyan" class="setup-swatch h-8 w-8 rounded-full bg-[#06b6d4] ring-2 ring-white ring-offset-2 ring-offset-[#0d1324] transition"></button>
+            <button type="button" onclick="selectSetupColor('blue')" data-setup-swatch="blue" class="setup-swatch h-8 w-8 rounded-full bg-[#2563eb] opacity-70 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectSetupColor('red')" data-setup-swatch="red" class="setup-swatch h-8 w-8 rounded-full bg-[#dc2626] opacity-70 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectSetupColor('emerald')" data-setup-swatch="emerald" class="setup-swatch h-8 w-8 rounded-full bg-emerald-500 opacity-70 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectSetupColor('violet')" data-setup-swatch="violet" class="setup-swatch h-8 w-8 rounded-full bg-violet-500 opacity-70 hover:opacity-100 transition"></button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label for="setup-pin-1" class="block text-[11px] text-slate-300 mb-1">PIN (4 a 6 dígitos)</label>
+            <input id="setup-pin-1" type="password" inputmode="numeric" maxlength="6" placeholder="••••" class="h-11 w-full rounded-xl border border-[#1e293b] bg-[#060913] text-center font-mono text-base tracking-widest text-white focus:border-[#06b6d4] focus:outline-none" />
+          </div>
+          <div>
+            <label for="setup-pin-2" class="block text-[11px] text-slate-300 mb-1">Confirmar PIN</label>
+            <input id="setup-pin-2" type="password" inputmode="numeric" maxlength="6" placeholder="••••" class="h-11 w-full rounded-xl border border-[#1e293b] bg-[#060913] text-center font-mono text-base tracking-widest text-white focus:border-[#06b6d4] focus:outline-none" />
+          </div>
+        </div>
+
+        <p id="setup-error" class="min-h-[16px] text-xs font-medium text-[#dc2626]"></p>
+
+        <button id="btn-setup-finish" type="button" onclick="finishDeviceProfileSetup()" class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 text-sm font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 disabled:opacity-50 transition">
+          <i data-lucide="shield-check" class="h-4 w-4"></i>
+          <span id="btn-setup-finish-label">Salvar e Abrir Cofre</span>
         </button>
       </div>
     </div>
   </section>
 
   <!-- ======================================================================= -->
-  <!-- TELA 2B: SELETOR DE PERFIS ("QUEM ESTÁ ACESSANDO?")                     -->
+  <!-- TELA 3: BLOQUEIO POR PIN EXCLUSIVO DESTE APARELHO (SEM OUTROS PERFIS)   -->
   <!-- ======================================================================= -->
-  <section id="view-selector" class="hidden min-h-screen w-full flex-col justify-between p-4 sm:p-8 relative overflow-y-auto">
-    <div class="pointer-events-none fixed top-0 left-1/3 h-80 w-96 rounded-full bg-[#2563eb]/15 blur-3xl"></div>
+  <section id="view-pin-lock" class="hidden min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 relative overflow-y-auto">
+    <div class="pointer-events-none fixed -top-32 left-1/2 -translate-x-1/2 h-96 w-[36rem] rounded-full bg-[#2563eb]/15 blur-3xl"></div>
 
-    <header class="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-5">
-      <div class="flex items-center gap-3">
-        <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#06b6d4] text-white shadow-lg shadow-[#2563eb]/25">
-          <i data-lucide="cloud-lightning" class="h-5 w-5"></i>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="text-base font-bold text-white">SSD Nexus</span>
-            <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-300">
-              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              SSD Sync Ativo
-            </span>
-          </div>
-          <p id="selector-user-subtitle" class="text-xs text-slate-400 mt-0.5">Conectado à Nuvem SSD</p>
-        </div>
+    <div id="pin-lock-card" class="w-full max-w-sm rounded-3xl nexus-glass p-6 sm:p-7 shadow-2xl relative z-10 animate-fade-up">
+      <div class="flex flex-col items-center text-center mb-5">
+        <div id="lock-prof-avatar" class="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#06b6d4] text-xl font-extrabold text-slate-950 shadow-xl">SS</div>
+        <h1 id="lock-prof-name" class="text-xl font-bold text-white">Meu Cofre</h1>
+        <span id="lock-prof-badge" class="mt-1 inline-flex items-center gap-1.5 rounded-full border border-[#06b6d4]/35 bg-[#06b6d4]/12 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-[#06b6d4]">
+          <i data-lucide="lock" class="h-3 w-3"></i>
+          <span>CP • CANAL PRIVADO</span>
+        </span>
+        <p id="lock-pin-subtitle" class="mt-2 text-xs text-slate-400">Digite seu PIN para acessar</p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2.5">
-        <button type="button" onclick="rescanCloudProfilesManual()" class="inline-flex items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] px-3.5 py-2.5 text-xs font-semibold text-slate-200 hover:border-[#06b6d4]/50 hover:text-[#06b6d4] transition">
-          <i data-lucide="refresh-cw" class="h-4 w-4"></i>
-          <span>Restaurar da Nuvem</span>
-        </button>
-        <button type="button" onclick="openNewProfileModal('create')" class="inline-flex items-center gap-1.5 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/12 px-3.5 py-2.5 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition">
-          <i data-lucide="plus" class="h-4 w-4"></i>
-          <span>Novo Perfil / Vincular</span>
-        </button>
-        <button type="button" onclick="handleLogout()" class="inline-flex items-center gap-1.5 rounded-xl border border-[#dc2626]/40 bg-[#dc2626]/12 px-3.5 py-2.5 text-xs font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition">
-          <i data-lucide="log-out" class="h-4 w-4"></i>
-          <span>Desconectar Conta</span>
+      <div id="lock-dots-row" class="my-5 flex justify-center gap-2.5"></div>
+      <p id="lock-pin-error" class="mb-3 min-h-[16px] text-center text-xs font-medium text-[#dc2626]"></p>
+
+      <div class="grid grid-cols-3 gap-2">
+        <button type="button" onclick="pressLockDigit('1')" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">1</button>
+        <button type="button" onclick="pressLockDigit('2')" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">2</button>
+        <button type="button" onclick="pressLockDigit('3')" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">3</button>
+        <button type="button" onclick="pressLockDigit('4')" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">4</button>
+        <button type="button" onclick="pressLockDigit('5')" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">5</button>
+        <button type="button" onclick="pressLockDigit('6')" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">6</button>
+        <button type="button" onclick="pressLockDigit('7')" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">7</button>
+        <button type="button" onclick="pressLockDigit('8')" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">8</button>
+        <button type="button" onclick="pressLockDigit('9')" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">9</button>
+        <button type="button" onclick="clearLockBuffer()" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#060913] text-xs font-semibold text-slate-400 hover:text-white transition">Limpar</button>
+        <button type="button" onclick="pressLockDigit('0')" class="py-3.5 rounded-2xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">0</button>
+        <button type="button" onclick="backspaceLockBuffer()" aria-label="Apagar" class="flex py-3.5 items-center justify-center rounded-2xl border border-[#1e293b] bg-[#060913] text-slate-400 hover:text-white transition">
+          <i data-lucide="delete" class="h-5 w-5"></i>
         </button>
       </div>
-    </header>
 
-    <main class="mx-auto my-8 w-full max-w-5xl flex-1">
-      <div class="mb-6">
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Quem está acessando?</h1>
-        <p class="mt-1 text-sm text-slate-400">Perfis 100% individuais: cada cofre possui seu canal privado exclusivo e exige seu próprio PIN ao alternar.</p>
+      <div class="mt-5 pt-4 border-t border-[#1e293b] flex items-center justify-between text-[11px] text-slate-500">
+        <span>SSD Nexus • Protegido</span>
+        <button type="button" onclick="handleLogout()" class="text-rose-400 hover:text-rose-300 font-medium transition">Desconectar Conta</button>
       </div>
-      <div id="selector-profiles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-    </main>
-
-    <footer class="mx-auto w-full max-w-5xl border-t border-[#1e293b] pt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-      <span>Cofres 100% individuais • PIN SHA-256</span>
-      <button type="button" onclick="openAboutModal()" class="hover:text-[#06b6d4] transition">Desenvolvedor: Josimar Sousa • SSD Soluções 2026</button>
-    </footer>
+    </div>
   </section>
 
   <!-- ======================================================================= -->
-  <!-- TELA 3: WORKSPACE DESKTOP DE 3 ZONAS                                    -->
+  <!-- TELA 4: WORKSPACE DE 3 ZONAS                                            -->
   <!-- ======================================================================= -->
   <div id="view-workspace" class="hidden h-screen w-screen overflow-hidden bg-[#060913]">
     <div id="ws-drag-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/92 backdrop-blur-md p-6">
@@ -444,7 +438,7 @@
           <i data-lucide="cloud-upload" class="h-8 w-8 animate-bounce"></i>
         </div>
         <h2 class="text-xl font-bold text-white">Solte para enviar para <span id="drag-target-profile-name" class="text-[#06b6d4]">seu Cofre</span></h2>
-        <p class="mt-1.5 text-xs text-slate-400">Os arquivos serão enviados exclusivamente para o canal privado deste cofre</p>
+        <p class="mt-1.5 text-xs text-slate-400">Os arquivos serão enviados exclusivamente para o cofre deste aparelho</p>
       </div>
     </div>
 
@@ -473,41 +467,23 @@
         </button>
       </div>
 
-      <div class="relative border-b border-[#1e293b] p-3 space-y-2.5">
-        <div class="sb-center flex items-center justify-between gap-2 rounded-2xl border border-[#1e293b] bg-[#060913] p-2.5">
-          <button id="profile-dropdown-trigger" type="button" onclick="toggleProfileDropdown()" class="flex flex-1 items-center gap-2.5 min-w-0 text-left group">
-            <div id="active-prof-avatar" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#06b6d4] text-xs font-bold text-slate-950 shadow-md">SS</div>
-            <div class="sb-hide min-w-0 flex-1">
-              <div id="active-prof-name" class="truncate text-xs font-bold text-white group-hover:text-[#06b6d4] transition">Cofre Principal</div>
-              <div id="active-prof-badge" class="flex items-center gap-1 text-[10px] text-slate-400">
-                <i data-lucide="lock" class="h-3 w-3 text-[#06b6d4]"></i>
-                <span>Canal Privado</span>
-              </div>
+      <!-- Perfil Exclusivo deste Aparelho (sem listar outros perfis) -->
+      <div class="border-b border-[#1e293b] p-3 space-y-2.5">
+        <div class="sb-center flex items-center gap-2.5 rounded-2xl border border-[#1e293b] bg-[#060913] p-2.5">
+          <div id="active-prof-avatar" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#06b6d4] text-xs font-bold text-slate-950 shadow-md">SS</div>
+          <div class="sb-hide min-w-0 flex-1">
+            <div id="active-prof-name" class="truncate text-xs font-bold text-white">Meu Cofre</div>
+            <div id="active-prof-badge" class="flex items-center gap-1 text-[10px] text-slate-400">
+              <i data-lucide="lock" class="h-3 w-3 text-[#06b6d4]"></i>
+              <span>CP • Individual</span>
             </div>
-          </button>
-          <button type="button" onclick="openProfileSelectorView()" title="Trocar Perfil" aria-label="Trocar Perfil" class="sb-hide flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#1e293b] bg-[#111827] text-slate-300 hover:border-[#06b6d4]/50 hover:text-[#06b6d4] transition">
-            <i data-lucide="arrow-left-right" class="h-3.5 w-3.5"></i>
-          </button>
+          </div>
         </div>
 
         <button type="button" onclick="triggerCloudUpload()" class="sb-center flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-3 text-xs font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 transition">
           <i data-lucide="plus-circle" class="h-4 w-4 shrink-0"></i>
           <span class="sb-hide">+ Enviar Arquivo</span>
         </button>
-
-        <div id="profile-dropdown-menu" class="hidden absolute left-3 right-3 top-[4.5rem] z-50 rounded-2xl border border-[#1e293b] bg-[#0d1324] p-2 shadow-2xl animate-fade-up">
-          <div id="dropdown-profiles-list" class="max-h-52 overflow-y-auto space-y-1"></div>
-          <div class="mt-2 border-t border-[#1e293b] pt-2 space-y-1">
-            <button type="button" onclick="closeProfileDropdown(); openNewProfileModal('create');" class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4]/10 transition">
-              <i data-lucide="plus-circle" class="h-4 w-4"></i>
-              <span>Criar Novo Perfil / Vincular</span>
-            </button>
-            <button type="button" onclick="closeProfileDropdown(); openProfileSelectorView();" class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium text-slate-300 hover:bg-[#111827] transition">
-              <i data-lucide="users" class="h-4 w-4 text-slate-400"></i>
-              <span>Tela "Quem está acessando?"</span>
-            </button>
-          </div>
-        </div>
       </div>
 
       <nav class="flex-1 overflow-y-auto p-3 space-y-1" aria-label="Categorias de arquivos">
@@ -579,7 +555,7 @@
           </button>
           <button type="button" onclick="handleLogout()" class="flex items-center justify-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] py-2 px-2 text-[11px] font-medium text-rose-300 hover:border-[#dc2626]/60 hover:bg-[#dc2626]/20 hover:text-white transition">
             <i data-lucide="log-out" class="h-3.5 w-3.5"></i>
-            <span>Desconectar Conta</span>
+            <span>Desconectar</span>
           </button>
         </div>
       </div>
@@ -606,10 +582,9 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <!-- Indicador fixo de isolamento individual -->
-          <div title="Perfil 100% individual — um perfil não acessa outro" class="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 px-3 text-xs font-semibold text-[#06b6d4] select-none">
+          <div id="ws-storage-pill" class="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 px-3 text-xs font-semibold text-[#06b6d4] select-none">
             <i data-lucide="shield-check" class="h-3.5 w-3.5"></i>
-            <span>Cofre Individual</span>
+            <span id="ws-storage-pill-text">CP • Individual</span>
           </div>
 
           <select id="ws-sort-select" onchange="setWorkspaceSort(this.value)" aria-label="Ordenar arquivos" class="h-10 rounded-xl border border-[#1e293b] bg-[#060913] px-3 text-xs font-medium text-slate-200 focus:border-[#06b6d4] focus:outline-none cursor-pointer">
@@ -620,7 +595,6 @@
             <option value="size-asc">Menor tamanho</option>
           </select>
 
-          <!-- Seletor de Colunas (2, 3 ou 4) -->
           <div class="flex items-center rounded-xl border border-[#1e293b] bg-[#060913] p-1" title="Quantidade de colunas">
             <button type="button" onclick="setWorkspaceCols(2)" data-ws-col="2" class="ws-col-btn rounded-lg px-2 py-1.5 font-mono text-xs font-semibold text-slate-400 hover:text-white transition">2</button>
             <button type="button" onclick="setWorkspaceCols(3)" data-ws-col="3" class="ws-col-btn rounded-lg bg-[#111827] px-2 py-1.5 font-mono text-xs font-semibold text-[#06b6d4] transition">3</button>
@@ -650,17 +624,17 @@
             <div>
               <div class="flex flex-wrap items-center gap-2.5">
                 <h1 id="ws-category-title" class="text-xl sm:text-2xl font-bold text-white">Todos os Arquivos</h1>
-                <span id="ws-profile-chip" class="inline-flex items-center gap-1.5 rounded-full border border-[#06b6d4]/35 bg-[#06b6d4]/15 px-3 py-0.5 text-xs font-semibold text-[#06b6d4]">Cofre Principal</span>
+                <span id="ws-profile-chip" class="inline-flex items-center gap-1.5 rounded-full border border-[#06b6d4]/35 bg-[#06b6d4]/15 px-3 py-0.5 text-xs font-semibold text-[#06b6d4]">Meu Cofre</span>
               </div>
               <p class="mt-1 text-xs text-slate-400">
-                Arraste arquivos para esta janela ou toque na nuvem flutuante para enviar diretamente ao canal privado deste perfil.
+                Arraste arquivos para esta janela ou toque na nuvem flutuante para enviar diretamente ao seu cofre.
               </p>
             </div>
           </div>
 
           <div id="ws-loading-banner" class="hidden mb-4 items-center gap-3 rounded-2xl border border-[#2563eb]/40 bg-[#2563eb]/12 px-4 py-3 text-xs text-blue-200 animate-fade-up">
             <i data-lucide="loader-2" class="h-4 w-4 animate-spin text-[#06b6d4]"></i>
-            <span>Sincronizando biblioteca do canal privado...</span>
+            <span>Sincronizando biblioteca do cofre...</span>
           </div>
 
           <div id="ws-files-container"></div>
@@ -698,121 +672,6 @@
   </div>
 
   <!-- ======================================================================= -->
-  <!-- MODAL: DESBLOQUEIO DE COFRE POR PIN                                     -->
-  <!-- ======================================================================= -->
-  <div id="modal-pin-unlock" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
-    <div id="modal-pin-card" class="w-full max-w-sm rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#06b6d4]/15 text-[#06b6d4] border border-[#06b6d4]/35">
-            <i data-lucide="lock" class="h-5 w-5"></i>
-          </div>
-          <div>
-            <h3 id="unlock-pin-title" class="text-base font-bold text-white">Cofre Protegido</h3>
-            <p id="unlock-pin-subtitle" class="text-xs text-slate-400">Digite seu PIN para desbloquear</p>
-          </div>
-        </div>
-        <button type="button" onclick="closePinUnlockModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#111827] hover:text-white">
-          <i data-lucide="x" class="h-5 w-5"></i>
-        </button>
-      </div>
-
-      <div id="unlock-dots-row" class="my-5 flex justify-center gap-2.5"></div>
-      <p id="unlock-pin-error" class="mb-3 min-h-[16px] text-center text-xs font-medium text-[#dc2626]"></p>
-
-      <div class="grid grid-cols-3 gap-2">
-        <button type="button" onclick="pressUnlockDigit('1')" class="py-3 rounded-xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">1</button>
-        <button type="button" onclick="pressUnlockDigit('2')" class="py-3 rounded-xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">2</button>
-        <button type="button" onclick="pressUnlockDigit('3')" class="py-3 rounded-xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">3</button>
-        <button type="button" onclick="pressUnlockDigit('4')" class="py-3 rounded-xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">4</button>
-        <button type="button" onclick="pressUnlockDigit('5')" class="py-3 rounded-xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">5</button>
-        <button type="button" onclick="pressUnlockDigit('6')" class="py-3 rounded-xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">6</button>
-        <button type="button" onclick="pressUnlockDigit('7')" class="py-3 rounded-xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">7</button>
-        <button type="button" onclick="pressUnlockDigit('8')" class="py-3 rounded-xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">8</button>
-        <button type="button" onclick="pressUnlockDigit('9')" class="py-3 rounded-xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">9</button>
-        <button type="button" onclick="clearUnlockBuffer()" class="py-3 rounded-xl border border-[#1e293b] bg-[#060913] text-xs font-semibold text-slate-400 hover:text-white transition">Limpar</button>
-        <button type="button" onclick="pressUnlockDigit('0')" class="py-3 rounded-xl border border-[#1e293b] bg-[#111827] font-mono text-lg font-semibold text-white hover:bg-[#1e293b] active:scale-95 transition">0</button>
-        <button type="button" onclick="backspaceUnlockBuffer()" aria-label="Apagar" class="flex py-3 items-center justify-center rounded-xl border border-[#1e293b] bg-[#060913] text-slate-400 hover:text-white transition">
-          <i data-lucide="delete" class="h-5 w-5"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================================= -->
-  <!-- MODAL: CRIAR NOVO PERFIL / COFRE OU VINCULAR CANAL EXISTENTE            -->
-  <!-- ======================================================================= -->
-  <div id="modal-new-profile" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
-    <div class="w-full max-w-md rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-2.5">
-          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2563eb]/20 text-[#06b6d4] border border-[#2563eb]/40">
-            <i data-lucide="folder-plus" class="h-5 w-5"></i>
-          </div>
-          <div>
-            <h3 class="text-base font-bold text-white">Novo Perfil / Cofre</h3>
-            <p class="text-xs text-slate-400">Crie um canal novo ou vincule um canal privado já existente</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeNewProfileModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#111827] hover:text-white">
-          <i data-lucide="x" class="h-5 w-5"></i>
-        </button>
-      </div>
-
-      <div class="grid grid-cols-2 gap-1.5 rounded-xl bg-[#060913] p-1 border border-[#1e293b] mb-4">
-        <button id="tab-np-create" type="button" onclick="setNewProfileTab('create')" class="rounded-lg bg-[#111827] py-2 text-xs font-semibold text-[#06b6d4] transition">Criar Novo Canal</button>
-        <button id="tab-np-link" type="button" onclick="setNewProfileTab('link')" class="rounded-lg py-2 text-xs font-semibold text-slate-400 hover:text-white transition">Vincular Existente</button>
-      </div>
-
-      <div class="space-y-4">
-        <div id="panel-np-link" class="hidden space-y-2">
-          <div class="flex items-center justify-between">
-            <label class="text-xs font-medium text-slate-300">Canais Privados da Conta</label>
-            <button type="button" onclick="populateExistingChannelsSelect()" class="text-[11px] text-[#06b6d4] hover:underline">Atualizar lista</button>
-          </div>
-          <select id="np-existing-channel" onchange="onSelectExistingChannel(this.value)" class="h-11 w-full rounded-xl border border-[#1e293b] bg-[#060913] px-3 text-xs text-white focus:border-[#06b6d4] focus:outline-none">
-            <option value="">Carregando canais...</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="np-name" class="block text-xs font-medium text-slate-300 mb-1.5">Nome do Perfil ou Cofre</label>
-          <input id="np-name" type="text" maxlength="32" placeholder="Ex: Cofre Privado, Trabalho, Galeria..." class="h-11 w-full rounded-xl border border-[#1e293b] bg-[#060913] px-3.5 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none" />
-        </div>
-
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-2">Cor do Avatar</label>
-          <div class="flex items-center gap-3">
-            <button type="button" onclick="selectNewProfileColor('cyan')" data-np-swatch="cyan" class="np-swatch h-8 w-8 rounded-full bg-[#06b6d4] ring-2 ring-white ring-offset-2 ring-offset-[#0d1324] transition"></button>
-            <button type="button" onclick="selectNewProfileColor('blue')" data-np-swatch="blue" class="np-swatch h-8 w-8 rounded-full bg-[#2563eb] opacity-70 hover:opacity-100 transition"></button>
-            <button type="button" onclick="selectNewProfileColor('red')" data-np-swatch="red" class="np-swatch h-8 w-8 rounded-full bg-[#dc2626] opacity-70 hover:opacity-100 transition"></button>
-            <button type="button" onclick="selectNewProfileColor('emerald')" data-np-swatch="emerald" class="np-swatch h-8 w-8 rounded-full bg-emerald-500 opacity-70 hover:opacity-100 transition"></button>
-            <button type="button" onclick="selectNewProfileColor('violet')" data-np-swatch="violet" class="np-swatch h-8 w-8 rounded-full bg-violet-500 opacity-70 hover:opacity-100 transition"></button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2.5">
-          <div>
-            <label for="np-pin-1" class="block text-[11px] text-slate-300 mb-1">PIN (4 a 6 dígitos)</label>
-            <input id="np-pin-1" type="password" inputmode="numeric" maxlength="6" placeholder="••••" class="h-10 w-full rounded-xl border border-[#1e293b] bg-[#060913] text-center font-mono text-base tracking-widest text-white focus:border-[#06b6d4] focus:outline-none" />
-          </div>
-          <div>
-            <label for="np-pin-2" class="block text-[11px] text-slate-300 mb-1">Confirmar PIN</label>
-            <input id="np-pin-2" type="password" inputmode="numeric" maxlength="6" placeholder="••••" class="h-10 w-full rounded-xl border border-[#1e293b] bg-[#060913] text-center font-mono text-base tracking-widest text-white focus:border-[#06b6d4] focus:outline-none" />
-          </div>
-        </div>
-
-        <p id="np-error" class="min-h-[16px] text-xs font-medium text-[#dc2626]"></p>
-
-        <div class="flex justify-end gap-2">
-          <button type="button" onclick="closeNewProfileModal()" class="rounded-xl border border-[#1e293b] bg-[#111827] px-4 py-2 text-xs font-medium text-slate-300 hover:text-white">Cancelar</button>
-          <button id="btn-save-new-profile" type="button" onclick="saveAdditionalProfile()" class="rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 py-2 text-xs font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 disabled:opacity-50 transition">Criar e Abrir</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================================================================= -->
   <!-- MODAL: SOBRE O SSD NEXUS                                                -->
   <!-- ======================================================================= -->
   <div id="modal-about" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
@@ -824,7 +683,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Desktop &amp; Mobile Workspace v2.6</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.0</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -839,11 +698,11 @@
           <span class="font-semibold text-white">SSD Soluções 2026</span>
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
-          <span class="text-slate-400">Arquitetura de Cofres</span>
-          <span class="font-mono text-emerald-400">100% Individual por Perfil</span>
+          <span class="text-slate-400">Isolamento</span>
+          <span class="font-mono text-emerald-400">Perfil Exclusivo por Aparelho</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-slate-400">Segurança de Cofres</span>
+          <span class="text-slate-400">Segurança</span>
           <span class="font-medium text-slate-200">PIN SHA-256 + Auto-Lock</span>
         </div>
       </div>
@@ -868,42 +727,37 @@
       api_hash: 'e5024e850807919814641dfcb5d26639'
     };
 
-    const VAULT_SYNC_TAG = '#SSD_NEXUS_VAULTS_V2';
     const SESSION_STORAGE_KEY = 'ssd_nexus_gramjs_session';
     const STORAGE_KEYS = {
-      PROFILES_PREFIX: 'ssd_nexus_profiles_',
+      DEVICE_PROFILE: 'ssd_nexus_device_profile_v3',
       FAVORITES_PREFIX: 'ssd_nexus_favorites_',
       COLS: 'ssd_nexus_grid_cols'
     };
 
     const ACCENT_PALETTE = {
-      cyan: { solid: 'bg-[#06b6d4] text-slate-950', dot: 'bg-[#06b6d4]', soft: 'bg-[#06b6d4]/15', border: 'border-[#06b6d4]/40', text: 'text-[#06b6d4]' },
-      blue: { solid: 'bg-[#2563eb] text-white', dot: 'bg-[#2563eb]', soft: 'bg-[#2563eb]/15', border: 'border-[#2563eb]/40', text: 'text-blue-300' },
-      red: { solid: 'bg-[#dc2626] text-white', dot: 'bg-[#dc2626]', soft: 'bg-[#dc2626]/15', border: 'border-[#dc2626]/40', text: 'text-rose-300' },
-      emerald: { solid: 'bg-emerald-500 text-slate-950', dot: 'bg-emerald-400', soft: 'bg-emerald-500/15', border: 'border-emerald-500/35', text: 'text-emerald-300' },
-      violet: { solid: 'bg-violet-500 text-white', dot: 'bg-violet-400', soft: 'bg-violet-500/15', border: 'border-violet-500/35', text: 'text-violet-300' }
+      cyan: { solid: 'bg-[#06b6d4] text-slate-950', soft: 'bg-[#06b6d4]/15', border: 'border-[#06b6d4]/40', text: 'text-[#06b6d4]' },
+      blue: { solid: 'bg-[#2563eb] text-white', soft: 'bg-[#2563eb]/15', border: 'border-[#2563eb]/40', text: 'text-blue-300' },
+      red: { solid: 'bg-[#dc2626] text-white', soft: 'bg-[#dc2626]/15', border: 'border-[#dc2626]/40', text: 'text-rose-300' },
+      emerald: { solid: 'bg-emerald-500 text-slate-950', soft: 'bg-emerald-500/15', border: 'border-emerald-500/35', text: 'text-emerald-300' },
+      violet: { solid: 'bg-violet-500 text-white', soft: 'bg-violet-500/15', border: 'border-violet-500/35', text: 'text-violet-300' }
     };
 
     const state = {
       client: null,
       gramjsLib: null,
       initTimeoutId: null,
-      cloudSyncMsgId: null,
-      restoreRequested: false,
       currentFullPhone: '',
       formattedPhone: '',
       currentPhoneCodeHash: '',
       resendTimerId: null,
       resendRemaining: 60,
       user: null,
-      profiles: [],
-      unlockedProfileIds: new Set(),
-      activeProfileId: null,
-      onboarding: { name: '', color: 'cyan', stage: 'create', firstPin: '', buffer: '' },
-      unlockModal: { targetProfileId: null, pinLength: 4, buffer: '' },
-      newProfileTab: 'create',
-      newProfileColor: 'cyan',
-      discoveredChannels: [],
+      deviceProfile: null,
+      isUnlocked: false,
+      setupMode: 'create',      // 'create' | 'existing'
+      setupStorage: 'CP',       // 'CP' (Canal Privado) | 'MS' (Mensagens Salvas)
+      setupColor: 'cyan',
+      lockBuffer: '',
       cloudFiles: [],
       rawMessagesByKey: new Map(),
       favoriteKeys: new Set(),
@@ -926,7 +780,7 @@
       autoLockTimer: null
     };
 
-    // 2. HASH SHA-256 PARA COFRES PIN
+    // 2. HASH SHA-256 PARA PIN
     async function sha256Hex(pinText) {
       const salted = 'ssd_nexus_vault_sha256_' + String(pinText);
       if (window.crypto && window.crypto.subtle) {
@@ -981,7 +835,7 @@
       return result;
     }
 
-    // 3. INICIALIZAÇÃO DO MOTOR LOCAL GRAMJS (SEM TRAVAMENTO)
+    // 3. MOTOR GRAMJS E INICIALIZAÇÃO
     function clearInitTimeout() {
       if (state.initTimeoutId) { clearTimeout(state.initTimeoutId); state.initTimeoutId = null; }
     }
@@ -994,17 +848,9 @@
       const raw = window.gramjs || window.telegram || null;
       if (!raw || !raw.TelegramClient || !raw.Api) return null;
       const StringSession = raw.StringSession || (raw.sessions && raw.sessions.StringSession);
-      const CustomFile = raw.CustomFile || (raw.client && raw.client.uploads && raw.client.uploads.CustomFile);
       const BufferImpl = raw.Buffer || window.Buffer;
       if (!StringSession) return null;
-      return {
-        TelegramClient: raw.TelegramClient,
-        Api: raw.Api,
-        Logger: raw.Logger,
-        StringSession,
-        CustomFile,
-        Buffer: BufferImpl
-      };
+      return { TelegramClient: raw.TelegramClient, Api: raw.Api, Logger: raw.Logger, StringSession, Buffer: BufferImpl };
     }
 
     function skipToPhoneLogin() {
@@ -1017,15 +863,14 @@
 
     function showMissingBundleDiagnostic() {
       document.getElementById('auth-init-error-title').textContent = 'Motor SSD Sync (gramjs.js) não encontrado';
-      document.getElementById('auth-init-error-msg').innerHTML = 'O arquivo local <span class="font-mono text-[#06b6d4]">./gramjs.js</span> ainda não foi compilado ou publicado neste repositório.';
-      document.getElementById('auth-init-error-steps').classList.remove('hidden');
-      document.getElementById('auth-init-error-detail').textContent = 'Execute o workflow "Build GramJS" no GitHub Actions e recarregue com Ctrl+Shift+R.';
+      document.getElementById('auth-init-error-msg').innerHTML = 'O arquivo local <span class="font-mono text-[#06b6d4]">./gramjs.js</span> não foi encontrado.';
+      document.getElementById('auth-init-error-detail').textContent = 'Verifique se gramjs.js está na raiz do repositório e recarregue.';
       setAuthSubPanel('init-error');
     }
 
     async function retryEngineBootstrap() {
       if (!getResolvedGramJsLib()) {
-        updateInitStatus('Verificando motor local...', 'Buscando ./gramjs.js atualizado no servidor...', 20);
+        updateInitStatus('Verificando motor local...', 'Buscando ./gramjs.js...', 25);
         try {
           await new Promise((resolve, reject) => {
             const s = document.createElement('script');
@@ -1056,18 +901,18 @@
       const { TelegramClient, Logger, StringSession } = resolvedLib;
       const savedSession = localStorage.getItem(SESSION_STORAGE_KEY) || '';
 
+      // Primeira vez: abre direto na tela de número e código
       if (!savedSession) {
         try {
-          const freshSession = new StringSession('');
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus Web', systemVersion: 'Web', appVersion: '2.6.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.0.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
-          state.client = new TelegramClient(freshSession, Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
+          state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
         skipToPhoneLogin();
         return;
       }
 
-      updateInitStatus('Conectando à Nuvem SSD...', 'Validando sessão criptografada salva...', 45);
+      updateInitStatus('Conectando à Nuvem SSD...', 'Validando sessão criptografada...', 45);
 
       let timedOut = false;
       const timeoutPromise = new Promise((_, reject) => {
@@ -1083,28 +928,17 @@
           state.client = null;
         }
 
-        const session = new StringSession(savedSession);
-        const clientOptions = {
-          connectionRetries: 4,
-          useWSS: true,
-          deviceModel: 'SSD Nexus Web',
-          systemVersion: 'Web',
-          appVersion: '2.6.0'
-        };
-        if (Logger) {
-          try { clientOptions.baseLogger = new Logger('error'); } catch (e) {}
-        }
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.0.0' };
+        if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
 
-        const client = new TelegramClient(session, Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
-        if (typeof client.setLogLevel === 'function') {
-          try { client.setLogLevel('error'); } catch (e) {}
-        }
+        const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
+        if (typeof client.setLogLevel === 'function') { try { client.setLogLevel('error'); } catch (e) {} }
 
         state.client = client;
         await Promise.race([client.connect(), timeoutPromise]);
         if (timedOut) return;
 
-        updateInitStatus('Verificando sessão criptografada...', 'Autenticando credenciais locais...', 80);
+        updateInitStatus('Verificando sessão criptografada...', 'Autenticando credenciais...', 80);
         const isAuthorized = await Promise.race([client.checkAuthorization(), timeoutPromise]);
         clearInitTimeout();
 
@@ -1116,17 +950,15 @@
         }
       } catch (err) {
         clearInitTimeout();
-        console.warn('[SSD Nexus Session Fallback]', err);
         localStorage.removeItem(SESSION_STORAGE_KEY);
         try {
-          const freshSession = new StringSession('');
-          state.client = new TelegramClient(freshSession, Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), { connectionRetries: 5, useWSS: true });
+          state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), { connectionRetries: 5, useWSS: true });
         } catch (e) {}
         skipToPhoneLogin();
       }
     }
 
-    // 4. FLUXO DE AUTENTICAÇÃO
+    // 4. FLUXO DE AUTENTICAÇÃO (NÚMERO + CÓDIGO + 2FA)
     function setAuthSubPanel(panelName, meta = {}) {
       ['init', 'init-error', 'phone', 'code', 'password'].forEach(p => {
         const el = document.getElementById(`auth-panel-${p}`);
@@ -1170,7 +1002,6 @@
     }
 
     function showDetailedAuthError(scope, err) {
-      console.error('[SSD Nexus Auth Error]', err);
       const code = (err && err.code !== undefined && err.code !== null) ? err.code : 'Sync';
       const rawMessage = (err && (err.errorMessage || err.message)) ? String(err.errorMessage || err.message) : String(err || 'Erro desconhecido');
       const box = document.getElementById(`error-${scope}-box`);
@@ -1196,20 +1027,15 @@
       clearAuthErrorBox('phone');
     });
 
-    phoneInputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') handlePhoneSubmit(false); });
+    phoneInputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') handlePhoneSubmit(); });
 
-    async function handlePhoneSubmit(isRestoreFlow = false) {
-      state.restoreRequested = Boolean(isRestoreFlow);
+    async function handlePhoneSubmit() {
       clearAuthErrorBox('phone');
-
       if (!state.client && state.gramjsLib) {
         const { TelegramClient, StringSession } = state.gramjsLib;
         state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), { connectionRetries: 5, useWSS: true });
       }
-      if (!state.client) {
-        showMissingBundleDiagnostic();
-        return;
-      }
+      if (!state.client) { showMissingBundleDiagnostic(); return; }
 
       const ddi = document.getElementById('select-ddi').value;
       const digits = phoneInputEl.value.replace(/\D/g, '');
@@ -1224,11 +1050,9 @@
       state.formattedPhone = `${ddi} ${phoneInputEl.value}`;
 
       const btn = document.getElementById('btn-submit-phone');
-      const btnRestore = document.getElementById('btn-restore-phone');
       const label = document.getElementById('btn-submit-phone-label');
       btn.disabled = true;
-      btnRestore.disabled = true;
-      label.textContent = isRestoreFlow ? 'Enviando código para restaurar...' : 'Enviando código...';
+      label.textContent = 'Enviando código...';
 
       try {
         if (!state.client.connected) await state.client.connect();
@@ -1245,7 +1069,6 @@
         showDetailedAuthError('phone', err);
       } finally {
         btn.disabled = false;
-        btnRestore.disabled = false;
         label.textContent = 'Receber Código de Acesso';
       }
     }
@@ -1404,121 +1227,40 @@
       }
     }
 
-    // 5. SINCRONIZAÇÃO DE PERFIS NA NUVEM (#SSD_NEXUS_VAULTS_V2 + CANAIS PRIVADOS)
+    // 5. PÓS-AUTENTICAÇÃO: SE JÁ EXISTE PERFIL NESTE APARELHO -> PEDE PIN; SENÃO -> CRIAR OU JÁ TENHO (MS/CP)
     function normalizeChannelId(raw) {
       if (raw === null || raw === undefined) return '';
       const str = typeof raw === 'object' && raw.value !== undefined ? String(raw.value) : String(raw);
       return str.replace(/^-100/, '').replace(/^-/, '').trim();
     }
 
-    async function syncProfilesWithCloud() {
-      if (!state.client || !state.user) return;
-      const merged = new Map();
-
-      state.profiles.forEach(p => {
-        const cid = normalizeChannelId(p.channelId);
-        const key = cid || p.id;
-        merged.set(key, { ...p, channelId: cid });
-      });
-
-      let needsCloudUpdate = false;
-
+    function loadDeviceProfile() {
       try {
-        const msgs = await state.client.getMessages('me', { search: VAULT_SYNC_TAG, limit: 10 });
-        if (Array.isArray(msgs) && msgs.length > 0) {
-          const latest = msgs.find(m => m.message && m.message.includes(VAULT_SYNC_TAG));
-          if (latest) {
-            state.cloudSyncMsgId = toSafeNumber(latest.id);
-            const rawJson = latest.message.replace(VAULT_SYNC_TAG, '').trim();
-            const parsed = JSON.parse(rawJson);
-            if (Array.isArray(parsed)) {
-              parsed.forEach(p => {
-                const cid = normalizeChannelId(p.channelId);
-                const key = cid || p.id;
-                if (key) {
-                  merged.set(key, {
-                    id: p.id || ('prof_' + key),
-                    name: p.name || 'Cofre SSD',
-                    color: p.color || 'cyan',
-                    pinHash: p.pinHash || '',
-                    pinLength: p.pinLength || 4,
-                    channelId: cid,
-                    accessHash: p.accessHash || '',
-                    channelTitle: p.channelTitle || p.name || ''
-                  });
-                }
-              });
-            }
-          }
-        }
-      } catch (e) {
-        console.warn('[SSD Nexus Sync Index Read]', e);
-      }
+        const raw = localStorage.getItem(STORAGE_KEYS.DEVICE_PROFILE);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.id && parsed.name && parsed.pinHash) return parsed;
+      } catch (e) {}
+      return null;
+    }
 
+    function saveDeviceProfile(prof) {
+      state.deviceProfile = prof;
+      try { localStorage.setItem(STORAGE_KEYS.DEVICE_PROFILE, JSON.stringify(prof)); } catch (e) {}
+    }
+
+    function loadFavorites() {
+      if (!state.user) return;
       try {
-        const dialogs = await state.client.getDialogs({ limit: 100 });
-        state.discoveredChannels = [];
-        dialogs.forEach(d => {
-          if (!d.isChannel || !d.entity) return;
-          const cid = normalizeChannelId(d.entity.id);
-          const title = String(d.title || '').trim();
-          const accessHash = d.entity.accessHash !== undefined && d.entity.accessHash !== null ? d.entity.accessHash.toString() : '';
-          state.discoveredChannels.push({ channelId: cid, title, accessHash });
-
-          if (cid && !merged.has(cid) && /^(SSD Nexus|NexusCloud|Cofre\s+SSD)/i.test(title)) {
-            const cleanName = title.replace(/^(SSD Nexus|NexusCloud)\s*[•:-]\s*/i, '').trim() || title;
-            merged.set(cid, {
-              id: 'prof_' + cid,
-              name: cleanName,
-              color: 'cyan',
-              pinHash: '',
-              pinLength: 4,
-              channelId: cid,
-              accessHash,
-              channelTitle: title,
-              createdAt: Date.now()
-            });
-            needsCloudUpdate = true;
-          }
-        });
+        state.favoriteKeys = new Set(JSON.parse(localStorage.getItem(STORAGE_KEYS.FAVORITES_PREFIX + state.user.id) || '[]'));
       } catch (e) {
-        console.warn('[SSD Nexus Scan Channels]', e);
-      }
-
-      state.profiles = Array.from(merged.values());
-      saveAccountProfiles();
-      if (needsCloudUpdate && state.profiles.length > 0) {
-        await pushProfilesToCloud();
+        state.favoriteKeys = new Set();
       }
     }
 
-    async function pushProfilesToCloud() {
-      if (!state.client || !state.user) return;
-      const payload = `${VAULT_SYNC_TAG}\n${JSON.stringify(state.profiles)}`;
-      try {
-        if (state.cloudSyncMsgId) {
-          await state.client.editMessage('me', { message: state.cloudSyncMsgId, text: payload });
-        } else {
-          const sent = await state.client.sendMessage('me', { message: payload });
-          if (sent && sent.id) state.cloudSyncMsgId = toSafeNumber(sent.id);
-        }
-      } catch (e) {
-        try {
-          const sent = await state.client.sendMessage('me', { message: payload });
-          if (sent && sent.id) state.cloudSyncMsgId = toSafeNumber(sent.id);
-        } catch (err) {}
-      }
-    }
-
-    async function rescanCloudProfilesManual() {
-      showToast('Restaurando Perfis', 'Buscando cofres privados na Nuvem SSD...', 'info');
-      await syncProfilesWithCloud();
-      renderProfileSelectorGrid();
-      if (state.profiles.length > 0) {
-        showToast('Perfis Restaurados', `${state.profiles.length} perfil(is) sincronizados da nuvem.`, 'success');
-      } else {
-        showToast('Nenhum Perfil Encontrado', 'Use "Novo Perfil / Vincular" para vincular um canal existente.', 'warning');
-      }
+    function saveFavoriteKeys() {
+      if (!state.user) return;
+      try { localStorage.setItem(STORAGE_KEYS.FAVORITES_PREFIX + state.user.id, JSON.stringify(Array.from(state.favoriteKeys))); } catch (e) {}
     }
 
     async function finalizeAuthenticatedSession() {
@@ -1531,45 +1273,123 @@
         const fullName = [me?.firstName, me?.lastName].filter(Boolean).join(' ').trim() || 'Usuário SSD';
         const phoneStr = me?.phone ? `+${me.phone}` : state.formattedPhone;
 
-        state.user = { id: userId, name: fullName, username: me?.username ? `@${me.username}` : '', phone: phoneStr };
-        loadAccountStorage();
-        await syncProfilesWithCloud();
+        state.user = { id: userId, name: fullName, phone: phoneStr };
+        loadFavorites();
 
-        if (state.profiles.length === 0) {
-          if (state.restoreRequested) {
-            openProfileSelectorView();
-            openNewProfileModal('link');
-            showToast('Conta Conectada', 'Selecione seu canal privado existente para vincular.', 'info');
-          } else {
-            startOnboardingWizard(fullName);
-          }
+        const boundProfile = loadDeviceProfile();
+        if (boundProfile) {
+          state.deviceProfile = boundProfile;
+          // Sempre que o app é fechado e reaberto, pede apenas o PIN do perfil deste aparelho
+          openDevicePinLockScreen();
         } else {
-          if (state.restoreRequested) {
-            showToast('Perfis Restaurados', `${state.profiles.length} perfil(is) recuperados da sua nuvem.`, 'success');
-          }
-          openProfileSelectorView();
+          // Primeira vez após validar código: pergunta Criar Perfil ou Já tenho perfil (MS ou CP)
+          openDeviceSetupChoice();
         }
       } catch (err) {
         console.error('[SSD Nexus Session Error]', err);
-        showToast('Erro de Sessão', 'Não foi possível carregar os dados da conta SSD Sync.', 'danger');
+        showToast('Erro de Sessão', 'Não foi possível carregar os dados da conta.', 'danger');
       }
     }
 
-    function loadAccountStorage() {
-      if (!state.user) return;
-      const uid = state.user.id;
-      try { state.profiles = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROFILES_PREFIX + uid) || '[]'); } catch (e) { state.profiles = []; }
-      try { state.favoriteKeys = new Set(JSON.parse(localStorage.getItem(STORAGE_KEYS.FAVORITES_PREFIX + uid) || '[]')); } catch (e) { state.favoriteKeys = new Set(); }
+    // 6. TELA DE CONFIGURAÇÃO DO PERFIL (CRIAR OU JÁ TENHO + MS/CP)
+    function openDeviceSetupChoice() {
+      document.getElementById('setup-choice-panel').classList.remove('hidden');
+      document.getElementById('setup-form-panel').classList.add('hidden');
+      switchView('setup');
     }
 
-    function saveAccountProfiles() {
-      if (!state.user) return;
-      try { localStorage.setItem(STORAGE_KEYS.PROFILES_PREFIX + state.user.id, JSON.stringify(state.profiles)); } catch (e) {}
+    function openSetupForm(mode) {
+      state.setupMode = mode; // 'create' | 'existing'
+      state.setupColor = 'cyan';
+      document.getElementById('setup-choice-panel').classList.add('hidden');
+      document.getElementById('setup-form-panel').classList.remove('hidden');
+      document.getElementById('setup-form-title').textContent = mode === 'create' ? 'Criar Novo Perfil' : 'Já tenho perfil';
+      document.getElementById('setup-form-sub').textContent = mode === 'create'
+        ? 'Escolha CP (Canal Privado) ou MS (Mensagens Salvas) e defina seu PIN.'
+        : 'Selecione se o seu perfil está em CP (Canal Privado) ou MS (Mensagens Salvas).';
+      document.getElementById('btn-setup-finish-label').textContent = mode === 'create' ? 'Criar e Abrir Cofre' : 'Vincular e Abrir Cofre';
+
+      document.getElementById('setup-profile-name').value = mode === 'create' ? (state.user?.name || '') : '';
+      document.getElementById('setup-pin-1').value = '';
+      document.getElementById('setup-pin-2').value = '';
+      document.getElementById('setup-error').textContent = '';
+
+      selectSetupColor('cyan');
+      selectSetupStorage('CP');
+      refreshIcons();
     }
 
-    function saveFavoriteKeys() {
-      if (!state.user) return;
-      try { localStorage.setItem(STORAGE_KEYS.FAVORITES_PREFIX + state.user.id, JSON.stringify(Array.from(state.favoriteKeys))); } catch (e) {}
+    function backToSetupChoice() {
+      document.getElementById('setup-form-panel').classList.add('hidden');
+      document.getElementById('setup-choice-panel').classList.remove('hidden');
+    }
+
+    function selectSetupStorage(type) {
+      state.setupStorage = type; // 'CP' | 'MS'
+      const btnCP = document.getElementById('btn-storage-cp');
+      const btnMS = document.getElementById('btn-storage-ms');
+      const existingCpBox = document.getElementById('setup-existing-cp-box');
+
+      if (type === 'CP') {
+        btnCP.className = 'flex flex-col items-start rounded-2xl border-2 border-[#06b6d4] bg-[#06b6d4]/15 p-3 text-left transition';
+        btnMS.className = 'flex flex-col items-start rounded-2xl border-2 border-[#1e293b] bg-[#060913] p-3 text-left hover:border-slate-600 transition';
+        if (state.setupMode === 'existing') {
+          existingCpBox.classList.remove('hidden');
+          loadExistingChannelsForSetup();
+        } else {
+          existingCpBox.classList.add('hidden');
+        }
+      } else {
+        btnMS.className = 'flex flex-col items-start rounded-2xl border-2 border-[#06b6d4] bg-[#06b6d4]/15 p-3 text-left transition';
+        btnCP.className = 'flex flex-col items-start rounded-2xl border-2 border-[#1e293b] bg-[#060913] p-3 text-left hover:border-slate-600 transition';
+        existingCpBox.classList.add('hidden');
+        const nameInp = document.getElementById('setup-profile-name');
+        if (!nameInp.value.trim()) nameInp.value = 'Mensagens Salvas';
+      }
+      refreshIcons();
+    }
+
+    function selectSetupColor(colorKey) {
+      state.setupColor = colorKey;
+      document.querySelectorAll('.setup-swatch').forEach(btn => {
+        const active = btn.dataset.setupSwatch === colorKey;
+        btn.classList.toggle('ring-2', active);
+        btn.classList.toggle('ring-white', active);
+        btn.classList.toggle('ring-offset-2', active);
+        btn.classList.toggle('ring-offset-[#0d1324]', active);
+        btn.classList.toggle('opacity-70', !active);
+      });
+    }
+
+    async function loadExistingChannelsForSetup() {
+      const sel = document.getElementById('setup-cp-select');
+      sel.innerHTML = '<option value="">Buscando canais privados...</option>';
+      try {
+        if (!state.client.connected) await state.client.connect();
+        const dialogs = await state.client.getDialogs({ limit: 100 });
+        const channels = dialogs.filter(d => d.isChannel && d.entity);
+        if (!channels.length) {
+          sel.innerHTML = '<option value="">Nenhum canal privado encontrado</option>';
+          return;
+        }
+        sel.innerHTML = '<option value="">-- Selecione seu Canal Privado (CP) --</option>' + channels.map(d => {
+          const cid = normalizeChannelId(d.entity.id);
+          const hash = d.entity.accessHash !== undefined && d.entity.accessHash !== null ? d.entity.accessHash.toString() : '';
+          return `<option value="${cid}|${hash}">${escapeHtml(d.title || ('Canal #' + cid))}</option>`;
+        }).join('');
+      } catch (e) {
+        sel.innerHTML = '<option value="">Erro ao carregar canais</option>';
+      }
+    }
+
+    function onSetupChannelPicked(val) {
+      if (!val) return;
+      const sel = document.getElementById('setup-cp-select');
+      const optText = sel.options[sel.selectedIndex]?.text || '';
+      const nameInp = document.getElementById('setup-profile-name');
+      if (!nameInp.value.trim() && optText) {
+        nameInp.value = optText.replace(/^(SSD Nexus|NexusCloud)\s*[•:-]\s*/i, '').trim();
+      }
     }
 
     async function createPrivateVaultChannel(profileName) {
@@ -1589,30 +1409,166 @@
 
       const channel = result && Array.isArray(result.chats) ? result.chats[0] : null;
       if (!channel || channel.id === undefined) {
-        throw new Error('Não foi possível obter os metadados do canal privado criado.');
+        throw new Error('Não foi possível obter os dados do canal privado.');
       }
-
       return {
         channelId: normalizeChannelId(channel.id),
-        accessHash: channel.accessHash !== undefined && channel.accessHash !== null ? channel.accessHash.toString() : '',
-        channelTitle: channel.title || title
+        accessHash: channel.accessHash !== undefined && channel.accessHash !== null ? channel.accessHash.toString() : ''
       };
     }
 
-    async function resolveProfilePeer(prof) {
-      if (!prof || !prof.channelId) return 'me';
+    async function finishDeviceProfileSetup() {
+      const name = document.getElementById('setup-profile-name').value.trim();
+      const p1 = document.getElementById('setup-pin-1').value.replace(/\D/g, '');
+      const p2 = document.getElementById('setup-pin-2').value.replace(/\D/g, '');
+      const errEl = document.getElementById('setup-error');
+      const btn = document.getElementById('btn-setup-finish');
+      const lbl = document.getElementById('btn-setup-finish-label');
+
+      errEl.textContent = '';
+      if (!name) { errEl.textContent = 'Digite um nome para o perfil.'; return; }
+      if (p1.length < 4 || p1.length > 6) { errEl.textContent = 'Defina um PIN obrigatório de 4 a 6 dígitos.'; return; }
+      if (p1 !== p2) { errEl.textContent = 'Os dois PINs não coincidem.'; return; }
+
+      btn.disabled = true;
+      lbl.textContent = state.setupStorage === 'CP' && state.setupMode === 'create' ? 'Criando Canal Privado...' : 'Configurando perfil...';
+
+      try {
+        let channelId = '';
+        let accessHash = '';
+
+        if (state.setupStorage === 'CP') {
+          if (state.setupMode === 'existing') {
+            const picked = document.getElementById('setup-cp-select').value;
+            if (!picked) {
+              errEl.textContent = 'Selecione seu Canal Privado (CP) na lista.';
+              btn.disabled = false;
+              lbl.textContent = 'Vincular e Abrir Cofre';
+              return;
+            }
+            const [cid, hash] = picked.split('|');
+            channelId = cid;
+            accessHash = hash || '';
+          } else {
+            const created = await createPrivateVaultChannel(name);
+            channelId = created.channelId;
+            accessHash = created.accessHash;
+          }
+        }
+
+        const pinHash = await sha256Hex(p1);
+        const profile = {
+          id: state.setupStorage === 'MS' ? 'ms_device' : ('cp_' + channelId),
+          name,
+          color: state.setupColor,
+          storageType: state.setupStorage, // 'CP' ou 'MS'
+          channelId,
+          accessHash,
+          pinHash,
+          pinLength: p1.length,
+          createdAt: Date.now()
+        };
+
+        saveDeviceProfile(profile);
+        state.isUnlocked = true;
+        showToast('Perfil Configurado', `"${name}" (${state.setupStorage}) vinculado a este aparelho.`, 'success');
+        await enterWorkspace();
+      } catch (err) {
+        console.error('[SSD Nexus Setup Error]', err);
+        errEl.textContent = sanitizeBrandText(err && (err.errorMessage || err.message) ? (err.errorMessage || err.message) : 'Erro ao configurar perfil.');
+      } finally {
+        btn.disabled = false;
+        lbl.textContent = state.setupMode === 'create' ? 'Criar e Abrir Cofre' : 'Vincular e Abrir Cofre';
+      }
+    }
+
+    // 7. TELA DE PIN EXCLUSIVA DESTE APARELHO (SEM OUTROS PERFIS)
+    function openDevicePinLockScreen() {
+      revokeAllObjectUrls();
+      state.isUnlocked = false;
+      state.cloudFiles = [];
+      state.rawMessagesByKey.clear();
+      state.lockBuffer = '';
+      closePreviewDrawer(false);
+
+      const prof = state.deviceProfile;
+      if (!prof) {
+        openDeviceSetupChoice();
+        return;
+      }
+
+      const palette = ACCENT_PALETTE[prof.color] || ACCENT_PALETTE.cyan;
+      const avatarEl = document.getElementById('lock-prof-avatar');
+      avatarEl.className = `mb-3 flex h-16 w-16 items-center justify-center rounded-2xl ${palette.solid} text-xl font-extrabold shadow-xl`;
+      avatarEl.textContent = getInitials(prof.name);
+
+      document.getElementById('lock-prof-name').textContent = prof.name;
+      const typeLabel = prof.storageType === 'MS' ? 'MS • MENSAGENS SALVAS' : 'CP • CANAL PRIVADO';
+      document.getElementById('lock-prof-badge').innerHTML = `<i data-lucide="lock" class="h-3 w-3"></i><span>${typeLabel}</span>`;
+      document.getElementById('lock-pin-subtitle').textContent = `Digite seu PIN de ${prof.pinLength || 4} dígitos para desbloquear`;
+      document.getElementById('lock-pin-error').textContent = '';
+
+      renderLockDots();
+      switchView('pin-lock');
+    }
+
+    function renderLockDots() {
+      const len = (state.deviceProfile && state.deviceProfile.pinLength) || 4;
+      const row = document.getElementById('lock-dots-row');
+      let html = '';
+      for (let i = 0; i < len; i++) {
+        const filled = i < state.lockBuffer.length;
+        html += `<div class="flex h-12 w-11 items-center justify-center rounded-2xl border-2 ${filled ? 'border-[#06b6d4] bg-[#06b6d4]/15' : 'border-slate-700 bg-[#060913]'} font-mono text-xl font-bold text-[#06b6d4]">${filled ? '•' : ''}</div>`;
+      }
+      row.innerHTML = html;
+    }
+
+    async function pressLockDigit(digit) {
+      const len = (state.deviceProfile && state.deviceProfile.pinLength) || 4;
+      if (state.lockBuffer.length >= len) return;
+      state.lockBuffer += digit;
+      document.getElementById('lock-pin-error').textContent = '';
+      renderLockDots();
+      if (state.lockBuffer.length === len) {
+        await new Promise(r => setTimeout(r, 110));
+        await verifyDeviceLockPin();
+      }
+    }
+
+    async function verifyDeviceLockPin() {
+      const prof = state.deviceProfile;
+      if (!prof) return;
+      const enteredHash = await sha256Hex(state.lockBuffer);
+      if (enteredHash === prof.pinHash) {
+        state.isUnlocked = true;
+        state.lockBuffer = '';
+        await enterWorkspace();
+      } else {
+        shakeElement('pin-lock-card');
+        state.lockBuffer = '';
+        renderLockDots();
+        document.getElementById('lock-pin-error').textContent = 'PIN incorreto. Tente novamente.';
+      }
+    }
+
+    function backspaceLockBuffer() { state.lockBuffer = state.lockBuffer.slice(0, -1); renderLockDots(); }
+    function clearLockBuffer() { state.lockBuffer = ''; document.getElementById('lock-pin-error').textContent = ''; renderLockDots(); }
+
+    // 8. WORKSPACE E RESOLUÇÃO DE PEER (MS OU CP)
+    async function resolveDeviceProfilePeer() {
+      const prof = state.deviceProfile;
+      if (!prof || prof.storageType === 'MS' || !prof.channelId) return 'me';
+
       const { Api } = state.gramjsLib;
       const targetIdStr = normalizeChannelId(prof.channelId);
 
       try {
         const dialogs = await state.client.getDialogs({ limit: 100 });
-        const match = dialogs.find(
-          d => d.entity && d.entity.id !== undefined && normalizeChannelId(d.entity.id) === targetIdStr
-        );
+        const match = dialogs.find(d => d.entity && d.entity.id !== undefined && normalizeChannelId(d.entity.id) === targetIdStr);
         if (match && match.entity) {
           if (match.entity.accessHash !== undefined && match.entity.accessHash !== null) {
             prof.accessHash = match.entity.accessHash.toString();
-            saveAccountProfiles();
+            saveDeviceProfile(prof);
           }
           return match.inputEntity || match.entity;
         }
@@ -1620,475 +1576,25 @@
 
       if (prof.accessHash) {
         try {
-          return new Api.InputPeerChannel({
-            channelId: targetIdStr,
-            accessHash: String(prof.accessHash)
-          });
+          return new Api.InputPeerChannel({ channelId: targetIdStr, accessHash: String(prof.accessHash) });
         } catch (e) {}
       }
-
       return `-100${targetIdStr}`;
     }
 
-    // 6. ONBOARDING DO PRIMEIRO PERFIL / COFRE
-    function startOnboardingWizard(defaultName) {
-      state.onboarding = { name: defaultName, color: 'cyan', stage: 'create', firstPin: '', buffer: '' };
-      document.getElementById('onb-profile-name').value = defaultName;
-      document.getElementById('onb-name-error').textContent = '';
-      selectOnboardingColor('cyan');
-      document.getElementById('onb-step-badge').textContent = 'PASSO 1 DE 2';
-      document.getElementById('onb-step-1').classList.remove('hidden');
-      document.getElementById('onb-step-2').classList.add('hidden');
-      switchView('onboarding');
-    }
-
-    function selectOnboardingColor(colorKey) {
-      state.onboarding.color = colorKey;
-      document.querySelectorAll('.onb-swatch').forEach(btn => {
-        const active = btn.dataset.swatch === colorKey;
-        btn.classList.toggle('ring-2', active);
-        btn.classList.toggle('ring-white', active);
-        btn.classList.toggle('ring-offset-2', active);
-        btn.classList.toggle('ring-offset-[#0d1324]', active);
-        btn.classList.toggle('opacity-65', !active);
-      });
-    }
-
-    function completeOnboardingStep1() {
-      const nameVal = document.getElementById('onb-profile-name').value.trim();
-      const errEl = document.getElementById('onb-name-error');
-      if (!nameVal) {
-        errEl.textContent = 'Informe um nome para o seu perfil ou cofre.';
-        document.getElementById('onb-profile-name').focus();
+    async function enterWorkspace() {
+      if (!state.deviceProfile || !state.isUnlocked) {
+        openDevicePinLockScreen();
         return;
       }
-      state.onboarding.name = nameVal;
-      state.onboarding.stage = 'create';
-      state.onboarding.firstPin = '';
-      state.onboarding.buffer = '';
-      updateOnboardingPinUI();
-      document.getElementById('onb-step-badge').textContent = 'PASSO 2 DE 2';
-      document.getElementById('onb-step-1').classList.add('hidden');
-      document.getElementById('onb-step-2').classList.remove('hidden');
-    }
-
-    function backToOnboardingStep1() {
-      state.onboarding.buffer = '';
-      state.onboarding.firstPin = '';
-      state.onboarding.stage = 'create';
-      document.getElementById('onb-step-badge').textContent = 'PASSO 1 DE 2';
-      document.getElementById('onb-step-2').classList.add('hidden');
-      document.getElementById('onb-step-1').classList.remove('hidden');
-    }
-
-    function updateOnboardingPinUI() {
-      const isConfirm = state.onboarding.stage === 'confirm';
-      const targetLen = isConfirm ? state.onboarding.firstPin.length : 6;
-      document.getElementById('onb-pin-heading').textContent = isConfirm ? `Confirme seu PIN (${targetLen} dígitos)` : 'Crie seu PIN (4 a 6 dígitos)';
-      document.getElementById('onb-pin-subheading').textContent = isConfirm ? 'Digite novamente o mesmo código para finalizar.' : 'Digite de 4 a 6 números e toque em Avançar.';
-      document.getElementById('btn-onb-confirm-pin-label').textContent = isConfirm ? 'Confirmar e Criar Cofre' : 'Avançar para Confirmação';
-      document.getElementById('onb-pin-error').textContent = '';
-
-      for (let i = 0; i < 6; i++) {
-        const dot = document.getElementById(`onb-dot-${i}`);
-        if (isConfirm && i >= targetLen) { dot.classList.add('hidden'); continue; }
-        dot.classList.remove('hidden');
-        if (i < state.onboarding.buffer.length) {
-          dot.textContent = '•';
-          dot.className = 'flex h-12 w-11 items-center justify-center rounded-2xl border-2 border-[#06b6d4] bg-[#06b6d4]/15 font-mono text-xl font-bold text-[#06b6d4] transition';
-        } else if (i >= 4 && !isConfirm) {
-          dot.textContent = '';
-          dot.className = 'flex h-12 w-11 items-center justify-center rounded-2xl border border-dashed border-slate-700/70 bg-[#060913]/60 font-mono text-xl font-bold text-[#06b6d4] transition';
-        } else {
-          dot.textContent = '';
-          dot.className = 'flex h-12 w-11 items-center justify-center rounded-2xl border-2 border-slate-700 bg-[#060913] font-mono text-xl font-bold text-[#06b6d4] transition';
-        }
-      }
-    }
-
-    async function handleOnboardingPinDigit(digit) {
-      const maxLen = state.onboarding.stage === 'confirm' ? state.onboarding.firstPin.length : 6;
-      if (state.onboarding.buffer.length >= maxLen) return;
-      state.onboarding.buffer += digit;
-      updateOnboardingPinUI();
-      if (state.onboarding.stage === 'confirm' && state.onboarding.buffer.length === state.onboarding.firstPin.length) {
-        await new Promise(r => setTimeout(r, 140));
-        await submitOnboardingPinStep();
-      }
-    }
-
-    async function submitOnboardingPinStep() {
-      const errEl = document.getElementById('onb-pin-error');
-      const btn = document.getElementById('btn-onb-confirm-pin');
-      const btnLabel = document.getElementById('btn-onb-confirm-pin-label');
-
-      if (state.onboarding.stage === 'create') {
-        if (state.onboarding.buffer.length < 4 || state.onboarding.buffer.length > 6) {
-          errEl.textContent = 'O PIN deve conter entre 4 e 6 dígitos.';
-          shakeElement('onb-pin-dots-container');
-          return;
-        }
-        state.onboarding.firstPin = state.onboarding.buffer;
-        state.onboarding.buffer = '';
-        state.onboarding.stage = 'confirm';
-        updateOnboardingPinUI();
-        return;
-      }
-
-      if (state.onboarding.buffer !== state.onboarding.firstPin) {
-        shakeElement('onb-pin-dots-container');
-        state.onboarding.stage = 'create';
-        state.onboarding.firstPin = '';
-        state.onboarding.buffer = '';
-        updateOnboardingPinUI();
-        errEl.textContent = 'Os PINs não coincidem. Defina novamente.';
-        return;
-      }
-
-      btn.disabled = true;
-      btnLabel.textContent = 'Criando canal privado...';
-      errEl.textContent = '';
-
-      try {
-        const pinLength = state.onboarding.buffer.length;
-        const pinHash = await sha256Hex(state.onboarding.buffer);
-        const channelMeta = await createPrivateVaultChannel(state.onboarding.name);
-
-        const profile = {
-          id: 'prof_' + channelMeta.channelId,
-          name: state.onboarding.name,
-          color: state.onboarding.color,
-          pinHash,
-          pinLength,
-          channelId: channelMeta.channelId,
-          accessHash: channelMeta.accessHash,
-          channelTitle: channelMeta.channelTitle,
-          createdAt: Date.now()
-        };
-
-        state.profiles.push(profile);
-        saveAccountProfiles();
-        await pushProfilesToCloud();
-        state.unlockedProfileIds.clear();
-        state.unlockedProfileIds.add(profile.id);
-        showToast('Cofre Privado Criado', 'Canal exclusivo criado e protegido por PIN SHA-256.', 'success');
-        await enterWorkspace(profile.id);
-      } catch (err) {
-        console.error('[SSD Nexus Create Vault Channel Error]', err);
-        errEl.textContent = sanitizeBrandText(err && (err.errorMessage || err.message) ? (err.errorMessage || err.message) : 'Falha ao criar canal privado.');
-      } finally {
-        btn.disabled = false;
-        btnLabel.textContent = 'Confirmar e Criar Cofre';
-      }
-    }
-
-    function backspaceOnboardingPin() { state.onboarding.buffer = state.onboarding.buffer.slice(0, -1); updateOnboardingPinUI(); }
-    function clearOnboardingPinBuffer() { state.onboarding.buffer = ''; updateOnboardingPinUI(); }
-
-    // 7. SELETOR DE PERFIS 100% INDIVIDUAIS E DESBLOQUEIO POR PIN
-    function lockAllProfilesMemory() {
-      revokeAllObjectUrls();
-      state.unlockedProfileIds.clear();
-      state.cloudFiles = [];
-      state.rawMessagesByKey.clear();
-      state.activeProfileId = null;
-      closePreviewDrawer(false);
-      closeProfileDropdown();
-    }
-
-    function openProfileSelectorView() {
-      lockAllProfilesMemory();
-      switchView('selector');
-      if (state.user) {
-        document.getElementById('selector-user-subtitle').textContent = [state.user.name, state.user.phone].filter(Boolean).join(' • ');
-      }
-      renderProfileSelectorGrid();
-    }
-
-    function getInitials(name) {
-      return String(name || 'SS').trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || 'SS';
-    }
-
-    function renderProfileSelectorGrid() {
-      const grid = document.getElementById('selector-profiles-grid');
-      if (state.profiles.length === 0) {
-        grid.innerHTML = `
-          <div class="col-span-full rounded-3xl border border-dashed border-[#1e293b] bg-[#0d1324]/80 p-10 text-center space-y-3">
-            <h3 class="text-base font-bold text-white">Nenhum perfil carregado ainda</h3>
-            <p class="text-xs text-slate-400">Clique em <strong>Novo Perfil / Vincular</strong> acima para vincular seu canal privado existente ou criar um novo.</p>
-          </div>
-        `;
-        refreshIcons();
-        return;
-      }
-
-      grid.innerHTML = state.profiles.map(prof => {
-        const palette = ACCENT_PALETTE[prof.color] || ACCENT_PALETTE.cyan;
-        const hasPin = Boolean(prof.pinHash);
-        const len = prof.pinLength || 4;
-
-        return `
-          <button type="button" onclick="handleProfileCardClick('${prof.id}')" class="group flex flex-col justify-between rounded-3xl nexus-glass p-6 text-left hover:border-[#06b6d4]/55 hover:bg-[#111827] transition-all shadow-xl animate-fade-up">
-            <div>
-              <div class="flex items-start justify-between gap-3 mb-5">
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl ${palette.solid} text-base font-extrabold shadow-lg">${escapeHtml(getInitials(prof.name))}</div>
-                <span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-semibold ${hasPin ? 'border-[#06b6d4]/40 bg-[#06b6d4]/15 text-[#06b6d4]' : 'border-emerald-500/35 bg-emerald-500/15 text-emerald-300'}">
-                  <i data-lucide="${hasPin ? 'lock' : 'shield'}" class="h-3 w-3"></i>
-                  <span>${hasPin ? `PIN ${len} DÍGITOS` : 'COFRE ISOLADO'}</span>
-                </span>
-              </div>
-              <h3 class="text-lg font-bold text-white group-hover:text-[#06b6d4] transition truncate">${escapeHtml(prof.name)}</h3>
-              <p class="mt-1.5 text-xs text-slate-400">Perfil 100% individual • Canal privado exclusivo</p>
-            </div>
-            <div class="mt-6 flex items-center justify-between border-t border-[#1e293b] pt-3.5 text-xs">
-              <span class="text-slate-400">${hasPin ? 'Toque para digitar o PIN' : 'Acesso individual direto'}</span>
-              <span class="inline-flex items-center gap-1 font-semibold ${palette.text} group-hover:translate-x-0.5 transition-transform">
-                <span>Abrir Cofre</span>
-                <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
-              </span>
-            </div>
-          </button>
-        `;
-      }).join('');
-      refreshIcons();
-    }
-
-    async function handleProfileCardClick(profileId) {
-      const prof = state.profiles.find(p => p.id === profileId);
-      if (!prof) return;
-      if (prof.pinHash) {
-        openPinUnlockModal(prof.id);
-      } else {
-        state.unlockedProfileIds.clear();
-        state.unlockedProfileIds.add(prof.id);
-        await enterWorkspace(prof.id);
-      }
-    }
-
-    function openPinUnlockModal(profileId) {
-      const prof = state.profiles.find(p => p.id === profileId);
-      if (!prof) return;
-      const pinLen = prof.pinLength || 4;
-      state.unlockModal = { targetProfileId: profileId, pinLength: pinLen, buffer: '' };
-      document.getElementById('unlock-pin-title').textContent = prof.name;
-      document.getElementById('unlock-pin-subtitle').textContent = `Digite seu PIN de ${pinLen} dígitos`;
-      document.getElementById('unlock-pin-error').textContent = '';
-      renderUnlockDots();
-      const modal = document.getElementById('modal-pin-unlock');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      refreshIcons();
-    }
-
-    function closePinUnlockModal() {
-      state.unlockModal.targetProfileId = null;
-      state.unlockModal.buffer = '';
-      const modal = document.getElementById('modal-pin-unlock');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    function renderUnlockDots() {
-      const len = state.unlockModal.pinLength || 4;
-      const row = document.getElementById('unlock-dots-row');
-      let html = '';
-      for (let i = 0; i < len; i++) {
-        const filled = i < state.unlockModal.buffer.length;
-        html += `<div class="flex h-12 w-11 items-center justify-center rounded-2xl border-2 ${filled ? 'border-[#06b6d4] bg-[#06b6d4]/15' : 'border-slate-700 bg-[#060913]'} font-mono text-xl font-bold text-[#06b6d4]">${filled ? '•' : ''}</div>`;
-      }
-      row.innerHTML = html;
-    }
-
-    async function pressUnlockDigit(digit) {
-      const len = state.unlockModal.pinLength || 4;
-      if (state.unlockModal.buffer.length >= len) return;
-      state.unlockModal.buffer += digit;
-      document.getElementById('unlock-pin-error').textContent = '';
-      renderUnlockDots();
-      if (state.unlockModal.buffer.length === len) {
-        await new Promise(r => setTimeout(r, 110));
-        await verifyUnlockModalPin();
-      }
-    }
-
-    async function verifyUnlockModalPin() {
-      const len = state.unlockModal.pinLength || 4;
-      if (state.unlockModal.buffer.length < len) return;
-      const prof = state.profiles.find(p => p.id === state.unlockModal.targetProfileId);
-      if (!prof) return;
-      const enteredHash = await sha256Hex(state.unlockModal.buffer);
-      if (enteredHash === prof.pinHash) {
-        const targetId = prof.id;
-        revokeAllObjectUrls();
-        state.unlockedProfileIds.clear();
-        state.unlockedProfileIds.add(targetId);
-        closePinUnlockModal();
-        await enterWorkspace(targetId);
-      } else {
-        shakeElement('modal-pin-card');
-        state.unlockModal.buffer = '';
-        renderUnlockDots();
-        document.getElementById('unlock-pin-error').textContent = 'PIN incorreto. Tente novamente.';
-      }
-    }
-
-    function backspaceUnlockBuffer() { state.unlockModal.buffer = state.unlockModal.buffer.slice(0, -1); renderUnlockDots(); }
-    function clearUnlockBuffer() { state.unlockModal.buffer = ''; document.getElementById('unlock-pin-error').textContent = ''; renderUnlockDots(); }
-
-    function setNewProfileTab(tab) {
-      state.newProfileTab = tab;
-      const btnCreate = document.getElementById('tab-np-create');
-      const btnLink = document.getElementById('tab-np-link');
-      const panelLink = document.getElementById('panel-np-link');
-      const saveBtn = document.getElementById('btn-save-new-profile');
-
-      if (tab === 'link') {
-        btnLink.className = 'rounded-lg bg-[#111827] py-2 text-xs font-semibold text-[#06b6d4] transition';
-        btnCreate.className = 'rounded-lg py-2 text-xs font-semibold text-slate-400 hover:text-white transition';
-        panelLink.classList.remove('hidden');
-        saveBtn.textContent = 'Vincular e Abrir';
-        populateExistingChannelsSelect();
-      } else {
-        btnCreate.className = 'rounded-lg bg-[#111827] py-2 text-xs font-semibold text-[#06b6d4] transition';
-        btnLink.className = 'rounded-lg py-2 text-xs font-semibold text-slate-400 hover:text-white transition';
-        panelLink.classList.add('hidden');
-        saveBtn.textContent = 'Criar e Abrir';
-      }
-    }
-
-    async function populateExistingChannelsSelect() {
-      const sel = document.getElementById('np-existing-channel');
-      sel.innerHTML = '<option value="">Buscando canais da conta...</option>';
-      try {
-        const dialogs = await state.client.getDialogs({ limit: 100 });
-        const channels = dialogs.filter(d => d.isChannel && d.entity);
-        if (!channels.length) {
-          sel.innerHTML = '<option value="">Nenhum canal encontrado</option>';
-          return;
-        }
-        sel.innerHTML = '<option value="">-- Selecione um canal privado --</option>' + channels.map(d => {
-          const cid = normalizeChannelId(d.entity.id);
-          return `<option value="${cid}">${escapeHtml(d.title || ('Canal #' + cid))}</option>`;
-        }).join('');
-      } catch (e) {
-        sel.innerHTML = '<option value="">Erro ao carregar canais</option>';
-      }
-    }
-
-    function onSelectExistingChannel(cid) {
-      if (!cid) return;
-      const sel = document.getElementById('np-existing-channel');
-      const optText = sel.options[sel.selectedIndex]?.text || '';
-      const nameInp = document.getElementById('np-name');
-      if (!nameInp.value.trim() && optText) {
-        nameInp.value = optText.replace(/^(SSD Nexus|NexusCloud)\s*[•:-]\s*/i, '').trim();
-      }
-    }
-
-    function openNewProfileModal(defaultTab = 'create') {
-      state.newProfileColor = 'cyan';
-      document.getElementById('np-name').value = '';
-      document.getElementById('np-pin-1').value = '';
-      document.getElementById('np-pin-2').value = '';
-      document.getElementById('np-error').textContent = '';
-      selectNewProfileColor('cyan');
-      setNewProfileTab(defaultTab);
-      const modal = document.getElementById('modal-new-profile');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      document.getElementById('np-name').focus();
-      refreshIcons();
-    }
-
-    function closeNewProfileModal() {
-      const modal = document.getElementById('modal-new-profile');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    function selectNewProfileColor(colorKey) {
-      state.newProfileColor = colorKey;
-      document.querySelectorAll('.np-swatch').forEach(btn => {
-        const active = btn.dataset.npSwatch === colorKey;
-        btn.classList.toggle('ring-2', active);
-        btn.classList.toggle('ring-white', active);
-        btn.classList.toggle('ring-offset-2', active);
-        btn.classList.toggle('ring-offset-[#0d1324]', active);
-        btn.classList.toggle('opacity-70', !active);
-      });
-    }
-
-    async function saveAdditionalProfile() {
-      const name = document.getElementById('np-name').value.trim();
-      const errEl = document.getElementById('np-error');
-      const p1 = document.getElementById('np-pin-1').value.replace(/\D/g, '');
-      const p2 = document.getElementById('np-pin-2').value.replace(/\D/g, '');
-      const btn = document.getElementById('btn-save-new-profile');
-
-      if (!name) { errEl.textContent = 'Informe o nome do perfil ou cofre.'; return; }
-      if (p1.length > 0 && (p1.length < 4 || p1.length > 6)) { errEl.textContent = 'O PIN deve conter entre 4 e 6 dígitos.'; return; }
-      if (p1 !== p2) { errEl.textContent = 'Os dois PINs digitados não coincidem.'; return; }
-
-      btn.disabled = true;
-      btn.textContent = state.newProfileTab === 'link' ? 'Vinculando canal...' : 'Criando canal privado...';
-      errEl.textContent = '';
-
-      try {
-        const pinHash = p1 ? await sha256Hex(p1) : '';
-        let channelMeta;
-
-        if (state.newProfileTab === 'link') {
-          const cid = document.getElementById('np-existing-channel').value;
-          if (!cid) { errEl.textContent = 'Selecione um canal privado na lista.'; btn.disabled = false; btn.textContent = 'Vincular e Abrir'; return; }
-          channelMeta = { channelId: cid, accessHash: '', channelTitle: name };
-          state.profiles = state.profiles.filter(p => normalizeChannelId(p.channelId) !== cid);
-        } else {
-          channelMeta = await createPrivateVaultChannel(name);
-        }
-
-        const newProf = {
-          id: 'prof_' + channelMeta.channelId,
-          name,
-          color: state.newProfileColor,
-          pinHash,
-          pinLength: p1 ? p1.length : 4,
-          channelId: channelMeta.channelId,
-          accessHash: channelMeta.accessHash,
-          channelTitle: channelMeta.channelTitle,
-          createdAt: Date.now()
-        };
-        state.profiles.push(newProf);
-        saveAccountProfiles();
-        await pushProfilesToCloud();
-        revokeAllObjectUrls();
-        state.unlockedProfileIds.clear();
-        state.unlockedProfileIds.add(newProf.id);
-        closeNewProfileModal();
-        showToast('Cofre Pronto', `"${name}" sincronizado na Nuvem SSD.`, 'success');
-        await enterWorkspace(newProf.id);
-      } catch (err) {
-        console.error('[SSD Nexus Save Profile Error]', err);
-        errEl.textContent = sanitizeBrandText(err && (err.errorMessage || err.message) ? (err.errorMessage || err.message) : 'Falha ao salvar perfil.');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = state.newProfileTab === 'link' ? 'Vincular e Abrir' : 'Criar e Abrir';
-      }
-    }
-
-    // 8. WORKSPACE E LISTAGEM ESTRITAMENTE INDIVIDUAL POR PERFIL
-    async function enterWorkspace(profileId) {
-      state.activeProfileId = profileId;
       state.category = 'all';
       state.previewItemKey = null;
       state.confirmDeleteKey = null;
       closePreviewDrawer(false);
       switchView('workspace');
 
-      // Evita duplicação caso o APK já injete o FAB nativo #ssdCloudFab
       const webFab = document.getElementById('ws-cloud-upload-fab');
-      if (webFab) {
-        webFab.classList.toggle('hidden', Boolean(document.getElementById('ssdCloudFab')));
-      }
+      if (webFab) webFab.classList.toggle('hidden', Boolean(document.getElementById('ssdCloudFab')));
 
       setWorkspaceCols(state.gridCols);
       renderWorkspaceHeaderAndProfile();
@@ -2111,69 +1617,25 @@
 
     function renderWorkspaceHeaderAndProfile() {
       if (state.user) document.getElementById('sb-user-name').textContent = state.user.name || 'SSD Sync Ativo';
-      const activeProf = state.profiles.find(p => p.id === state.activeProfileId) || state.profiles[0];
-      if (!activeProf) return;
+      const prof = state.deviceProfile;
+      if (!prof) return;
 
-      const palette = ACCENT_PALETTE[activeProf.color] || ACCENT_PALETTE.cyan;
+      const palette = ACCENT_PALETTE[prof.color] || ACCENT_PALETTE.cyan;
       const avatarEl = document.getElementById('active-prof-avatar');
       avatarEl.className = `flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${palette.solid} text-xs font-extrabold shadow-md`;
-      avatarEl.textContent = getInitials(activeProf.name);
+      avatarEl.textContent = getInitials(prof.name);
 
-      document.getElementById('active-prof-name').textContent = activeProf.name;
-      const pinTag = activeProf.pinHash ? `PIN ${activeProf.pinLength || 4}d` : 'Isolado';
-      document.getElementById('active-prof-badge').innerHTML = `<i data-lucide="lock" class="h-3 w-3 text-[#06b6d4]"></i><span>Perfil Individual • ${pinTag}</span>`;
+      document.getElementById('active-prof-name').textContent = prof.name;
+      const typeShort = prof.storageType === 'MS' ? 'MS • Mensagens Salvas' : 'CP • Canal Privado';
+      document.getElementById('active-prof-badge').innerHTML = `<i data-lucide="lock" class="h-3 w-3 text-[#06b6d4]"></i><span>${typeShort}</span>`;
+      document.getElementById('ws-storage-pill-text').textContent = typeShort;
 
       const chip = document.getElementById('ws-profile-chip');
       chip.className = `inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-xs font-semibold ${palette.border} ${palette.soft} ${palette.text}`;
-      chip.textContent = activeProf.name;
+      chip.textContent = prof.name;
 
-      document.getElementById('drag-target-profile-name').textContent = activeProf.name;
-      renderDropdownProfilesList();
+      document.getElementById('drag-target-profile-name').textContent = prof.name;
       refreshIcons();
-    }
-
-    function renderDropdownProfilesList() {
-      const container = document.getElementById('dropdown-profiles-list');
-      container.innerHTML = state.profiles.map(p => {
-        const palette = ACCENT_PALETTE[p.color] || ACCENT_PALETTE.cyan;
-        const isCurrent = p.id === state.activeProfileId;
-        return `
-          <button type="button" onclick="switchWorkspaceProfile('${p.id}')" class="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition ${isCurrent ? 'bg-[#111827] text-white font-semibold' : 'text-slate-300 hover:bg-[#111827]/75 hover:text-white'}">
-            <div class="flex items-center gap-2.5 min-w-0">
-              <span class="h-2.5 w-2.5 shrink-0 rounded-full ${palette.dot}"></span>
-              <span class="truncate">${escapeHtml(p.name)}</span>
-            </div>
-            <div class="flex items-center gap-1.5 shrink-0">
-              <i data-lucide="${isCurrent ? 'check' : 'lock'}" class="h-3.5 w-3.5 ${isCurrent ? 'text-[#06b6d4]' : 'text-slate-400'}"></i>
-            </div>
-          </button>
-        `;
-      }).join('');
-      refreshIcons();
-    }
-
-    function toggleProfileDropdown() { document.getElementById('profile-dropdown-menu').classList.toggle('hidden'); }
-    function closeProfileDropdown() { document.getElementById('profile-dropdown-menu').classList.add('hidden'); }
-
-    // Ao trocar de perfil, limpa a memória e exige o PIN do novo perfil
-    async function switchWorkspaceProfile(targetId) {
-      closeProfileDropdown();
-      if (targetId === state.activeProfileId) return;
-      const prof = state.profiles.find(p => p.id === targetId);
-      if (!prof) return;
-
-      revokeAllObjectUrls();
-      state.unlockedProfileIds.clear();
-      state.cloudFiles = [];
-      state.rawMessagesByKey.clear();
-      closePreviewDrawer(false);
-
-      if (prof.pinHash) {
-        openPinUnlockModal(prof.id);
-        return;
-      }
-      state.unlockedProfileIds.add(prof.id);
-      await enterWorkspace(prof.id);
     }
 
     function toSafeNumber(val) {
@@ -2186,7 +1648,7 @@
     }
 
     async function refreshCloudFiles(notify = false) {
-      if (!state.client) return;
+      if (!state.client || !state.deviceProfile) return;
       const topIcon = document.getElementById('icon-sync-refresh');
       const sbIcon = document.getElementById('icon-sidebar-sync');
       const banner = document.getElementById('ws-loading-banner');
@@ -2198,18 +1660,15 @@
       try {
         if (!state.client.connected) await state.client.connect();
 
-        const activeProf = state.profiles.find(p => p.id === state.activeProfileId);
-        if (!activeProf) return;
-
         const parsedList = [];
         state.rawMessagesByKey.clear();
 
-        const peer = await resolveProfilePeer(activeProf);
+        const peer = await resolveDeviceProfilePeer();
         const messages = await state.client.getMessages(peer, { limit: 100 });
 
         if (Array.isArray(messages)) {
           for (const msg of messages) {
-            const item = parseGramJsMessage(msg, activeProf, peer);
+            const item = parseGramJsMessage(msg, state.deviceProfile, peer);
             if (item) {
               parsedList.push(item);
               state.rawMessagesByKey.set(item.key, msg);
@@ -2221,10 +1680,10 @@
         renderWorkspaceSidebarCounts();
         renderWorkspaceFiles();
 
-        if (notify) showToast('Sincronização Concluída', `${state.cloudFiles.length} arquivo(s) carregados neste cofre.`, 'success');
+        if (notify) showToast('Sincronização Concluída', `${state.cloudFiles.length} arquivo(s) carregados.`, 'success');
       } catch (err) {
         console.error('[SSD Nexus List Files Error]', err);
-        if (notify) showToast('Aviso de Sincronização', 'Não foi possível atualizar a lista de arquivos agora.', 'warning');
+        if (notify) showToast('Aviso de Sincronização', 'Não foi possível atualizar a lista agora.', 'warning');
       } finally {
         if (topIcon) topIcon.classList.remove('animate-spin');
         if (sbIcon) sbIcon.classList.remove('animate-spin');
@@ -2281,13 +1740,12 @@
       const dateFormatted = new Date(timestamp * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
       const category = classifyFileCategory(fileName, mimeType, hasPhoto);
       const canHaveThumb = Boolean(hasPhoto || mimeType.startsWith('image/') || (doc && Array.isArray(doc.thumbs) && doc.thumbs.length > 0));
-      const vaultId = prof ? prof.id : 'me';
 
       return {
-        key: `${vaultId}_${msgId}`,
+        key: `${prof.id}_${msgId}`,
         id: msgId,
-        vaultId,
-        vaultName: prof ? prof.name : 'Nuvem SSD',
+        vaultId: prof.id,
+        vaultName: prof.name,
         peer,
         name: fileName,
         caption: (msg.message || '').trim(),
@@ -2378,10 +1836,7 @@
 
     function extractVideoMetadata(file) {
       return new Promise((resolve) => {
-        if (!file.type || !file.type.startsWith('video/')) {
-          resolve(null);
-          return;
-        }
+        if (!file.type || !file.type.startsWith('video/')) { resolve(null); return; }
         const url = URL.createObjectURL(file);
         const video = document.createElement('video');
         let settled = false;
@@ -2397,13 +1852,7 @@
         const timer = setTimeout(() => finish(null), 3500);
         video.preload = 'metadata';
         video.muted = true;
-        video.onloadedmetadata = () => {
-          finish({
-            duration: Math.max(0, Math.round(video.duration || 0)),
-            w: video.videoWidth || 0,
-            h: video.videoHeight || 0
-          });
-        };
+        video.onloadedmetadata = () => finish({ duration: Math.max(0, Math.round(video.duration || 0)), w: video.videoWidth || 0, h: video.videoHeight || 0 });
         video.onerror = () => finish(null);
         video.src = url;
       });
@@ -2418,7 +1867,7 @@
           <span class="truncate text-xs font-semibold text-white max-w-[195px]" title="${escapeHtml(fileName)}">Enviando ${escapeHtml(fileName)}</span>
           <div class="flex items-center gap-2 shrink-0">
             <span data-up-pct class="font-mono text-xs font-bold text-[#06b6d4]">0%</span>
-            <button type="button" data-up-cancel title="Cancelar envio" class="rounded-md border border-[#dc2626]/40 bg-[#dc2626]/15 px-1.5 py-0.5 text-[10px] font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition">Cancelar</button>
+            <button type="button" data-up-cancel class="rounded-md border border-[#dc2626]/40 bg-[#dc2626]/15 px-1.5 py-0.5 text-[10px] font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition">Cancelar</button>
           </div>
         </div>
         <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#060913]">
@@ -2447,12 +1896,8 @@
       const speedEl = card.querySelector('[data-up-speed]');
       if (pctEl) pctEl.textContent = `${pct}%`;
       if (barEl) barEl.style.width = `${pct}%`;
-      if (bytesEl && typeof uploadedBytes === 'number') {
-        bytesEl.textContent = `${formatFileSize(uploadedBytes)} / ${formatFileSize(totalSize)}`;
-      }
-      if (speedEl) {
-        speedEl.textContent = statusText || (speedBps > 0 ? `${formatFileSize(speedBps)}/s` : 'Enviando...');
-      }
+      if (bytesEl && typeof uploadedBytes === 'number') bytesEl.textContent = `${formatFileSize(uploadedBytes)} / ${formatFileSize(totalSize)}`;
+      if (speedEl) speedEl.textContent = statusText || (speedBps > 0 ? `${formatFileSize(speedBps)}/s` : 'Enviando...');
     }
 
     async function uploadFileInChunks(file, onProgress, cancelState) {
@@ -2474,44 +1919,21 @@
         const chunkBuf = Buffer.from(new Uint8Array(chunkAb));
 
         let attempt = 0;
-        const maxAttempts = 5;
-
-        while (attempt < maxAttempts) {
+        while (attempt < 5) {
           if (cancelState.aborted) throw new Error('UPLOAD_CANCELLED');
           attempt++;
           try {
             if (!state.client.connected) await state.client.connect();
-
             if (isBig) {
-              await state.client.invoke(
-                new Api.upload.SaveBigFilePart({
-                  fileId,
-                  filePart: partIndex,
-                  fileTotalParts: totalParts,
-                  bytes: chunkBuf
-                })
-              );
+              await state.client.invoke(new Api.upload.SaveBigFilePart({ fileId, filePart: partIndex, fileTotalParts: totalParts, bytes: chunkBuf }));
             } else {
-              await state.client.invoke(
-                new Api.upload.SaveFilePart({
-                  fileId,
-                  filePart: partIndex,
-                  bytes: chunkBuf
-                })
-              );
+              await state.client.invoke(new Api.upload.SaveFilePart({ fileId, filePart: partIndex, bytes: chunkBuf }));
             }
-
             uploadedBytes += chunkBuf.length;
             resetAutoLockTimer();
-
             if (typeof onProgress === 'function') {
               const elapsedSec = Math.max(0.2, (Date.now() - startedAt) / 1000);
-              onProgress({
-                pct: Math.min(99, Math.max(1, Math.round((uploadedBytes / totalSize) * 100))),
-                uploadedBytes,
-                totalSize,
-                speedBps: uploadedBytes / elapsedSec
-              });
+              onProgress({ pct: Math.min(99, Math.max(1, Math.round((uploadedBytes / totalSize) * 100))), uploadedBytes, totalSize, speedBps: uploadedBytes / elapsedSec });
             }
             return;
           } catch (err) {
@@ -2519,13 +1941,10 @@
             const errMsg = String((err && (err.errorMessage || err.message)) || '');
             const floodMatch = errMsg.match(/FLOOD_WAIT_(\d+)/i);
             if (floodMatch) {
-              const waitMs = (parseInt(floodMatch[1], 10) + 1) * 1000;
-              await new Promise(r => setTimeout(r, Math.min(waitMs, 30000)));
-            } else if (attempt < maxAttempts) {
+              await new Promise(r => setTimeout(r, Math.min((parseInt(floodMatch[1], 10) + 1) * 1000, 30000)));
+            } else if (attempt < 5) {
               await new Promise(r => setTimeout(r, attempt * 1500));
-              try {
-                if (!state.client.connected) await state.client.connect();
-              } catch (e) {}
+              try { if (!state.client.connected) await state.client.connect(); } catch (e) {}
             } else {
               throw err;
             }
@@ -2533,66 +1952,38 @@
         }
       }
 
-      const workerCount = Math.min(SSD_UPLOAD_CONCURRENCY, totalParts);
       const workers = [];
-      for (let w = 0; w < workerCount; w++) {
+      for (let w = 0; w < Math.min(SSD_UPLOAD_CONCURRENCY, totalParts); w++) {
         workers.push((async () => {
           while (!fatalError && !cancelState.aborted) {
             const partIndex = nextPart++;
             if (partIndex >= totalParts) break;
-            try {
-              await uploadSinglePart(partIndex);
-            } catch (err) {
-              fatalError = err;
-              break;
-            }
+            try { await uploadSinglePart(partIndex); } catch (err) { fatalError = err; break; }
           }
         })());
       }
-
       await Promise.all(workers);
 
       if (cancelState.aborted) throw new Error('UPLOAD_CANCELLED');
       if (fatalError) throw fatalError;
-
-      if (isBig) {
-        return new Api.InputFileBig({ id: fileId, parts: totalParts, name: file.name });
-      }
-      return new Api.InputFile({ id: fileId, parts: totalParts, name: file.name, md5Checksum: '' });
+      return isBig
+        ? new Api.InputFileBig({ id: fileId, parts: totalParts, name: file.name })
+        : new Api.InputFile({ id: fileId, parts: totalParts, name: file.name, md5Checksum: '' });
     }
 
     async function uploadFilesToCloud(fileList) {
-      if (!state.client || !state.gramjsLib) {
-        showToast('Desconectado', 'Conecte-se à Nuvem SSD antes de enviar arquivos.', 'warning');
-        return;
-      }
-
+      if (!state.client || !state.gramjsLib || !state.deviceProfile) return;
       const { Api, Buffer } = state.gramjsLib;
-      if (!Api || !Buffer) {
-        showToast('Erro de Motor', 'Api ou Buffer não disponíveis em ./gramjs.js.', 'danger');
-        return;
-      }
+      if (!Api || !Buffer) return;
 
-      const activeProf = state.profiles.find(p => p.id === state.activeProfileId);
-      if (!activeProf) {
-        showToast('Perfil Inativo', 'Abra um perfil individual antes de enviar arquivos.', 'warning');
-        return;
-      }
-
-      const rawPeer = await resolveProfilePeer(activeProf);
-      const inputPeer = rawPeer === 'me'
-        ? new Api.InputPeerSelf()
-        : await state.client.getInputEntity(rawPeer);
-
+      const rawPeer = await resolveDeviceProfilePeer();
+      const inputPeer = rawPeer === 'me' ? new Api.InputPeerSelf() : await state.client.getInputEntity(rawPeer);
       let uploadedCount = 0;
 
       for (const file of fileList) {
-        if (!file.size) {
-          showToast('Arquivo Vazio', `${file.name} possui 0 bytes e foi ignorado.`, 'warning');
-          continue;
-        }
+        if (!file.size) continue;
         if (file.size > SSD_MAX_FILE_SIZE) {
-          showToast('Arquivo Muito Grande', `${file.name} excede o limite de 2 GB por arquivo.`, 'danger');
+          showToast('Arquivo Muito Grande', `${file.name} excede o limite de 2 GB.`, 'danger');
           continue;
         }
 
@@ -2601,19 +1992,9 @@
 
         try {
           if (!state.client.connected) await state.client.connect();
+          const inputFile = await uploadFileInChunks(file, (prog) => updateUploadProgressCard(toastCard, prog), cancelState);
 
-          const inputFile = await uploadFileInChunks(
-            file,
-            (prog) => updateUploadProgressCard(toastCard, prog),
-            cancelState
-          );
-
-          updateUploadProgressCard(toastCard, {
-            pct: 99,
-            uploadedBytes: file.size,
-            totalSize: file.size,
-            statusText: 'Finalizando no cofre...'
-          });
+          updateUploadProgressCard(toastCard, { pct: 99, uploadedBytes: file.size, totalSize: file.size, statusText: 'Finalizando...' });
 
           const isSmallPhoto = file.type && file.type.startsWith('image/') && file.size <= SSD_BIG_FILE_THRESHOLD;
           const isVideo = (file.type && file.type.startsWith('video/')) || /\.(mp4|mov|m4v|webm|mkv|avi)$/i.test(file.name);
@@ -2626,12 +2007,7 @@
             if (isVideo) {
               const vMeta = await extractVideoMetadata(file);
               if (vMeta && vMeta.w > 0 && vMeta.h > 0) {
-                attributes.push(new Api.DocumentAttributeVideo({
-                  duration: vMeta.duration,
-                  w: vMeta.w,
-                  h: vMeta.h,
-                  supportsStreaming: true
-                }));
+                attributes.push(new Api.DocumentAttributeVideo({ duration: vMeta.duration, w: vMeta.w, h: vMeta.h, supportsStreaming: true }));
               }
             }
             media = new Api.InputMediaUploadedDocument({
@@ -2642,37 +2018,23 @@
             });
           }
 
-          await state.client.invoke(
-            new Api.messages.SendMedia({
-              peer: inputPeer,
-              media,
-              message: file.name,
-              randomId: generateSafeFileId()
-            })
-          );
-
-          updateUploadProgressCard(toastCard, {
-            pct: 100,
-            uploadedBytes: file.size,
-            totalSize: file.size,
-            statusText: 'Concluído!'
-          });
+          await state.client.invoke(new Api.messages.SendMedia({ peer: inputPeer, media, message: file.name, randomId: generateSafeFileId() }));
+          updateUploadProgressCard(toastCard, { pct: 100, uploadedBytes: file.size, totalSize: file.size, statusText: 'Concluído!' });
           setTimeout(() => removeProgressToast(toastCard), 900);
           uploadedCount++;
         } catch (err) {
           removeProgressToast(toastCard);
           if (err && err.message === 'UPLOAD_CANCELLED') {
-            showToast('Envio Cancelado', `Upload de ${file.name} foi interrompido.`, 'warning');
+            showToast('Envio Cancelado', `Upload de ${file.name} interrompido.`, 'warning');
           } else {
-            console.error('[SSD Nexus Chunk Upload Error]', err);
-            const detail = sanitizeBrandText(err && (err.errorMessage || err.message) ? (err.errorMessage || err.message) : 'Erro desconhecido');
+            const detail = sanitizeBrandText(err && (err.errorMessage || err.message) ? (err.errorMessage || err.message) : 'Erro');
             showToast('Falha no Upload', `${file.name}: ${detail}`, 'danger');
           }
         }
       }
 
       if (uploadedCount > 0) {
-        showToast('Upload Concluído', `${uploadedCount} arquivo(s) enviados para "${activeProf.name}".`, 'success');
+        showToast('Upload Concluído', `${uploadedCount} arquivo(s) enviados.`, 'success');
         await refreshCloudFiles(false);
       }
     }
@@ -2706,12 +2068,8 @@
     });
 
     // 10. RENDERIZAÇÃO DA ZONA 2 E ZONA 3
-    function getScopedCloudFiles() {
-      return state.cloudFiles.filter(f => f.vaultId === state.activeProfileId);
-    }
-
     function getVisibleWorkspaceFiles() {
-      let items = getScopedCloudFiles();
+      let items = state.cloudFiles.slice();
       if (state.category === 'photos') items = items.filter(f => f.category === 'photos');
       else if (state.category === 'videos') items = items.filter(f => f.category === 'videos');
       else if (state.category === 'documents') items = items.filter(f => f.category === 'documents');
@@ -2736,7 +2094,7 @@
     }
 
     function renderWorkspaceSidebarCounts() {
-      const scoped = getScopedCloudFiles();
+      const scoped = state.cloudFiles;
       document.getElementById('count-cat-all').textContent = scoped.length;
       document.getElementById('count-cat-photos').textContent = scoped.filter(f => f.category === 'photos').length;
       document.getElementById('count-cat-videos').textContent = scoped.filter(f => f.category === 'videos').length;
@@ -2765,7 +2123,7 @@
     function renderWorkspaceFiles() {
       const container = document.getElementById('ws-files-container');
       const items = getVisibleWorkspaceFiles();
-      const activeProf = state.profiles.find(p => p.id === state.activeProfileId) || state.profiles[0];
+      const prof = state.deviceProfile;
 
       if (items.length === 0) {
         container.innerHTML = `
@@ -2773,9 +2131,9 @@
             <div class="mb-3.5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#111827] text-[#06b6d4]">
               <i data-lucide="cloud-upload" class="h-7 w-7"></i>
             </div>
-            <h3 class="text-base font-bold text-white">Cofre individual vazio</h3>
+            <h3 class="text-base font-bold text-white">Cofre vazio</h3>
             <p class="mt-1.5 max-w-sm text-xs text-slate-400 leading-relaxed">
-              Este perfil é 100% isolado. Arraste arquivos para esta janela ou toque na nuvem de Upload para enviar para <strong class="text-slate-200">${escapeHtml(activeProf ? activeProf.name : 'este cofre')}</strong>.
+              Arraste arquivos para esta janela ou toque na nuvem de Upload para enviar para <strong class="text-slate-200">${escapeHtml(prof ? prof.name : 'este cofre')}</strong>.
             </p>
             <div class="mt-5">
               <button type="button" onclick="triggerCloudUpload()" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 transition">
@@ -2940,9 +2298,8 @@
         saveFavoriteKeys();
         renderWorkspaceSidebarCounts();
         renderWorkspaceFiles();
-        showToast('Arquivo Excluído', 'Item removido permanentemente do canal privado.', 'info');
+        showToast('Arquivo Excluído', 'Item removido permanentemente.', 'info');
       } catch (err) {
-        console.error('[SSD Nexus Delete Error]', err);
         showToast('Erro ao Excluir', 'Não foi possível remover este arquivo.', 'danger');
       }
     }
@@ -2960,7 +2317,7 @@
       }
     }
 
-    // 11. INSPETOR LATERAL (ZONA 3) + TELA CHEIA (FOTOS E VÍDEOS)
+    // 11. INSPETOR LATERAL + TELA CHEIA (FOTOS E VÍDEOS)
     async function openPreviewDrawer(fileKey) {
       const file = state.cloudFiles.find(f => f.key === fileKey);
       if (!file) return;
@@ -3015,7 +2372,6 @@
         state.previewCache[file.key] = entry;
         return entry;
       } catch (err) {
-        console.error('[SSD Nexus Download Media Error]', err);
         return null;
       }
     }
@@ -3036,11 +2392,10 @@
       const modal = document.getElementById('modal-fullscreen-media');
       const imgEl = document.getElementById('fs-media-img');
       const vidEl = document.getElementById('fs-media-video');
-      const titleEl = document.getElementById('fs-media-title');
 
       state.fsZoom = 1;
       state.fsRot = 0;
-      titleEl.textContent = file.name;
+      document.getElementById('fs-media-title').textContent = file.name;
       vidEl.pause();
       vidEl.removeAttribute('src');
 
@@ -3107,8 +2462,7 @@
       ta.style.opacity = '0';
       document.body.appendChild(ta);
       ta.select();
-      try { document.execCommand('copy'); showToast('Texto Copiado', 'Conteúdo copiado para a área de transferência.', 'success'); }
-      catch (e) { showToast('Erro ao Copiar', 'Não foi possível copiar o conteúdo.', 'danger'); }
+      try { document.execCommand('copy'); showToast('Texto Copiado', 'Copiado para a área de transferência.', 'success'); } catch (e) {}
       document.body.removeChild(ta);
     }
 
@@ -3174,7 +2528,7 @@
             <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Inspetor de Arquivo</div>
             <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Tamanho</span><span class="font-mono font-semibold text-[#06b6d4]">${formatFileSize(file.sizeBytes)}</span></div>
             <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Formato MIME</span><span class="font-mono text-slate-300 truncate max-w-[190px]">${escapeHtml(file.mimeType)}</span></div>
-            <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Cofre Individual</span><span class="font-medium text-slate-200">${escapeHtml(file.vaultName)}</span></div>
+            <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Cofre</span><span class="font-medium text-slate-200">${escapeHtml(file.vaultName)}</span></div>
             <div class="flex justify-between gap-2"><span class="text-slate-400">Sincronizado em</span><span class="text-slate-300">${file.date}</span></div>
           </div>
           <div class="space-y-2">
@@ -3302,8 +2656,8 @@
     }
 
     function triggerQuickLock(reason = 'Bloqueio Rápido Ativado') {
-      openProfileSelectorView();
-      showToast(reason, 'Cofres trancados e prévias temporárias limpas da memória.', 'warning');
+      openDevicePinLockScreen();
+      showToast(reason, 'Cofre trancado. Digite seu PIN para reabrir.', 'warning');
     }
 
     function setAutoLockMinutes(val) { state.autoLockMinutes = Number(val) || 0; resetAutoLockTimer(); }
@@ -3311,7 +2665,7 @@
     function resetAutoLockTimer() {
       if (state.autoLockTimer) { clearTimeout(state.autoLockTimer); state.autoLockTimer = null; }
       const inWorkspace = !document.getElementById('view-workspace').classList.contains('hidden');
-      if (inWorkspace && state.autoLockMinutes > 0 && state.unlockedProfileIds.size > 0) {
+      if (inWorkspace && state.autoLockMinutes > 0 && state.isUnlocked) {
         state.autoLockTimer = setTimeout(() => triggerQuickLock('Bloqueio Automático por Inatividade'), state.autoLockMinutes * 60 * 1000);
       }
     }
@@ -3323,31 +2677,28 @@
     });
 
     async function handleLogout() {
-      lockAllProfilesMemory();
+      revokeAllObjectUrls();
+      closePreviewDrawer(false);
       if (state.client && state.gramjsLib && state.gramjsLib.Api) {
         try { await state.client.invoke(new state.gramjsLib.Api.auth.LogOut()); } catch (e) {}
         try { await state.client.disconnect(); } catch (e) {}
       }
       localStorage.removeItem(SESSION_STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEYS.DEVICE_PROFILE);
       state.client = null;
       state.user = null;
+      state.deviceProfile = null;
+      state.isUnlocked = false;
+      state.cloudFiles = [];
+      state.rawMessagesByKey.clear();
       state.currentPhoneCodeHash = '';
-      showToast('Conta Desconectada', 'Sua sessão criptografada foi encerrada.', 'info');
+      showToast('Conta Desconectada', 'Sessão e vínculo deste aparelho removidos.', 'info');
       await bootstrapSSDEngine();
     }
 
-    // Integração botão Voltar do Android
     window.handleAndroidBack = function () {
       if (!document.getElementById('modal-fullscreen-media').classList.contains('hidden')) {
         closeFullscreenMedia();
-        return true;
-      }
-      if (!document.getElementById('modal-pin-unlock').classList.contains('hidden')) {
-        closePinUnlockModal();
-        return true;
-      }
-      if (!document.getElementById('modal-new-profile').classList.contains('hidden')) {
-        closeNewProfileModal();
         return true;
       }
       if (!document.getElementById('modal-about').classList.contains('hidden')) {
@@ -3368,40 +2719,22 @@
       if (e.altKey && e.key.toLowerCase() === 'l') {
         if (!document.getElementById('view-workspace').classList.contains('hidden')) { e.preventDefault(); triggerQuickLock('Bloqueio Rápido (Alt+L)'); return; }
       }
-      const pinUnlockOpen = !document.getElementById('modal-pin-unlock').classList.contains('hidden');
-      if (pinUnlockOpen) {
-        if (/^[0-9]$/.test(e.key)) { e.preventDefault(); pressUnlockDigit(e.key); }
-        else if (e.key === 'Backspace') { e.preventDefault(); backspaceUnlockBuffer(); }
-        else if (e.key === 'Enter') { e.preventDefault(); verifyUnlockModalPin(); }
-        else if (e.key === 'Escape') closePinUnlockModal();
-        return;
-      }
-      const onboardingStep2Open = !document.getElementById('view-onboarding').classList.contains('hidden') && !document.getElementById('onb-step-2').classList.contains('hidden');
-      if (onboardingStep2Open) {
-        if (/^[0-9]$/.test(e.key)) { e.preventDefault(); handleOnboardingPinDigit(e.key); }
-        else if (e.key === 'Backspace') { e.preventDefault(); backspaceOnboardingPin(); }
-        else if (e.key === 'Enter') { e.preventDefault(); submitOnboardingPinStep(); }
+      if (!document.getElementById('view-pin-lock').classList.contains('hidden')) {
+        if (/^[0-9]$/.test(e.key)) { e.preventDefault(); pressLockDigit(e.key); }
+        else if (e.key === 'Backspace') { e.preventDefault(); backspaceLockBuffer(); }
+        else if (e.key === 'Enter') { e.preventDefault(); verifyDeviceLockPin(); }
         return;
       }
       if (e.key === 'Escape') {
         closeFullscreenMedia();
-        closePinUnlockModal();
-        closeNewProfileModal();
         closeAboutModal();
-        closeProfileDropdown();
         if (state.previewItemKey) closePreviewDrawer(true);
       }
     });
 
-    document.addEventListener('click', (e) => {
-      const trigger = document.getElementById('profile-dropdown-trigger');
-      const menu = document.getElementById('profile-dropdown-menu');
-      if (trigger && menu && !trigger.contains(e.target) && !menu.contains(e.target)) closeProfileDropdown();
-    });
-
     // 13. UTILITÁRIOS E INICIALIZAÇÃO
     function switchView(viewName) {
-      ['auth', 'onboarding', 'selector', 'workspace'].forEach(v => {
+      ['auth', 'setup', 'pin-lock', 'workspace'].forEach(v => {
         const el = document.getElementById(`view-${v}`);
         if (!el) return;
         const active = v === viewName;
@@ -3409,6 +2742,10 @@
         el.classList.toggle('flex', active);
       });
       refreshIcons();
+    }
+
+    function getInitials(name) {
+      return String(name || 'SS').trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || 'SS';
     }
 
     function openAboutModal() { const m = document.getElementById('modal-about'); m.classList.remove('hidden'); m.classList.add('flex'); refreshIcons(); }
