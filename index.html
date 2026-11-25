@@ -150,20 +150,20 @@
         </button>
       </div>
 
-      <!-- Entrada de Telefone -->
+      <!-- Entrada de Telefone (+55 com asteriscos visuais no DDD e número) -->
       <div id="auth-panel-phone" class="hidden space-y-4 animate-fade-up">
         <div>
           <label for="input-phone" class="block text-xs font-medium text-slate-300 mb-2">Número de Celular</label>
           <div class="flex gap-2">
             <select id="select-ddi" aria-label="Código do país" class="h-12 rounded-2xl border border-[#1e293b] bg-[#060913] px-3 font-mono text-xs font-medium text-slate-200 focus:border-[#06b6d4] focus:outline-none cursor-pointer">
-              <option value="+55">+55 Brasil</option>
+              <option value="+55" selected>+55 Brasil</option>
               <option value="+351">+351 Portugal</option>
               <option value="+1">+1 EUA</option>
               <option value="+54">+54 Argentina</option>
               <option value="+34">+34 Espanha</option>
               <option value="+44">+44 Reino Unido</option>
             </select>
-            <input id="input-phone" type="tel" autocomplete="tel-national" placeholder="(85) 99743-6140" maxlength="16" class="h-12 flex-1 rounded-2xl border border-[#1e293b] bg-[#060913] px-4 font-mono text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none transition" />
+            <input id="input-phone" type="tel" autocomplete="tel-national" placeholder="(**) *****-****" maxlength="16" class="h-12 flex-1 rounded-2xl border border-[#1e293b] bg-[#060913] px-4 font-mono text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none transition" />
           </div>
           <div id="error-phone-box" class="hidden mt-3 rounded-2xl border border-[#dc2626]/50 bg-[#dc2626]/12 p-3 text-left animate-fade-up">
             <div class="flex items-start gap-2.5">
@@ -197,7 +197,7 @@
       <div id="auth-panel-code" class="hidden space-y-5 animate-fade-up">
         <div class="rounded-2xl border border-[#1e293b] bg-[#060913]/90 p-4 text-center space-y-2">
           <div class="flex items-center justify-center gap-2 text-xs flex-wrap">
-            <span id="label-sent-phone" class="font-mono font-semibold text-[#06b6d4]">+55 (85) 99743-6140</span>
+            <span id="label-sent-phone" class="font-mono font-semibold text-[#06b6d4]">+55 (**) *****-****</span>
             <button type="button" onclick="handleChangePhoneNumber()" class="font-medium text-blue-400 hover:text-cyan-300 underline underline-offset-2 transition">Alterar número</button>
           </div>
           <p class="text-xs text-slate-300 leading-relaxed">
@@ -299,7 +299,7 @@
         <div>
           <h1 class="text-2xl font-bold text-white">Configure seu Primeiro Cofre</h1>
           <p class="mt-1 text-xs text-slate-400 leading-relaxed">
-            Criaremos um canal privado exclusivo na sua Nuvem SSD protegido por um PIN local criptografado via SHA-256.
+            Criaremos um canal privado exclusivo e individual na sua Nuvem SSD protegido por um PIN local criptografado via SHA-256.
           </p>
         </div>
 
@@ -325,8 +325,8 @@
             <i data-lucide="shield-check" class="h-5 w-5"></i>
           </div>
           <div class="text-xs">
-            <span class="block font-semibold text-white">Canal Privado + PIN SHA-256</span>
-            <span class="block text-[11px] text-slate-300 mt-0.5">Seu cofre nasce 100% vazio e isolado em um canal privado dedicado.</span>
+            <span class="block font-semibold text-white">Perfil 100% Individual + PIN SHA-256</span>
+            <span class="block text-[11px] text-slate-300 mt-0.5">Cada perfil é isolado e nunca acessa arquivos de outro perfil.</span>
           </div>
         </div>
 
@@ -423,13 +423,13 @@
     <main class="mx-auto my-8 w-full max-w-5xl flex-1">
       <div class="mb-6">
         <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Quem está acessando?</h1>
-        <p class="mt-1 text-sm text-slate-400">Cada perfil possui um canal privado exclusivo na Nuvem SSD protegido por PIN.</p>
+        <p class="mt-1 text-sm text-slate-400">Perfis 100% individuais: cada cofre possui seu canal privado exclusivo e exige seu próprio PIN ao alternar.</p>
       </div>
       <div id="selector-profiles-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
     </main>
 
     <footer class="mx-auto w-full max-w-5xl border-t border-[#1e293b] pt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-      <span>Cofres isolados em canais privados • PIN SHA-256</span>
+      <span>Cofres 100% individuais • PIN SHA-256</span>
       <button type="button" onclick="openAboutModal()" class="hover:text-[#06b6d4] transition">Desenvolvedor: Josimar Sousa • SSD Soluções 2026</button>
     </footer>
   </section>
@@ -606,10 +606,11 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <button id="btn-vault-scope" type="button" onclick="toggleVaultIsolation()" title="Alternar entre o canal exclusivo deste cofre ou todos os cofres" class="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 px-3 text-xs font-semibold text-[#06b6d4] hover:brightness-110 transition">
-            <i id="icon-vault-scope" data-lucide="shield" class="h-3.5 w-3.5"></i>
-            <span id="label-vault-scope">Canal Privado</span>
-          </button>
+          <!-- Indicador fixo de isolamento individual -->
+          <div title="Perfil 100% individual — um perfil não acessa outro" class="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 px-3 text-xs font-semibold text-[#06b6d4] select-none">
+            <i data-lucide="shield-check" class="h-3.5 w-3.5"></i>
+            <span>Cofre Individual</span>
+          </div>
 
           <select id="ws-sort-select" onchange="setWorkspaceSort(this.value)" aria-label="Ordenar arquivos" class="h-10 rounded-xl border border-[#1e293b] bg-[#060913] px-3 text-xs font-medium text-slate-200 focus:border-[#06b6d4] focus:outline-none cursor-pointer">
             <option value="date-desc">Mais recentes</option>
@@ -644,7 +645,7 @@
       </header>
 
       <div class="flex flex-1 overflow-hidden">
-        <main class="flex-1 overflow-y-auto p-4 lg:p-6">
+        <main class="flex-1 overflow-y-auto p-4 lg:p-6 pb-24">
           <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div class="flex flex-wrap items-center gap-2.5">
@@ -652,7 +653,7 @@
                 <span id="ws-profile-chip" class="inline-flex items-center gap-1.5 rounded-full border border-[#06b6d4]/35 bg-[#06b6d4]/15 px-3 py-0.5 text-xs font-semibold text-[#06b6d4]">Cofre Principal</span>
               </div>
               <p class="mt-1 text-xs text-slate-400">
-                Arraste arquivos para qualquer área desta janela ou toque em + Enviar Arquivo para guardar no canal privado deste cofre.
+                Arraste arquivos para esta janela ou toque na nuvem flutuante para enviar diretamente ao canal privado deste perfil.
               </p>
             </div>
           </div>
@@ -668,6 +669,12 @@
         <aside id="ws-preview-drawer" class="fixed inset-y-0 right-0 z-40 hidden w-full sm:w-[420px] flex-col border-l border-[#1e293b] bg-[#0d1324] shadow-2xl lg:static"></aside>
       </div>
     </div>
+
+    <!-- BOTÃO FLUTUANTE DE NUVEM PARA UPLOAD -->
+    <button id="ws-cloud-upload-fab" type="button" onclick="triggerCloudUpload()" title="Enviar para a nuvem" aria-label="Enviar para a nuvem" class="fixed bottom-5 right-5 z-30 flex h-14 items-center gap-2.5 rounded-full border border-[#06b6d4]/65 bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 text-xs sm:text-sm font-bold text-white shadow-2xl shadow-[#06b6d4]/35 hover:brightness-110 active:scale-95 transition">
+      <i data-lucide="cloud-upload" class="h-5 w-5"></i>
+      <span>Upload</span>
+    </button>
   </div>
 
   <!-- ======================================================================= -->
@@ -806,22 +813,6 @@
   </div>
 
   <!-- ======================================================================= -->
-  <!-- MODAL: MOVER ARQUIVO PARA OUTRO COFRE                                   -->
-  <!-- ======================================================================= -->
-  <div id="modal-move-profile" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
-    <div class="w-full max-w-sm rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-base font-bold text-white">Mover para Perfil / Cofre</h3>
-        <button type="button" onclick="closeMoveProfileModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
-          <i data-lucide="x" class="h-5 w-5"></i>
-        </button>
-      </div>
-      <p id="move-modal-desc" class="text-xs text-slate-400 mb-4">Escolha o cofre de destino:</p>
-      <div id="move-profiles-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
-    </div>
-  </div>
-
-  <!-- ======================================================================= -->
   <!-- MODAL: SOBRE O SSD NEXUS                                                -->
   <!-- ======================================================================= -->
   <div id="modal-about" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
@@ -833,7 +824,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Desktop &amp; Mobile Workspace v2.5</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Desktop &amp; Mobile Workspace v2.6</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -849,7 +840,7 @@
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
           <span class="text-slate-400">Arquitetura de Cofres</span>
-          <span class="font-mono text-emerald-400">Canal Privado + Sync Nuvem</span>
+          <span class="font-mono text-emerald-400">100% Individual por Perfil</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança de Cofres</span>
@@ -864,7 +855,7 @@
   </div>
 
   <!-- Pilha de Notificações Toast -->
-  <div id="toast-stack" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
+  <div id="toast-stack" class="fixed bottom-20 right-4 z-50 flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
 
   <!-- Carregamento do bundle local GramJS -->
   <script>window.__SSD_GRAMJS_SCRIPT_FAILED = false;</script>
@@ -927,10 +918,8 @@
       viewMode: 'grid',
       gridCols: Number(localStorage.getItem('ssd_nexus_grid_cols')) || 3,
       sortBy: 'date-desc',
-      vaultIsolated: true,
       searchQuery: '',
       previewItemKey: null,
-      moveTargetKey: null,
       confirmDeleteKey: null,
       sidebarCollapsed: false,
       autoLockMinutes: 5,
@@ -1034,14 +1023,6 @@
       setAuthSubPanel('init-error');
     }
 
-    function showConnectionDiagnostic(message, detail = '') {
-      document.getElementById('auth-init-error-title').textContent = 'Não foi possível conectar à Nuvem SSD';
-      document.getElementById('auth-init-error-msg').textContent = message;
-      document.getElementById('auth-init-error-steps').classList.add('hidden');
-      document.getElementById('auth-init-error-detail').textContent = detail;
-      setAuthSubPanel('init-error');
-    }
-
     async function retryEngineBootstrap() {
       if (!getResolvedGramJsLib()) {
         updateInitStatus('Verificando motor local...', 'Buscando ./gramjs.js atualizado no servidor...', 20);
@@ -1075,11 +1056,10 @@
       const { TelegramClient, Logger, StringSession } = resolvedLib;
       const savedSession = localStorage.getItem(SESSION_STORAGE_KEY) || '';
 
-      // Se é uma nova instalação (sem sessão salva), abre o formulário de número imediatamente
       if (!savedSession) {
         try {
           const freshSession = new StringSession('');
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus Web', systemVersion: 'Web', appVersion: '2.5.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus Web', systemVersion: 'Web', appVersion: '2.6.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(freshSession, Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1109,7 +1089,7 @@
           useWSS: true,
           deviceModel: 'SSD Nexus Web',
           systemVersion: 'Web',
-          appVersion: '2.5.0'
+          appVersion: '2.6.0'
         };
         if (Logger) {
           try { clientOptions.baseLogger = new Logger('error'); } catch (e) {}
@@ -1146,7 +1126,7 @@
       }
     }
 
-    // 4. FLUXO DE AUTENTICAÇÃO (CÓDIGO OBRIGATÓRIO EM NOVA INSTALAÇÃO)
+    // 4. FLUXO DE AUTENTICAÇÃO
     function setAuthSubPanel(panelName, meta = {}) {
       ['init', 'init-error', 'phone', 'code', 'password'].forEach(p => {
         const el = document.getElementById(`auth-panel-${p}`);
@@ -1443,7 +1423,6 @@
 
       let needsCloudUpdate = false;
 
-      // 1. Ler índice #SSD_NEXUS_VAULTS_V2 nas Mensagens Salvas
       try {
         const msgs = await state.client.getMessages('me', { search: VAULT_SYNC_TAG, limit: 10 });
         if (Array.isArray(msgs) && msgs.length > 0) {
@@ -1476,7 +1455,6 @@
         console.warn('[SSD Nexus Sync Index Read]', e);
       }
 
-      // 2. Escanear canais privados criados anteriormente na conta
       try {
         const dialogs = await state.client.getDialogs({ limit: 100 });
         state.discoveredChannels = [];
@@ -1555,8 +1533,6 @@
 
         state.user = { id: userId, name: fullName, username: me?.username ? `@${me.username}` : '', phone: phoneStr };
         loadAccountStorage();
-
-        // Sincroniza perfis da nuvem antes de decidir se cria novo ou abre seletor
         await syncProfilesWithCloud();
 
         if (state.profiles.length === 0) {
@@ -1793,6 +1769,7 @@
         state.profiles.push(profile);
         saveAccountProfiles();
         await pushProfilesToCloud();
+        state.unlockedProfileIds.clear();
         state.unlockedProfileIds.add(profile.id);
         showToast('Cofre Privado Criado', 'Canal exclusivo criado e protegido por PIN SHA-256.', 'success');
         await enterWorkspace(profile.id);
@@ -1808,8 +1785,19 @@
     function backspaceOnboardingPin() { state.onboarding.buffer = state.onboarding.buffer.slice(0, -1); updateOnboardingPinUI(); }
     function clearOnboardingPinBuffer() { state.onboarding.buffer = ''; updateOnboardingPinUI(); }
 
-    // 7. SELETOR DE PERFIS E DESBLOQUEIO POR PIN
+    // 7. SELETOR DE PERFIS 100% INDIVIDUAIS E DESBLOQUEIO POR PIN
+    function lockAllProfilesMemory() {
+      revokeAllObjectUrls();
+      state.unlockedProfileIds.clear();
+      state.cloudFiles = [];
+      state.rawMessagesByKey.clear();
+      state.activeProfileId = null;
+      closePreviewDrawer(false);
+      closeProfileDropdown();
+    }
+
     function openProfileSelectorView() {
+      lockAllProfilesMemory();
       switchView('selector');
       if (state.user) {
         document.getElementById('selector-user-subtitle').textContent = [state.user.name, state.user.phone].filter(Boolean).join(' • ');
@@ -1836,25 +1824,24 @@
 
       grid.innerHTML = state.profiles.map(prof => {
         const palette = ACCENT_PALETTE[prof.color] || ACCENT_PALETTE.cyan;
-        const isUnlocked = !prof.pinHash || state.unlockedProfileIds.has(prof.id);
+        const hasPin = Boolean(prof.pinHash);
         const len = prof.pinLength || 4;
-        const hasChannel = Boolean(prof.channelId);
 
         return `
           <button type="button" onclick="handleProfileCardClick('${prof.id}')" class="group flex flex-col justify-between rounded-3xl nexus-glass p-6 text-left hover:border-[#06b6d4]/55 hover:bg-[#111827] transition-all shadow-xl animate-fade-up">
             <div>
               <div class="flex items-start justify-between gap-3 mb-5">
                 <div class="flex h-12 w-12 items-center justify-center rounded-2xl ${palette.solid} text-base font-extrabold shadow-lg">${escapeHtml(getInitials(prof.name))}</div>
-                <span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-semibold ${isUnlocked ? 'border-emerald-500/35 bg-emerald-500/15 text-emerald-300' : 'border-[#06b6d4]/40 bg-[#06b6d4]/15 text-[#06b6d4]'}">
-                  <i data-lucide="${isUnlocked ? 'unlock' : 'lock'}" class="h-3 w-3"></i>
-                  <span>${isUnlocked ? 'DESBLOQUEADO' : `PIN ${len} DÍGITOS`}</span>
+                <span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-semibold ${hasPin ? 'border-[#06b6d4]/40 bg-[#06b6d4]/15 text-[#06b6d4]' : 'border-emerald-500/35 bg-emerald-500/15 text-emerald-300'}">
+                  <i data-lucide="${hasPin ? 'lock' : 'shield'}" class="h-3 w-3"></i>
+                  <span>${hasPin ? `PIN ${len} DÍGITOS` : 'COFRE ISOLADO'}</span>
                 </span>
               </div>
               <h3 class="text-lg font-bold text-white group-hover:text-[#06b6d4] transition truncate">${escapeHtml(prof.name)}</h3>
-              <p class="mt-1.5 text-xs text-slate-400">${hasChannel ? 'Canal privado exclusivo • Sincronizado' : 'Cofre legado (Mensagens Salvas)'}</p>
+              <p class="mt-1.5 text-xs text-slate-400">Perfil 100% individual • Canal privado exclusivo</p>
             </div>
             <div class="mt-6 flex items-center justify-between border-t border-[#1e293b] pt-3.5 text-xs">
-              <span class="text-slate-400">${isUnlocked ? 'Pronto para abrir' : 'Toque para digitar o PIN'}</span>
+              <span class="text-slate-400">${hasPin ? 'Toque para digitar o PIN' : 'Acesso individual direto'}</span>
               <span class="inline-flex items-center gap-1 font-semibold ${palette.text} group-hover:translate-x-0.5 transition-transform">
                 <span>Abrir Cofre</span>
                 <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
@@ -1869,8 +1856,13 @@
     async function handleProfileCardClick(profileId) {
       const prof = state.profiles.find(p => p.id === profileId);
       if (!prof) return;
-      if (!prof.pinHash || state.unlockedProfileIds.has(prof.id)) await enterWorkspace(prof.id);
-      else openPinUnlockModal(prof.id);
+      if (prof.pinHash) {
+        openPinUnlockModal(prof.id);
+      } else {
+        state.unlockedProfileIds.clear();
+        state.unlockedProfileIds.add(prof.id);
+        await enterWorkspace(prof.id);
+      }
     }
 
     function openPinUnlockModal(profileId) {
@@ -1927,6 +1919,8 @@
       const enteredHash = await sha256Hex(state.unlockModal.buffer);
       if (enteredHash === prof.pinHash) {
         const targetId = prof.id;
+        revokeAllObjectUrls();
+        state.unlockedProfileIds.clear();
         state.unlockedProfileIds.add(targetId);
         closePinUnlockModal();
         await enterWorkspace(targetId);
@@ -2066,6 +2060,8 @@
         state.profiles.push(newProf);
         saveAccountProfiles();
         await pushProfilesToCloud();
+        revokeAllObjectUrls();
+        state.unlockedProfileIds.clear();
         state.unlockedProfileIds.add(newProf.id);
         closeNewProfileModal();
         showToast('Cofre Pronto', `"${name}" sincronizado na Nuvem SSD.`, 'success');
@@ -2079,18 +2075,23 @@
       }
     }
 
-    // 8. WORKSPACE E LISTAGEM DE ARQUIVOS DO CANAL PRIVADO
+    // 8. WORKSPACE E LISTAGEM ESTRITAMENTE INDIVIDUAL POR PERFIL
     async function enterWorkspace(profileId) {
       state.activeProfileId = profileId;
       state.category = 'all';
-      state.vaultIsolated = true;
       state.previewItemKey = null;
       state.confirmDeleteKey = null;
       closePreviewDrawer(false);
       switchView('workspace');
+
+      // Evita duplicação caso o APK já injete o FAB nativo #ssdCloudFab
+      const webFab = document.getElementById('ws-cloud-upload-fab');
+      if (webFab) {
+        webFab.classList.toggle('hidden', Boolean(document.getElementById('ssdCloudFab')));
+      }
+
       setWorkspaceCols(state.gridCols);
       renderWorkspaceHeaderAndProfile();
-      updateVaultScopeUI();
       resetAutoLockTimer();
       await refreshCloudFiles(false);
     }
@@ -2119,13 +2120,12 @@
       avatarEl.textContent = getInitials(activeProf.name);
 
       document.getElementById('active-prof-name').textContent = activeProf.name;
-      const scopeTag = activeProf.channelId ? 'Canal Privado' : 'Cofre Legado';
-      const pinTag = activeProf.pinHash ? `PIN ${activeProf.pinLength || 4}d` : 'Sem PIN';
-      document.getElementById('active-prof-badge').innerHTML = `<i data-lucide="lock" class="h-3 w-3 text-[#06b6d4]"></i><span>${scopeTag} • ${pinTag}</span>`;
+      const pinTag = activeProf.pinHash ? `PIN ${activeProf.pinLength || 4}d` : 'Isolado';
+      document.getElementById('active-prof-badge').innerHTML = `<i data-lucide="lock" class="h-3 w-3 text-[#06b6d4]"></i><span>Perfil Individual • ${pinTag}</span>`;
 
       const chip = document.getElementById('ws-profile-chip');
       chip.className = `inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-xs font-semibold ${palette.border} ${palette.soft} ${palette.text}`;
-      chip.textContent = state.vaultIsolated ? activeProf.name : 'Todos os Cofres Desbloqueados';
+      chip.textContent = activeProf.name;
 
       document.getElementById('drag-target-profile-name').textContent = activeProf.name;
       renderDropdownProfilesList();
@@ -2137,7 +2137,6 @@
       container.innerHTML = state.profiles.map(p => {
         const palette = ACCENT_PALETTE[p.color] || ACCENT_PALETTE.cyan;
         const isCurrent = p.id === state.activeProfileId;
-        const isUnlocked = !p.pinHash || state.unlockedProfileIds.has(p.id);
         return `
           <button type="button" onclick="switchWorkspaceProfile('${p.id}')" class="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs transition ${isCurrent ? 'bg-[#111827] text-white font-semibold' : 'text-slate-300 hover:bg-[#111827]/75 hover:text-white'}">
             <div class="flex items-center gap-2.5 min-w-0">
@@ -2145,8 +2144,7 @@
               <span class="truncate">${escapeHtml(p.name)}</span>
             </div>
             <div class="flex items-center gap-1.5 shrink-0">
-              <i data-lucide="${isUnlocked ? 'unlock' : 'lock'}" class="h-3.5 w-3.5 ${isUnlocked ? 'text-emerald-400' : 'text-[#06b6d4]'}"></i>
-              ${isCurrent ? `<i data-lucide="check" class="h-3.5 w-3.5 text-[#06b6d4]"></i>` : ''}
+              <i data-lucide="${isCurrent ? 'check' : 'lock'}" class="h-3.5 w-3.5 ${isCurrent ? 'text-[#06b6d4]' : 'text-slate-400'}"></i>
             </div>
           </button>
         `;
@@ -2157,12 +2155,24 @@
     function toggleProfileDropdown() { document.getElementById('profile-dropdown-menu').classList.toggle('hidden'); }
     function closeProfileDropdown() { document.getElementById('profile-dropdown-menu').classList.add('hidden'); }
 
+    // Ao trocar de perfil, limpa a memória e exige o PIN do novo perfil
     async function switchWorkspaceProfile(targetId) {
       closeProfileDropdown();
       if (targetId === state.activeProfileId) return;
       const prof = state.profiles.find(p => p.id === targetId);
       if (!prof) return;
-      if (prof.pinHash && !state.unlockedProfileIds.has(prof.id)) { openPinUnlockModal(prof.id); return; }
+
+      revokeAllObjectUrls();
+      state.unlockedProfileIds.clear();
+      state.cloudFiles = [];
+      state.rawMessagesByKey.clear();
+      closePreviewDrawer(false);
+
+      if (prof.pinHash) {
+        openPinUnlockModal(prof.id);
+        return;
+      }
+      state.unlockedProfileIds.add(prof.id);
       await enterWorkspace(prof.id);
     }
 
@@ -2188,32 +2198,21 @@
       try {
         if (!state.client.connected) await state.client.connect();
 
-        const activeProf = state.profiles.find(p => p.id === state.activeProfileId) || state.profiles[0];
+        const activeProf = state.profiles.find(p => p.id === state.activeProfileId);
         if (!activeProf) return;
-
-        const targetProfiles = state.vaultIsolated
-          ? [activeProf]
-          : state.profiles.filter(p => !p.pinHash || state.unlockedProfileIds.has(p.id));
 
         const parsedList = [];
         state.rawMessagesByKey.clear();
-        const seenPeers = new Set();
 
-        for (const prof of targetProfiles) {
-          const peerKey = prof.channelId ? `ch_${prof.channelId}` : 'me';
-          if (seenPeers.has(peerKey)) continue;
-          seenPeers.add(peerKey);
+        const peer = await resolveProfilePeer(activeProf);
+        const messages = await state.client.getMessages(peer, { limit: 100 });
 
-          const peer = await resolveProfilePeer(prof);
-          const messages = await state.client.getMessages(peer, { limit: 100 });
-
-          if (Array.isArray(messages)) {
-            for (const msg of messages) {
-              const item = parseGramJsMessage(msg, prof, peer);
-              if (item) {
-                parsedList.push(item);
-                state.rawMessagesByKey.set(item.key, msg);
-              }
+        if (Array.isArray(messages)) {
+          for (const msg of messages) {
+            const item = parseGramJsMessage(msg, activeProf, peer);
+            if (item) {
+              parsedList.push(item);
+              state.rawMessagesByKey.set(item.key, msg);
             }
           }
         }
@@ -2574,7 +2573,12 @@
         return;
       }
 
-      const activeProf = state.profiles.find(p => p.id === state.activeProfileId) || state.profiles[0];
+      const activeProf = state.profiles.find(p => p.id === state.activeProfileId);
+      if (!activeProf) {
+        showToast('Perfil Inativo', 'Abra um perfil individual antes de enviar arquivos.', 'warning');
+        return;
+      }
+
       const rawPeer = await resolveProfilePeer(activeProf);
       const inputPeer = rawPeer === 'me'
         ? new Api.InputPeerSelf()
@@ -2668,7 +2672,7 @@
       }
 
       if (uploadedCount > 0) {
-        showToast('Upload Concluído', `${uploadedCount} arquivo(s) enviados para "${activeProf ? activeProf.name : 'seu cofre'}".`, 'success');
+        showToast('Upload Concluído', `${uploadedCount} arquivo(s) enviados para "${activeProf.name}".`, 'success');
         await refreshCloudFiles(false);
       }
     }
@@ -2703,7 +2707,6 @@
 
     // 10. RENDERIZAÇÃO DA ZONA 2 E ZONA 3
     function getScopedCloudFiles() {
-      if (!state.vaultIsolated) return state.cloudFiles.slice();
       return state.cloudFiles.filter(f => f.vaultId === state.activeProfileId);
     }
 
@@ -2770,13 +2773,13 @@
             <div class="mb-3.5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#111827] text-[#06b6d4]">
               <i data-lucide="cloud-upload" class="h-7 w-7"></i>
             </div>
-            <h3 class="text-base font-bold text-white">Cofre vazio</h3>
+            <h3 class="text-base font-bold text-white">Cofre individual vazio</h3>
             <p class="mt-1.5 max-w-sm text-xs text-slate-400 leading-relaxed">
-              Este canal privado está 100% isolado e pronto para uso. Arraste arquivos para esta janela ou clique abaixo para enviar para <strong class="text-slate-200">${escapeHtml(activeProf ? activeProf.name : 'este cofre')}</strong>.
+              Este perfil é 100% isolado. Arraste arquivos para esta janela ou toque na nuvem de Upload para enviar para <strong class="text-slate-200">${escapeHtml(activeProf ? activeProf.name : 'este cofre')}</strong>.
             </p>
             <div class="mt-5">
               <button type="button" onclick="triggerCloudUpload()" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 transition">
-                <i data-lucide="plus" class="h-4 w-4"></i>
+                <i data-lucide="cloud-upload" class="h-4 w-4"></i>
                 <span>Enviar Arquivo</span>
               </button>
             </div>
@@ -2825,19 +2828,13 @@
                       ` : ''}
                     </div>
                     ${!isCompact4 ? `
-                      <div class="flex items-center justify-between gap-1 border-t border-[#1e293b]/80 pt-1.5">
-                        <button type="button" onclick="event.stopPropagation(); openMoveProfileModal('${file.key}')" title="Mover para outro cofre" class="flex items-center gap-1 rounded-lg px-1.5 py-1 text-[10px] sm:text-[11px] text-slate-400 hover:bg-[#060913] hover:text-[#06b6d4] transition">
-                          <i data-lucide="folder-input" class="h-3.5 w-3.5"></i>
-                          <span class="hidden sm:inline">Cofre</span>
+                      <div class="flex items-center justify-end gap-1 border-t border-[#1e293b]/80 pt-1.5">
+                        <button type="button" onclick="event.stopPropagation(); downloadFileToDevice('${file.key}')" title="Baixar" aria-label="Baixar" class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-[#060913] hover:text-emerald-400 transition">
+                          <i data-lucide="download" class="h-3.5 w-3.5"></i>
                         </button>
-                        <div class="flex items-center gap-0.5">
-                          <button type="button" onclick="event.stopPropagation(); downloadFileToDevice('${file.key}')" title="Baixar" aria-label="Baixar" class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-[#060913] hover:text-emerald-400 transition">
-                            <i data-lucide="download" class="h-3.5 w-3.5"></i>
-                          </button>
-                          <button type="button" onclick="event.stopPropagation(); promptCardDelete('${file.key}')" title="Excluir" aria-label="Excluir" class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-[#dc2626]/20 hover:text-[#dc2626] transition">
-                            <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
-                          </button>
-                        </div>
+                        <button type="button" onclick="event.stopPropagation(); promptCardDelete('${file.key}')" title="Excluir" aria-label="Excluir" class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-[#dc2626]/20 hover:text-[#dc2626] transition">
+                          <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
+                        </button>
                       </div>
                     ` : ''}
                     ${state.confirmDeleteKey === file.key ? `
@@ -2890,7 +2887,6 @@
                           ` : `
                             <div class="inline-flex items-center gap-1">
                               <button type="button" onclick="toggleFavoriteFile(event, '${file.key}')" title="Favoritar" class="p-1.5 rounded-lg ${isFav ? 'text-amber-400' : 'text-slate-400 hover:text-white'}"><i data-lucide="star" class="h-3.5 w-3.5 ${isFav ? 'fill-amber-400' : ''}"></i></button>
-                              <button type="button" onclick="openMoveProfileModal('${file.key}')" title="Mover cofre" class="p-1.5 rounded-lg text-slate-400 hover:text-[#06b6d4]"><i data-lucide="folder-input" class="h-3.5 w-3.5"></i></button>
                               <button type="button" onclick="downloadFileToDevice('${file.key}')" title="Baixar" class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-400"><i data-lucide="download" class="h-3.5 w-3.5"></i></button>
                               <button type="button" onclick="promptCardDelete('${file.key}')" title="Excluir" class="p-1.5 rounded-lg text-slate-400 hover:text-[#dc2626]"><i data-lucide="trash-2" class="h-3.5 w-3.5"></i></button>
                             </div>
@@ -2961,75 +2957,6 @@
       if (state.previewItemKey === fileKey) {
         const file = state.cloudFiles.find(f => f.key === fileKey);
         if (file) renderPreviewDrawer(file, { loading: false });
-      }
-    }
-
-    function openMoveProfileModal(fileKey) {
-      state.moveTargetKey = fileKey;
-      const file = state.cloudFiles.find(f => f.key === fileKey);
-      const currentProfId = file ? file.vaultId : state.activeProfileId;
-      const listEl = document.getElementById('move-profiles-list');
-      document.getElementById('move-modal-desc').textContent = file ? `Transferir "${file.name}" para qual cofre?` : 'Escolha o cofre de destino:';
-
-      if (state.profiles.length <= 1) {
-        listEl.innerHTML = `
-          <div class="rounded-2xl border border-[#1e293b] bg-[#060913] p-4 text-center space-y-3">
-            <p class="text-xs text-slate-400">Você possui apenas um cofre configurado.</p>
-            <button type="button" onclick="closeMoveProfileModal(); openNewProfileModal('create');" class="rounded-xl bg-[#2563eb] px-4 py-2 text-xs font-semibold text-white">+ Criar Novo Cofre</button>
-          </div>
-        `;
-      } else {
-        listEl.innerHTML = state.profiles.map(p => {
-          const palette = ACCENT_PALETTE[p.color] || ACCENT_PALETTE.cyan;
-          const isCurrent = p.id === currentProfId;
-          return `
-            <button type="button" onclick="executeMoveToProfile('${p.id}')" class="flex w-full items-center justify-between rounded-2xl border ${isCurrent ? 'border-[#06b6d4] bg-[#06b6d4]/10' : 'border-[#1e293b] bg-[#060913] hover:border-[#06b6d4]/50 hover:bg-[#111827]'} p-3 text-left transition">
-              <div class="flex items-center gap-3">
-                <span class="flex h-8 w-8 items-center justify-center rounded-xl ${palette.solid} text-[11px] font-bold">${escapeHtml(getInitials(p.name))}</span>
-                <div>
-                  <div class="text-xs font-bold text-white">${escapeHtml(p.name)}</div>
-                  <div class="text-[11px] text-slate-400">${isCurrent ? 'Cofre atual' : 'Canal privado exclusivo'}</div>
-                </div>
-              </div>
-              <i data-lucide="${isCurrent ? 'check' : 'arrow-right'}" class="h-4 w-4 ${isCurrent ? 'text-[#06b6d4]' : 'text-slate-400'}"></i>
-            </button>
-          `;
-        }).join('');
-      }
-
-      const modal = document.getElementById('modal-move-profile');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-      refreshIcons();
-    }
-
-    function closeMoveProfileModal() {
-      const modal = document.getElementById('modal-move-profile');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    }
-
-    async function executeMoveToProfile(destProfileId) {
-      const dest = state.profiles.find(p => p.id === destProfileId);
-      const file = state.cloudFiles.find(f => f.key === state.moveTargetKey);
-      if (!dest || !file || !state.client) return;
-      if (file.vaultId === destProfileId) { closeMoveProfileModal(); return; }
-
-      closeMoveProfileModal();
-      showToast('Transferindo Arquivo', `Movendo "${file.name}" para "${dest.name}"...`, 'info');
-
-      try {
-        if (!state.client.connected) await state.client.connect();
-        const sourcePeer = file.peer || 'me';
-        const destPeer = await resolveProfilePeer(dest);
-        await state.client.forwardMessages(destPeer, { messages: [file.id], fromPeer: sourcePeer, dropAuthor: true });
-        await state.client.deleteMessages(sourcePeer, [file.id], { revoke: true });
-        if (state.previewItemKey === file.key) closePreviewDrawer(false);
-        await refreshCloudFiles(false);
-        showToast('Transferência Concluída', `Arquivo movido para "${dest.name}".`, 'success');
-      } catch (err) {
-        console.error('[SSD Nexus Move Vault Error]', err);
-        showToast('Erro na Transferência', 'Não foi possível mover o arquivo entre os cofres.', 'danger');
       }
     }
 
@@ -3247,7 +3174,7 @@
             <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Inspetor de Arquivo</div>
             <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Tamanho</span><span class="font-mono font-semibold text-[#06b6d4]">${formatFileSize(file.sizeBytes)}</span></div>
             <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Formato MIME</span><span class="font-mono text-slate-300 truncate max-w-[190px]">${escapeHtml(file.mimeType)}</span></div>
-            <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Cofre Exclusivo</span><span class="font-medium text-slate-200">${escapeHtml(file.vaultName)}</span></div>
+            <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Cofre Individual</span><span class="font-medium text-slate-200">${escapeHtml(file.vaultName)}</span></div>
             <div class="flex justify-between gap-2"><span class="text-slate-400">Sincronizado em</span><span class="text-slate-300">${file.date}</span></div>
           </div>
           <div class="space-y-2">
@@ -3255,10 +3182,7 @@
               <button type="button" onclick="openFullscreenMedia('${file.key}')" class="flex w-full items-center justify-center gap-2 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 py-2.5 px-4 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition"><i data-lucide="maximize-2" class="h-4 w-4"></i><span>Abrir em Tela Cheia</span></button>
             ` : ''}
             <button type="button" onclick="downloadFileToDevice('${file.key}')" class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] py-2.5 px-4 text-xs font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 transition"><i data-lucide="download" class="h-4 w-4"></i><span>Baixar Arquivo</span></button>
-            <div class="grid grid-cols-2 gap-2">
-              <button type="button" onclick="toggleFavoriteFile(event, '${file.key}')" class="flex items-center justify-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] py-2.5 px-3 text-xs font-medium text-slate-200 hover:text-white transition"><i data-lucide="star" class="h-4 w-4 ${isFav ? 'text-amber-400 fill-amber-400' : 'text-slate-400'}"></i><span>${isFav ? 'Favoritado' : 'Favoritar'}</span></button>
-              <button type="button" onclick="openMoveProfileModal('${file.key}')" class="flex items-center justify-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] py-2.5 px-3 text-xs font-medium text-[#06b6d4] hover:text-white transition"><i data-lucide="folder-input" class="h-4 w-4"></i><span>Mover Cofre</span></button>
-            </div>
+            <button type="button" onclick="toggleFavoriteFile(event, '${file.key}')" class="flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] py-2.5 px-3 text-xs font-medium text-slate-200 hover:text-white transition"><i data-lucide="star" class="h-4 w-4 ${isFav ? 'text-amber-400 fill-amber-400' : 'text-slate-400'}"></i><span>${isFav ? 'Favoritado' : 'Favoritar'}</span></button>
             ${state.confirmDeleteKey === file.key ? `
               <div class="rounded-xl border border-[#dc2626]/50 bg-[#dc2626]/15 p-3 text-center space-y-2">
                 <p class="text-xs font-medium text-rose-200">Excluir permanentemente deste cofre?</p>
@@ -3317,29 +3241,6 @@
     }
 
     function setWorkspaceSort(val) { state.sortBy = val; renderWorkspaceFiles(); }
-
-    async function toggleVaultIsolation() {
-      state.vaultIsolated = !state.vaultIsolated;
-      updateVaultScopeUI();
-      renderWorkspaceHeaderAndProfile();
-      await refreshCloudFiles(false);
-    }
-
-    function updateVaultScopeUI() {
-      const btn = document.getElementById('btn-vault-scope');
-      const icon = document.getElementById('icon-vault-scope');
-      const label = document.getElementById('label-vault-scope');
-      if (state.vaultIsolated) {
-        btn.className = 'inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 px-3 text-xs font-semibold text-[#06b6d4] hover:brightness-110 transition';
-        icon.setAttribute('data-lucide', 'shield');
-        label.textContent = 'Canal Privado';
-      } else {
-        btn.className = 'inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#2563eb]/50 bg-[#2563eb]/20 px-3 text-xs font-semibold text-blue-200 hover:brightness-110 transition';
-        icon.setAttribute('data-lucide', 'globe');
-        label.textContent = 'Todos os Cofres';
-      }
-      refreshIcons();
-    }
 
     function setWorkspaceView(mode) {
       state.viewMode = mode;
@@ -3401,12 +3302,6 @@
     }
 
     function triggerQuickLock(reason = 'Bloqueio Rápido Ativado') {
-      revokeAllObjectUrls();
-      state.unlockedProfileIds.clear();
-      state.cloudFiles = [];
-      state.rawMessagesByKey.clear();
-      closePreviewDrawer(false);
-      closeProfileDropdown();
       openProfileSelectorView();
       showToast(reason, 'Cofres trancados e prévias temporárias limpas da memória.', 'warning');
     }
@@ -3428,9 +3323,7 @@
     });
 
     async function handleLogout() {
-      revokeAllObjectUrls();
-      closeProfileDropdown();
-      closePreviewDrawer(false);
+      lockAllProfilesMemory();
       if (state.client && state.gramjsLib && state.gramjsLib.Api) {
         try { await state.client.invoke(new state.gramjsLib.Api.auth.LogOut()); } catch (e) {}
         try { await state.client.disconnect(); } catch (e) {}
@@ -3438,13 +3331,35 @@
       localStorage.removeItem(SESSION_STORAGE_KEY);
       state.client = null;
       state.user = null;
-      state.cloudFiles = [];
-      state.rawMessagesByKey.clear();
-      state.unlockedProfileIds.clear();
       state.currentPhoneCodeHash = '';
       showToast('Conta Desconectada', 'Sua sessão criptografada foi encerrada.', 'info');
       await bootstrapSSDEngine();
     }
+
+    // Integração botão Voltar do Android
+    window.handleAndroidBack = function () {
+      if (!document.getElementById('modal-fullscreen-media').classList.contains('hidden')) {
+        closeFullscreenMedia();
+        return true;
+      }
+      if (!document.getElementById('modal-pin-unlock').classList.contains('hidden')) {
+        closePinUnlockModal();
+        return true;
+      }
+      if (!document.getElementById('modal-new-profile').classList.contains('hidden')) {
+        closeNewProfileModal();
+        return true;
+      }
+      if (!document.getElementById('modal-about').classList.contains('hidden')) {
+        closeAboutModal();
+        return true;
+      }
+      if (state.previewItemKey) {
+        closePreviewDrawer(true);
+        return true;
+      }
+      return false;
+    };
 
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -3472,7 +3387,6 @@
         closeFullscreenMedia();
         closePinUnlockModal();
         closeNewProfileModal();
-        closeMoveProfileModal();
         closeAboutModal();
         closeProfileDropdown();
         if (state.previewItemKey) closePreviewDrawer(true);
