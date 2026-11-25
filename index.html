@@ -273,7 +273,6 @@
         <button type="button" onclick="handleLogout()" class="text-xs text-slate-400 hover:text-[#dc2626] transition">Desconectar</button>
       </div>
 
-      <!-- Passo A: Escolher Criar Perfil ou Já tenho perfil -->
       <div id="setup-choice-panel" class="space-y-4">
         <div>
           <h1 class="text-2xl font-bold text-white">Configurar Acesso</h1>
@@ -305,7 +304,6 @@
         </button>
       </div>
 
-      <!-- Passo B: Formulário Criar / Já tenho perfil com escolha MS ou CP -->
       <div id="setup-form-panel" class="hidden space-y-4 animate-fade-up">
         <div class="flex items-center justify-between">
           <div>
@@ -315,7 +313,6 @@
           <button type="button" onclick="backToSetupChoice()" class="rounded-xl border border-[#1e293b] bg-[#060913] px-3 py-1.5 text-xs text-slate-300 hover:text-white shrink-0">Voltar</button>
         </div>
 
-        <!-- Seletor MS ou CP -->
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-2">Tipo de Armazenamento</label>
           <div class="grid grid-cols-2 gap-2.5">
@@ -336,7 +333,6 @@
           </div>
         </div>
 
-        <!-- Seletor de Canal Existente (só aparece quando modo = existing e tipo = CP) -->
         <div id="setup-existing-cp-box" class="hidden space-y-2">
           <div class="flex items-center justify-between">
             <label class="text-xs font-medium text-slate-300">Selecione seu Canal Privado (CP)</label>
@@ -385,7 +381,7 @@
   </section>
 
   <!-- ======================================================================= -->
-  <!-- TELA 3: BLOQUEIO POR PIN EXCLUSIVO DESTE APARELHO (SEM OUTROS PERFIS)   -->
+  <!-- TELA 3: BLOQUEIO POR PIN EXCLUSIVO DESTE APARELHO                       -->
   <!-- ======================================================================= -->
   <section id="view-pin-lock" class="hidden min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 relative overflow-y-auto">
     <div class="pointer-events-none fixed -top-32 left-1/2 -translate-x-1/2 h-96 w-[36rem] rounded-full bg-[#2563eb]/15 blur-3xl"></div>
@@ -467,7 +463,6 @@
         </button>
       </div>
 
-      <!-- Perfil Exclusivo deste Aparelho (sem listar outros perfis) -->
       <div class="border-b border-[#1e293b] p-3 space-y-2.5">
         <div class="sb-center flex items-center gap-2.5 rounded-2xl border border-[#1e293b] bg-[#060913] p-2.5">
           <div id="active-prof-avatar" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#06b6d4] text-xs font-bold text-slate-950 shadow-md">SS</div>
@@ -486,7 +481,7 @@
         </button>
       </div>
 
-      <nav class="flex-1 overflow-y-auto p-3 space-y-1" aria-label="Categorias de arquivos">
+      <nav class="flex-1 overflow-y-auto p-3 space-y-1" aria-label="Categorias e Pastas">
         <div class="sb-hide flex items-center justify-between px-2.5 pb-1.5">
           <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Biblioteca</span>
           <button type="button" onclick="refreshCloudFiles(true)" class="inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-[10px] font-medium text-[#06b6d4] hover:bg-[#06b6d4]/15 transition">
@@ -519,6 +514,18 @@
           <div class="flex items-center gap-3"><i data-lucide="star" class="h-4 w-4 text-amber-400 shrink-0"></i><span class="sb-hide">Favoritos</span></div>
           <span id="count-cat-favorites" class="sb-hide rounded-full bg-[#060913]/80 px-2 py-0.5 font-mono text-[11px] text-slate-400">0</span>
         </button>
+
+        <!-- SEÇÃO DE PASTAS -->
+        <div class="sb-hide pt-4 mt-3 border-t border-[#1e293b]/80">
+          <div class="flex items-center justify-between px-2.5 pb-2">
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Minhas Pastas</span>
+            <button type="button" onclick="openCreateFolderModal()" class="inline-flex items-center gap-1 rounded-lg border border-[#06b6d4]/35 bg-[#06b6d4]/10 px-2 py-0.5 text-[10px] font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition">
+              <i data-lucide="folder-plus" class="h-3 w-3"></i>
+              <span>+ Nova</span>
+            </button>
+          </div>
+          <div id="sidebar-folders-list" class="space-y-1"></div>
+        </div>
       </nav>
 
       <div class="border-t border-[#1e293b] bg-[#060913]/85 p-3 space-y-2">
@@ -582,10 +589,10 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <div id="ws-storage-pill" class="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 px-3 text-xs font-semibold text-[#06b6d4] select-none">
-            <i data-lucide="shield-check" class="h-3.5 w-3.5"></i>
-            <span id="ws-storage-pill-text">CP • Individual</span>
-          </div>
+          <button type="button" onclick="openCreateFolderModal()" title="Criar Nova Pasta" class="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 px-3 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition">
+            <i data-lucide="folder-plus" class="h-4 w-4"></i>
+            <span class="hidden sm:inline">Nova Pasta</span>
+          </button>
 
           <select id="ws-sort-select" onchange="setWorkspaceSort(this.value)" aria-label="Ordenar arquivos" class="h-10 rounded-xl border border-[#1e293b] bg-[#060913] px-3 text-xs font-medium text-slate-200 focus:border-[#06b6d4] focus:outline-none cursor-pointer">
             <option value="date-desc">Mais recentes</option>
@@ -625,9 +632,13 @@
               <div class="flex flex-wrap items-center gap-2.5">
                 <h1 id="ws-category-title" class="text-xl sm:text-2xl font-bold text-white">Todos os Arquivos</h1>
                 <span id="ws-profile-chip" class="inline-flex items-center gap-1.5 rounded-full border border-[#06b6d4]/35 bg-[#06b6d4]/15 px-3 py-0.5 text-xs font-semibold text-[#06b6d4]">Meu Cofre</span>
+                <button id="btn-delete-active-folder" type="button" onclick="deleteActiveFolder()" class="hidden inline-flex items-center gap-1 rounded-full border border-[#dc2626]/40 bg-[#dc2626]/12 px-2.5 py-0.5 text-[11px] font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition">
+                  <i data-lucide="trash-2" class="h-3 w-3"></i>
+                  <span>Excluir Pasta</span>
+                </button>
               </div>
               <p class="mt-1 text-xs text-slate-400">
-                Arraste arquivos para esta janela ou toque na nuvem flutuante para enviar diretamente ao seu cofre.
+                Arraste arquivos para esta janela, crie pastas para organizar ou toque na nuvem flutuante para enviar.
               </p>
             </div>
           </div>
@@ -649,6 +660,81 @@
       <i data-lucide="cloud-upload" class="h-5 w-5"></i>
       <span>Upload</span>
     </button>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: CRIAR NOVA PASTA                                                 -->
+  <!-- ======================================================================= -->
+  <div id="modal-create-folder" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
+    <div class="w-full max-w-sm rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2.5">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#06b6d4]/15 text-[#06b6d4] border border-[#06b6d4]/35">
+            <i data-lucide="folder-plus" class="h-5 w-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Criar Nova Pasta</h3>
+            <p class="text-xs text-slate-400">Organize os arquivos do seu cofre</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeCreateFolderModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label for="input-folder-name" class="block text-xs font-medium text-slate-300 mb-1.5">Nome da Pasta</label>
+          <input id="input-folder-name" type="text" maxlength="28" placeholder="Ex: Documentos, Viagem, Trabalho..." class="h-11 w-full rounded-xl border border-[#1e293b] bg-[#060913] px-3.5 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-2">Cor da Pasta</label>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="selectFolderColor('cyan')" data-f-swatch="cyan" class="f-swatch h-8 w-8 rounded-full bg-[#06b6d4] ring-2 ring-white ring-offset-2 ring-offset-[#0d1324] transition"></button>
+            <button type="button" onclick="selectFolderColor('blue')" data-f-swatch="blue" class="f-swatch h-8 w-8 rounded-full bg-[#2563eb] opacity-70 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectFolderColor('red')" data-f-swatch="red" class="f-swatch h-8 w-8 rounded-full bg-[#dc2626] opacity-70 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectFolderColor('emerald')" data-f-swatch="emerald" class="f-swatch h-8 w-8 rounded-full bg-emerald-500 opacity-70 hover:opacity-100 transition"></button>
+            <button type="button" onclick="selectFolderColor('violet')" data-f-swatch="violet" class="f-swatch h-8 w-8 rounded-full bg-violet-500 opacity-70 hover:opacity-100 transition"></button>
+          </div>
+        </div>
+
+        <p id="folder-error" class="min-h-[16px] text-xs font-medium text-[#dc2626]"></p>
+
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="closeCreateFolderModal()" class="rounded-xl border border-[#1e293b] bg-[#111827] px-4 py-2 text-xs font-medium text-slate-300 hover:text-white">Cancelar</button>
+          <button type="button" onclick="saveNewFolder()" class="rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 py-2 text-xs font-semibold text-white hover:brightness-110 transition">Criar Pasta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: ENCAMINHAR ARQUIVO ENTRE PASTAS                                  -->
+  <!-- ======================================================================= -->
+  <div id="modal-forward-folder" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
+    <div class="w-full max-w-sm rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#06b6d4]/15 text-[#06b6d4] border border-[#06b6d4]/35">
+            <i data-lucide="folder-input" class="h-4 w-4"></i>
+          </div>
+          <h3 class="text-base font-bold text-white">Encaminhar para Pasta</h3>
+        </div>
+        <button type="button" onclick="closeForwardFolderModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+      <p id="forward-modal-desc" class="text-xs text-slate-400 mb-4 truncate">Escolha a pasta de destino:</p>
+      <div id="forward-folders-list" class="space-y-2 max-h-64 overflow-y-auto"></div>
+      <div class="mt-4 pt-3 border-t border-[#1e293b] flex justify-between items-center">
+        <button type="button" onclick="closeForwardFolderModal(); openCreateFolderModal();" class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#06b6d4] hover:underline">
+          <i data-lucide="folder-plus" class="h-3.5 w-3.5"></i>
+          <span>Criar nova pasta</span>
+        </button>
+        <button type="button" onclick="closeForwardFolderModal()" class="rounded-xl border border-[#1e293b] bg-[#111827] px-3.5 py-1.5 text-xs text-slate-300 hover:text-white">Fechar</button>
+      </div>
+    </div>
   </div>
 
   <!-- ======================================================================= -->
@@ -683,7 +769,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.0</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.1</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -698,8 +784,8 @@
           <span class="font-semibold text-white">SSD Soluções 2026</span>
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
-          <span class="text-slate-400">Isolamento</span>
-          <span class="font-mono text-emerald-400">Perfil Exclusivo por Aparelho</span>
+          <span class="text-slate-400">Organização</span>
+          <span class="font-mono text-emerald-400">Pastas + Compartilhar + Encaminhar</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
@@ -731,15 +817,17 @@
     const STORAGE_KEYS = {
       DEVICE_PROFILE: 'ssd_nexus_device_profile_v3',
       FAVORITES_PREFIX: 'ssd_nexus_favorites_',
+      FOLDERS_PREFIX: 'ssd_nexus_folders_',
+      FILE_FOLDERS_PREFIX: 'ssd_nexus_file_folders_',
       COLS: 'ssd_nexus_grid_cols'
     };
 
     const ACCENT_PALETTE = {
-      cyan: { solid: 'bg-[#06b6d4] text-slate-950', soft: 'bg-[#06b6d4]/15', border: 'border-[#06b6d4]/40', text: 'text-[#06b6d4]' },
-      blue: { solid: 'bg-[#2563eb] text-white', soft: 'bg-[#2563eb]/15', border: 'border-[#2563eb]/40', text: 'text-blue-300' },
-      red: { solid: 'bg-[#dc2626] text-white', soft: 'bg-[#dc2626]/15', border: 'border-[#dc2626]/40', text: 'text-rose-300' },
-      emerald: { solid: 'bg-emerald-500 text-slate-950', soft: 'bg-emerald-500/15', border: 'border-emerald-500/35', text: 'text-emerald-300' },
-      violet: { solid: 'bg-violet-500 text-white', soft: 'bg-violet-500/15', border: 'border-violet-500/35', text: 'text-violet-300' }
+      cyan: { solid: 'bg-[#06b6d4] text-slate-950', dot: 'bg-[#06b6d4]', soft: 'bg-[#06b6d4]/15', border: 'border-[#06b6d4]/40', text: 'text-[#06b6d4]' },
+      blue: { solid: 'bg-[#2563eb] text-white', dot: 'bg-[#2563eb]', soft: 'bg-[#2563eb]/15', border: 'border-[#2563eb]/40', text: 'text-blue-300' },
+      red: { solid: 'bg-[#dc2626] text-white', dot: 'bg-[#dc2626]', soft: 'bg-[#dc2626]/15', border: 'border-[#dc2626]/40', text: 'text-rose-300' },
+      emerald: { solid: 'bg-emerald-500 text-slate-950', dot: 'bg-emerald-400', soft: 'bg-emerald-500/15', border: 'border-emerald-500/35', text: 'text-emerald-300' },
+      violet: { solid: 'bg-violet-500 text-white', dot: 'bg-violet-400', soft: 'bg-violet-500/15', border: 'border-violet-500/35', text: 'text-violet-300' }
     };
 
     const state = {
@@ -754,10 +842,15 @@
       user: null,
       deviceProfile: null,
       isUnlocked: false,
-      setupMode: 'create',      // 'create' | 'existing'
-      setupStorage: 'CP',       // 'CP' (Canal Privado) | 'MS' (Mensagens Salvas)
+      setupMode: 'create',
+      setupStorage: 'CP',
       setupColor: 'cyan',
       lockBuffer: '',
+      folders: [],
+      fileFolderMap: {},
+      activeFolderId: null,
+      newFolderColor: 'cyan',
+      forwardTargetKey: null,
       cloudFiles: [],
       rawMessagesByKey: new Map(),
       favoriteKeys: new Set(),
@@ -901,10 +994,9 @@
       const { TelegramClient, Logger, StringSession } = resolvedLib;
       const savedSession = localStorage.getItem(SESSION_STORAGE_KEY) || '';
 
-      // Primeira vez: abre direto na tela de número e código
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.0.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.1.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -928,7 +1020,7 @@
           state.client = null;
         }
 
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.0.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.1.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
 
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
@@ -958,7 +1050,7 @@
       }
     }
 
-    // 4. FLUXO DE AUTENTICAÇÃO (NÚMERO + CÓDIGO + 2FA)
+    // 4. FLUXO DE AUTENTICAÇÃO
     function setAuthSubPanel(panelName, meta = {}) {
       ['init', 'init-error', 'phone', 'code', 'password'].forEach(p => {
         const el = document.getElementById(`auth-panel-${p}`);
@@ -1227,7 +1319,7 @@
       }
     }
 
-    // 5. PÓS-AUTENTICAÇÃO: SE JÁ EXISTE PERFIL NESTE APARELHO -> PEDE PIN; SENÃO -> CRIAR OU JÁ TENHO (MS/CP)
+    // 5. PERSISTÊNCIA DO PERFIL, FAVORITOS E PASTAS
     function normalizeChannelId(raw) {
       if (raw === null || raw === undefined) return '';
       const str = typeof raw === 'object' && raw.value !== undefined ? String(raw.value) : String(raw);
@@ -1249,18 +1341,24 @@
       try { localStorage.setItem(STORAGE_KEYS.DEVICE_PROFILE, JSON.stringify(prof)); } catch (e) {}
     }
 
-    function loadFavorites() {
-      if (!state.user) return;
-      try {
-        state.favoriteKeys = new Set(JSON.parse(localStorage.getItem(STORAGE_KEYS.FAVORITES_PREFIX + state.user.id) || '[]'));
-      } catch (e) {
-        state.favoriteKeys = new Set();
-      }
+    function loadFavoritesAndFolders() {
+      if (!state.user || !state.deviceProfile) return;
+      const pid = state.deviceProfile.id;
+      try { state.favoriteKeys = new Set(JSON.parse(localStorage.getItem(STORAGE_KEYS.FAVORITES_PREFIX + state.user.id) || '[]')); } catch (e) { state.favoriteKeys = new Set(); }
+      try { state.folders = JSON.parse(localStorage.getItem(STORAGE_KEYS.FOLDERS_PREFIX + pid) || '[]'); } catch (e) { state.folders = []; }
+      try { state.fileFolderMap = JSON.parse(localStorage.getItem(STORAGE_KEYS.FILE_FOLDERS_PREFIX + pid) || '{}'); } catch (e) { state.fileFolderMap = {}; }
     }
 
     function saveFavoriteKeys() {
       if (!state.user) return;
       try { localStorage.setItem(STORAGE_KEYS.FAVORITES_PREFIX + state.user.id, JSON.stringify(Array.from(state.favoriteKeys))); } catch (e) {}
+    }
+
+    function saveFoldersStorage() {
+      if (!state.deviceProfile) return;
+      const pid = state.deviceProfile.id;
+      try { localStorage.setItem(STORAGE_KEYS.FOLDERS_PREFIX + pid, JSON.stringify(state.folders)); } catch (e) {}
+      try { localStorage.setItem(STORAGE_KEYS.FILE_FOLDERS_PREFIX + pid, JSON.stringify(state.fileFolderMap)); } catch (e) {}
     }
 
     async function finalizeAuthenticatedSession() {
@@ -1274,15 +1372,13 @@
         const phoneStr = me?.phone ? `+${me.phone}` : state.formattedPhone;
 
         state.user = { id: userId, name: fullName, phone: phoneStr };
-        loadFavorites();
 
         const boundProfile = loadDeviceProfile();
         if (boundProfile) {
           state.deviceProfile = boundProfile;
-          // Sempre que o app é fechado e reaberto, pede apenas o PIN do perfil deste aparelho
+          loadFavoritesAndFolders();
           openDevicePinLockScreen();
         } else {
-          // Primeira vez após validar código: pergunta Criar Perfil ou Já tenho perfil (MS ou CP)
           openDeviceSetupChoice();
         }
       } catch (err) {
@@ -1299,7 +1395,7 @@
     }
 
     function openSetupForm(mode) {
-      state.setupMode = mode; // 'create' | 'existing'
+      state.setupMode = mode;
       state.setupColor = 'cyan';
       document.getElementById('setup-choice-panel').classList.add('hidden');
       document.getElementById('setup-form-panel').classList.remove('hidden');
@@ -1325,7 +1421,7 @@
     }
 
     function selectSetupStorage(type) {
-      state.setupStorage = type; // 'CP' | 'MS'
+      state.setupStorage = type;
       const btnCP = document.getElementById('btn-storage-cp');
       const btnMS = document.getElementById('btn-storage-ms');
       const existingCpBox = document.getElementById('setup-existing-cp-box');
@@ -1408,9 +1504,7 @@
       );
 
       const channel = result && Array.isArray(result.chats) ? result.chats[0] : null;
-      if (!channel || channel.id === undefined) {
-        throw new Error('Não foi possível obter os dados do canal privado.');
-      }
+      if (!channel || channel.id === undefined) throw new Error('Não foi possível obter os dados do canal privado.');
       return {
         channelId: normalizeChannelId(channel.id),
         accessHash: channel.accessHash !== undefined && channel.accessHash !== null ? channel.accessHash.toString() : ''
@@ -1461,7 +1555,7 @@
           id: state.setupStorage === 'MS' ? 'ms_device' : ('cp_' + channelId),
           name,
           color: state.setupColor,
-          storageType: state.setupStorage, // 'CP' ou 'MS'
+          storageType: state.setupStorage,
           channelId,
           accessHash,
           pinHash,
@@ -1470,11 +1564,11 @@
         };
 
         saveDeviceProfile(profile);
+        loadFavoritesAndFolders();
         state.isUnlocked = true;
         showToast('Perfil Configurado', `"${name}" (${state.setupStorage}) vinculado a este aparelho.`, 'success');
         await enterWorkspace();
       } catch (err) {
-        console.error('[SSD Nexus Setup Error]', err);
         errEl.textContent = sanitizeBrandText(err && (err.errorMessage || err.message) ? (err.errorMessage || err.message) : 'Erro ao configurar perfil.');
       } finally {
         btn.disabled = false;
@@ -1482,7 +1576,7 @@
       }
     }
 
-    // 7. TELA DE PIN EXCLUSIVA DESTE APARELHO (SEM OUTROS PERFIS)
+    // 7. TELA DE PIN EXCLUSIVA DESTE APARELHO
     function openDevicePinLockScreen() {
       revokeAllObjectUrls();
       state.isUnlocked = false;
@@ -1492,10 +1586,7 @@
       closePreviewDrawer(false);
 
       const prof = state.deviceProfile;
-      if (!prof) {
-        openDeviceSetupChoice();
-        return;
-      }
+      if (!prof) { openDeviceSetupChoice(); return; }
 
       const palette = ACCENT_PALETTE[prof.color] || ACCENT_PALETTE.cyan;
       const avatarEl = document.getElementById('lock-prof-avatar');
@@ -1554,7 +1645,237 @@
     function backspaceLockBuffer() { state.lockBuffer = state.lockBuffer.slice(0, -1); renderLockDots(); }
     function clearLockBuffer() { state.lockBuffer = ''; document.getElementById('lock-pin-error').textContent = ''; renderLockDots(); }
 
-    // 8. WORKSPACE E RESOLUÇÃO DE PEER (MS OU CP)
+    // 8. GERENCIAMENTO DE PASTAS E ENCAMINHAMENTO ENTRE PASTAS
+    function openCreateFolderModal() {
+      state.newFolderColor = 'cyan';
+      document.getElementById('input-folder-name').value = '';
+      document.getElementById('folder-error').textContent = '';
+      selectFolderColor('cyan');
+      const modal = document.getElementById('modal-create-folder');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('input-folder-name').focus();
+      refreshIcons();
+    }
+
+    function closeCreateFolderModal() {
+      const modal = document.getElementById('modal-create-folder');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function selectFolderColor(colorKey) {
+      state.newFolderColor = colorKey;
+      document.querySelectorAll('.f-swatch').forEach(btn => {
+        const active = btn.dataset.fSwatch === colorKey;
+        btn.classList.toggle('ring-2', active);
+        btn.classList.toggle('ring-white', active);
+        btn.classList.toggle('ring-offset-2', active);
+        btn.classList.toggle('ring-offset-[#0d1324]', active);
+        btn.classList.toggle('opacity-70', !active);
+      });
+    }
+
+    document.getElementById('input-folder-name').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveNewFolder(); });
+
+    function saveNewFolder() {
+      const name = document.getElementById('input-folder-name').value.trim();
+      const errEl = document.getElementById('folder-error');
+      if (!name) { errEl.textContent = 'Digite um nome para a pasta.'; return; }
+      if (state.folders.some(f => f.name.toLowerCase() === name.toLowerCase())) {
+        errEl.textContent = 'Já existe uma pasta com esse nome.';
+        return;
+      }
+
+      const folder = { id: 'fld_' + Date.now(), name, color: state.newFolderColor };
+      state.folders.push(folder);
+      saveFoldersStorage();
+      closeCreateFolderModal();
+      renderSidebarFolders();
+      showToast('Pasta Criada', `Pasta "${name}" adicionada ao seu cofre.`, 'success');
+    }
+
+    function renderSidebarFolders() {
+      const listEl = document.getElementById('sidebar-folders-list');
+      if (!listEl) return;
+
+      if (state.folders.length === 0) {
+        listEl.innerHTML = `<p class="px-2.5 py-2 text-[11px] text-slate-500">Nenhuma pasta criada.</p>`;
+        return;
+      }
+
+      listEl.innerHTML = state.folders.map(f => {
+        const palette = ACCENT_PALETTE[f.color] || ACCENT_PALETTE.cyan;
+        const isActive = state.category === 'folder' && state.activeFolderId === f.id;
+        const count = state.cloudFiles.filter(item => state.fileFolderMap[item.key] === f.id).length;
+
+        return `
+          <button type="button" onclick="openFolderView('${f.id}')" class="flex w-full items-center justify-between rounded-xl px-3 py-2 text-xs transition ${isActive ? 'bg-[#111827] text-white font-semibold border border-[#1e293b]' : 'text-slate-400 hover:bg-[#111827]/80 hover:text-white border border-transparent'}">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <i data-lucide="folder" class="h-4 w-4 ${palette.text} shrink-0"></i>
+              <span class="truncate">${escapeHtml(f.name)}</span>
+            </div>
+            <span class="rounded-full bg-[#060913] px-2 py-0.5 font-mono text-[11px] text-slate-300 shrink-0">${count}</span>
+          </button>
+        `;
+      }).join('');
+      refreshIcons();
+    }
+
+    function openFolderView(folderId) {
+      const folder = state.folders.find(f => f.id === folderId);
+      if (!folder) return;
+      state.category = 'folder';
+      state.activeFolderId = folderId;
+      document.getElementById('ws-category-title').textContent = folder.name;
+      document.getElementById('btn-delete-active-folder').classList.remove('hidden');
+
+      document.querySelectorAll('.ws-cat-btn').forEach(btn => {
+        btn.className = 'ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#111827]/80 hover:text-white border border-transparent transition';
+      });
+
+      renderSidebarFolders();
+      renderWorkspaceFiles();
+      toggleMobileDrawer(false);
+    }
+
+    function deleteActiveFolder() {
+      if (!state.activeFolderId) return;
+      const folder = state.folders.find(f => f.id === state.activeFolderId);
+      if (!folder) return;
+
+      // Remove a pasta e devolve os arquivos dela para a raiz (não apaga os arquivos da nuvem)
+      Object.keys(state.fileFolderMap).forEach(k => {
+        if (state.fileFolderMap[k] === state.activeFolderId) delete state.fileFolderMap[k];
+      });
+      state.folders = state.folders.filter(f => f.id !== state.activeFolderId);
+      saveFoldersStorage();
+      setWorkspaceCategory('all');
+      renderSidebarFolders();
+      showToast('Pasta Excluída', `A pasta "${folder.name}" foi removida. Seus arquivos continuam em Todos os Arquivos.`, 'info');
+    }
+
+    function openForwardFolderModal(fileKey) {
+      const file = state.cloudFiles.find(f => f.key === fileKey);
+      if (!file) return;
+      state.forwardTargetKey = fileKey;
+      const currentFolderId = state.fileFolderMap[fileKey] || '';
+
+      document.getElementById('forward-modal-desc').textContent = `Encaminhar "${file.name}" para:`;
+      const listEl = document.getElementById('forward-folders-list');
+
+      let html = `
+        <button type="button" onclick="executeForwardToFolder('')" class="flex w-full items-center justify-between rounded-2xl border ${!currentFolderId ? 'border-[#06b6d4] bg-[#06b6d4]/10' : 'border-[#1e293b] bg-[#060913] hover:border-[#06b6d4]/50 hover:bg-[#111827]'} p-3 text-left transition">
+          <div class="flex items-center gap-3">
+            <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-[#111827] text-slate-300 border border-[#1e293b]">
+              <i data-lucide="folder-kanban" class="h-4 w-4"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Raiz (Sem pasta)</div>
+              <div class="text-[11px] text-slate-400">Biblioteca principal</div>
+            </div>
+          </div>
+          <i data-lucide="${!currentFolderId ? 'check' : 'arrow-right'}" class="h-4 w-4 ${!currentFolderId ? 'text-[#06b6d4]' : 'text-slate-400'}"></i>
+        </button>
+      `;
+
+      state.folders.forEach(f => {
+        const palette = ACCENT_PALETTE[f.color] || ACCENT_PALETTE.cyan;
+        const isCurrent = currentFolderId === f.id;
+        html += `
+          <button type="button" onclick="executeForwardToFolder('${f.id}')" class="flex w-full items-center justify-between rounded-2xl border ${isCurrent ? 'border-[#06b6d4] bg-[#06b6d4]/10' : 'border-[#1e293b] bg-[#060913] hover:border-[#06b6d4]/50 hover:bg-[#111827]'} p-3 text-left transition">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${palette.soft} ${palette.text} border ${palette.border}">
+                <i data-lucide="folder" class="h-4 w-4"></i>
+              </div>
+              <div class="min-w-0">
+                <div class="text-xs font-bold text-white truncate">${escapeHtml(f.name)}</div>
+                <div class="text-[11px] text-slate-400">${isCurrent ? 'Pasta atual' : 'Encaminhar para esta pasta'}</div>
+              </div>
+            </div>
+            <i data-lucide="${isCurrent ? 'check' : 'arrow-right'}" class="h-4 w-4 shrink-0 ${isCurrent ? 'text-[#06b6d4]' : 'text-slate-400'}"></i>
+          </button>
+        `;
+      });
+
+      listEl.innerHTML = html;
+      const modal = document.getElementById('modal-forward-folder');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      refreshIcons();
+    }
+
+    function closeForwardFolderModal() {
+      const modal = document.getElementById('modal-forward-folder');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      state.forwardTargetKey = null;
+    }
+
+    function executeForwardToFolder(folderId) {
+      const fileKey = state.forwardTargetKey;
+      if (!fileKey) return;
+
+      if (!folderId) {
+        delete state.fileFolderMap[fileKey];
+        showToast('Arquivo Encaminhado', 'Movido para a Raiz (Sem pasta).', 'success');
+      } else {
+        const folder = state.folders.find(f => f.id === folderId);
+        state.fileFolderMap[fileKey] = folderId;
+        showToast('Arquivo Encaminhado', `Movido para a pasta "${folder ? folder.name : ''}".`, 'success');
+      }
+
+      saveFoldersStorage();
+      closeForwardFolderModal();
+      renderSidebarFolders();
+      renderWorkspaceFiles();
+      if (state.previewItemKey === fileKey) {
+        const file = state.cloudFiles.find(f => f.key === fileKey);
+        if (file) renderPreviewDrawer(file, { loading: false });
+      }
+    }
+
+    // 9. COMPARTILHAR ARQUIVO (WEB SHARE API + FALLBACK)
+    async function shareFileFromCloud(fileKey) {
+      const file = state.cloudFiles.find(f => f.key === fileKey);
+      if (!file) return;
+
+      const toastCard = createProgressToast(`Preparando ${file.name} para compartilhar...`);
+      const entry = await downloadFileDataOnDemand(file, (pct) => updateProgressToast(toastCard, pct));
+      removeProgressToast(toastCard);
+
+      if (!entry || !entry.blob) {
+        showToast('Erro ao Compartilhar', `Não foi possível carregar ${file.name}.`, 'danger');
+        return;
+      }
+
+      try {
+        const shareFile = new File([entry.blob], file.name, { type: file.mimeType || 'application/octet-stream' });
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [shareFile] })) {
+          await navigator.share({
+            files: [shareFile],
+            title: file.name,
+            text: 'Enviado via SSD Nexus'
+          });
+          showToast('Compartilhado', `${file.name} enviado com sucesso.`, 'success');
+          return;
+        }
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+        console.warn('[SSD Nexus Share Fallback]', err);
+      }
+
+      // Fallback automático: baixa o arquivo no dispositivo para compartilhar pelo gerenciador
+      const link = document.createElement('a');
+      link.href = entry.url;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Arquivo Baixado', 'Seu navegador não suporta compartilhamento direto; o arquivo foi salvo para você compartilhar.', 'info');
+    }
+
+    // 10. WORKSPACE E RESOLUÇÃO DE PEER (MS OU CP)
     async function resolveDeviceProfilePeer() {
       const prof = state.deviceProfile;
       if (!prof || prof.storageType === 'MS' || !prof.channelId) return 'me';
@@ -1583,11 +1904,9 @@
     }
 
     async function enterWorkspace() {
-      if (!state.deviceProfile || !state.isUnlocked) {
-        openDevicePinLockScreen();
-        return;
-      }
+      if (!state.deviceProfile || !state.isUnlocked) { openDevicePinLockScreen(); return; }
       state.category = 'all';
+      state.activeFolderId = null;
       state.previewItemKey = null;
       state.confirmDeleteKey = null;
       closePreviewDrawer(false);
@@ -1598,6 +1917,7 @@
 
       setWorkspaceCols(state.gridCols);
       renderWorkspaceHeaderAndProfile();
+      renderSidebarFolders();
       resetAutoLockTimer();
       await refreshCloudFiles(false);
     }
@@ -1628,7 +1948,6 @@
       document.getElementById('active-prof-name').textContent = prof.name;
       const typeShort = prof.storageType === 'MS' ? 'MS • Mensagens Salvas' : 'CP • Canal Privado';
       document.getElementById('active-prof-badge').innerHTML = `<i data-lucide="lock" class="h-3 w-3 text-[#06b6d4]"></i><span>${typeShort}</span>`;
-      document.getElementById('ws-storage-pill-text').textContent = typeShort;
 
       const chip = document.getElementById('ws-profile-chip');
       chip.className = `inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-xs font-semibold ${palette.border} ${palette.soft} ${palette.text}`;
@@ -1678,11 +1997,11 @@
 
         state.cloudFiles = parsedList;
         renderWorkspaceSidebarCounts();
+        renderSidebarFolders();
         renderWorkspaceFiles();
 
         if (notify) showToast('Sincronização Concluída', `${state.cloudFiles.length} arquivo(s) carregados.`, 'success');
       } catch (err) {
-        console.error('[SSD Nexus List Files Error]', err);
         if (notify) showToast('Aviso de Sincronização', 'Não foi possível atualizar a lista agora.', 'warning');
       } finally {
         if (topIcon) topIcon.classList.remove('animate-spin');
@@ -1811,7 +2130,7 @@
       }
     }
 
-    // 9. UPLOAD EM STREAMING (BLOCOS DE 512 KB)
+    // 11. UPLOAD EM STREAMING (BLOCOS DE 512 KB) COM VÍNCULO AUTOMÁTICO À PASTA ABERTA
     const SSD_UPLOAD_CHUNK_SIZE = 512 * 1024;
     const SSD_BIG_FILE_THRESHOLD = 10 * 1024 * 1024;
     const SSD_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
@@ -1978,6 +2297,8 @@
 
       const rawPeer = await resolveDeviceProfilePeer();
       const inputPeer = rawPeer === 'me' ? new Api.InputPeerSelf() : await state.client.getInputEntity(rawPeer);
+      const targetFolderId = state.category === 'folder' ? state.activeFolderId : null;
+      const beforeIds = new Set(state.cloudFiles.map(f => f.id));
       let uploadedCount = 0;
 
       for (const file of fileList) {
@@ -2034,8 +2355,16 @@
       }
 
       if (uploadedCount > 0) {
-        showToast('Upload Concluído', `${uploadedCount} arquivo(s) enviados.`, 'success');
         await refreshCloudFiles(false);
+        if (targetFolderId) {
+          state.cloudFiles.forEach(item => {
+            if (!beforeIds.has(item.id)) state.fileFolderMap[item.key] = targetFolderId;
+          });
+          saveFoldersStorage();
+          renderSidebarFolders();
+          renderWorkspaceFiles();
+        }
+        showToast('Upload Concluído', `${uploadedCount} arquivo(s) enviados.`, 'success');
       }
     }
 
@@ -2067,10 +2396,12 @@
       if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) uploadFilesToCloud(Array.from(e.dataTransfer.files));
     });
 
-    // 10. RENDERIZAÇÃO DA ZONA 2 E ZONA 3
+    // 12. RENDERIZAÇÃO DA ZONA 2 E ZONA 3
     function getVisibleWorkspaceFiles() {
       let items = state.cloudFiles.slice();
-      if (state.category === 'photos') items = items.filter(f => f.category === 'photos');
+      if (state.category === 'folder' && state.activeFolderId) {
+        items = items.filter(f => state.fileFolderMap[f.key] === state.activeFolderId);
+      } else if (state.category === 'photos') items = items.filter(f => f.category === 'photos');
       else if (state.category === 'videos') items = items.filter(f => f.category === 'videos');
       else if (state.category === 'documents') items = items.filter(f => f.category === 'documents');
       else if (state.category === 'audios') items = items.filter(f => f.category === 'audios');
@@ -2120,10 +2451,16 @@
       return 'grid grid-cols-3 gap-2 sm:gap-4';
     }
 
+    function getFolderNameForFile(fileKey) {
+      const fid = state.fileFolderMap[fileKey];
+      if (!fid) return 'Raiz (Sem pasta)';
+      const f = state.folders.find(x => x.id === fid);
+      return f ? f.name : 'Raiz (Sem pasta)';
+    }
+
     function renderWorkspaceFiles() {
       const container = document.getElementById('ws-files-container');
       const items = getVisibleWorkspaceFiles();
-      const prof = state.deviceProfile;
 
       if (items.length === 0) {
         container.innerHTML = `
@@ -2131,9 +2468,9 @@
             <div class="mb-3.5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#111827] text-[#06b6d4]">
               <i data-lucide="cloud-upload" class="h-7 w-7"></i>
             </div>
-            <h3 class="text-base font-bold text-white">Cofre vazio</h3>
+            <h3 class="text-base font-bold text-white">${state.category === 'folder' ? 'Pasta vazia' : 'Cofre vazio'}</h3>
             <p class="mt-1.5 max-w-sm text-xs text-slate-400 leading-relaxed">
-              Arraste arquivos para esta janela ou toque na nuvem de Upload para enviar para <strong class="text-slate-200">${escapeHtml(prof ? prof.name : 'este cofre')}</strong>.
+              Envie arquivos novos ou use o botão <strong>Encaminhar</strong> em qualquer item para mover para cá.
             </p>
             <div class="mt-5">
               <button type="button" onclick="triggerCloudUpload()" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 transition">
@@ -2186,13 +2523,22 @@
                       ` : ''}
                     </div>
                     ${!isCompact4 ? `
-                      <div class="flex items-center justify-end gap-1 border-t border-[#1e293b]/80 pt-1.5">
-                        <button type="button" onclick="event.stopPropagation(); downloadFileToDevice('${file.key}')" title="Baixar" aria-label="Baixar" class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-[#060913] hover:text-emerald-400 transition">
-                          <i data-lucide="download" class="h-3.5 w-3.5"></i>
+                      <div class="flex items-center justify-between gap-1 border-t border-[#1e293b]/80 pt-1.5">
+                        <button type="button" onclick="event.stopPropagation(); openForwardFolderModal('${file.key}')" title="Encaminhar para pasta" class="flex h-7 items-center gap-1 rounded-lg px-1.5 text-[10px] text-slate-400 hover:bg-[#060913] hover:text-[#06b6d4] transition">
+                          <i data-lucide="folder-input" class="h-3.5 w-3.5"></i>
+                          <span class="hidden sm:inline">Pasta</span>
                         </button>
-                        <button type="button" onclick="event.stopPropagation(); promptCardDelete('${file.key}')" title="Excluir" aria-label="Excluir" class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-[#dc2626]/20 hover:text-[#dc2626] transition">
-                          <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
-                        </button>
+                        <div class="flex items-center gap-0.5">
+                          <button type="button" onclick="event.stopPropagation(); shareFileFromCloud('${file.key}')" title="Compartilhar" aria-label="Compartilhar" class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-[#060913] hover:text-[#06b6d4] transition">
+                            <i data-lucide="share-2" class="h-3.5 w-3.5"></i>
+                          </button>
+                          <button type="button" onclick="event.stopPropagation(); downloadFileToDevice('${file.key}')" title="Baixar" aria-label="Baixar" class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-[#060913] hover:text-emerald-400 transition">
+                            <i data-lucide="download" class="h-3.5 w-3.5"></i>
+                          </button>
+                          <button type="button" onclick="event.stopPropagation(); promptCardDelete('${file.key}')" title="Excluir" aria-label="Excluir" class="flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-[#dc2626]/20 hover:text-[#dc2626] transition">
+                            <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
+                          </button>
+                        </div>
                       </div>
                     ` : ''}
                     ${state.confirmDeleteKey === file.key ? `
@@ -2220,7 +2566,7 @@
                     <th class="py-3 pl-4 pr-3">Arquivo</th>
                     <th class="py-3 px-3">Tipo</th>
                     <th class="py-3 px-3">Tamanho</th>
-                    <th class="py-3 px-3 hidden md:table-cell">Data</th>
+                    <th class="py-3 px-3 hidden md:table-cell">Pasta</th>
                     <th class="py-3 pr-4 text-right">Ações</th>
                   </tr>
                 </thead>
@@ -2231,10 +2577,10 @@
                     const isFav = state.favoriteKeys.has(file.key);
                     return `
                       <tr onclick="openPreviewDrawer('${file.key}')" class="cursor-pointer transition ${isPreviewing ? 'bg-[#06b6d4]/15' : 'hover:bg-[#111827]'}">
-                        <td class="py-3 pl-4 pr-3"><div class="flex items-center gap-2.5"><i data-lucide="${meta.icon}" class="h-4 w-4 ${meta.color} shrink-0"></i><span class="font-medium text-slate-100 truncate max-w-[180px] sm:max-w-sm">${escapeHtml(file.name)}</span></div></td>
+                        <td class="py-3 pl-4 pr-3"><div class="flex items-center gap-2.5"><i data-lucide="${meta.icon}" class="h-4 w-4 ${meta.color} shrink-0"></i><span class="font-medium text-slate-100 truncate max-w-[160px] sm:max-w-sm">${escapeHtml(file.name)}</span></div></td>
                         <td class="py-3 px-3"><span class="rounded border px-1.5 py-0.5 font-mono text-[10px] font-semibold ${meta.badge}">${escapeHtml(file.ext)}</span></td>
                         <td class="py-3 px-3 font-mono text-slate-300">${formatFileSize(file.sizeBytes)}</td>
-                        <td class="py-3 px-3 text-slate-400 hidden md:table-cell">${file.date}</td>
+                        <td class="py-3 px-3 text-slate-400 hidden md:table-cell">${escapeHtml(getFolderNameForFile(file.key))}</td>
                         <td class="py-3 pr-4 text-right" onclick="event.stopPropagation()">
                           ${state.confirmDeleteKey === file.key ? `
                             <div class="inline-flex items-center gap-1.5">
@@ -2244,6 +2590,8 @@
                             </div>
                           ` : `
                             <div class="inline-flex items-center gap-1">
+                              <button type="button" onclick="openForwardFolderModal('${file.key}')" title="Encaminhar para pasta" class="p-1.5 rounded-lg text-slate-400 hover:text-[#06b6d4]"><i data-lucide="folder-input" class="h-3.5 w-3.5"></i></button>
+                              <button type="button" onclick="shareFileFromCloud('${file.key}')" title="Compartilhar" class="p-1.5 rounded-lg text-slate-400 hover:text-[#06b6d4]"><i data-lucide="share-2" class="h-3.5 w-3.5"></i></button>
                               <button type="button" onclick="toggleFavoriteFile(event, '${file.key}')" title="Favoritar" class="p-1.5 rounded-lg ${isFav ? 'text-amber-400' : 'text-slate-400 hover:text-white'}"><i data-lucide="star" class="h-3.5 w-3.5 ${isFav ? 'fill-amber-400' : ''}"></i></button>
                               <button type="button" onclick="downloadFileToDevice('${file.key}')" title="Baixar" class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-400"><i data-lucide="download" class="h-3.5 w-3.5"></i></button>
                               <button type="button" onclick="promptCardDelete('${file.key}')" title="Excluir" class="p-1.5 rounded-lg text-slate-400 hover:text-[#dc2626]"><i data-lucide="trash-2" class="h-3.5 w-3.5"></i></button>
@@ -2293,10 +2641,13 @@
         state.cloudFiles = state.cloudFiles.filter(f => f.key !== fileKey);
         state.rawMessagesByKey.delete(fileKey);
         state.favoriteKeys.delete(fileKey);
+        delete state.fileFolderMap[fileKey];
         state.confirmDeleteKey = null;
         if (state.previewItemKey === fileKey) closePreviewDrawer(false);
         saveFavoriteKeys();
+        saveFoldersStorage();
         renderWorkspaceSidebarCounts();
+        renderSidebarFolders();
         renderWorkspaceFiles();
         showToast('Arquivo Excluído', 'Item removido permanentemente.', 'info');
       } catch (err) {
@@ -2317,7 +2668,7 @@
       }
     }
 
-    // 11. INSPETOR LATERAL + TELA CHEIA (FOTOS E VÍDEOS)
+    // 13. INSPETOR LATERAL + TELA CHEIA
     async function openPreviewDrawer(fileKey) {
       const file = state.cloudFiles.find(f => f.key === fileKey);
       if (!file) return;
@@ -2364,8 +2715,9 @@
           }
         });
         if (!bytes || bytes.length === 0) return null;
-        const url = URL.createObjectURL(new Blob([bytes], { type: file.mimeType || 'application/octet-stream' }));
-        const entry = { url, mimeType: file.mimeType };
+        const blob = new Blob([bytes], { type: file.mimeType || 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const entry = { url, blob, mimeType: file.mimeType };
         if (isTextPreviewable(file) && bytes.length <= 2 * 1024 * 1024) {
           try { entry.text = new TextDecoder('utf-8').decode(bytes); } catch (e) {}
         }
@@ -2527,7 +2879,7 @@
           <div class="rounded-2xl border border-[#1e293b] bg-[#060913] p-4 space-y-2.5 text-xs">
             <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Inspetor de Arquivo</div>
             <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Tamanho</span><span class="font-mono font-semibold text-[#06b6d4]">${formatFileSize(file.sizeBytes)}</span></div>
-            <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Formato MIME</span><span class="font-mono text-slate-300 truncate max-w-[190px]">${escapeHtml(file.mimeType)}</span></div>
+            <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Pasta Atual</span><span class="font-medium text-slate-200">${escapeHtml(getFolderNameForFile(file.key))}</span></div>
             <div class="flex justify-between gap-2 border-b border-[#1e293b] pb-2"><span class="text-slate-400">Cofre</span><span class="font-medium text-slate-200">${escapeHtml(file.vaultName)}</span></div>
             <div class="flex justify-between gap-2"><span class="text-slate-400">Sincronizado em</span><span class="text-slate-300">${file.date}</span></div>
           </div>
@@ -2536,6 +2888,10 @@
               <button type="button" onclick="openFullscreenMedia('${file.key}')" class="flex w-full items-center justify-center gap-2 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 py-2.5 px-4 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition"><i data-lucide="maximize-2" class="h-4 w-4"></i><span>Abrir em Tela Cheia</span></button>
             ` : ''}
             <button type="button" onclick="downloadFileToDevice('${file.key}')" class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] py-2.5 px-4 text-xs font-semibold text-white shadow-lg shadow-[#2563eb]/25 hover:brightness-110 transition"><i data-lucide="download" class="h-4 w-4"></i><span>Baixar Arquivo</span></button>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="shareFileFromCloud('${file.key}')" class="flex items-center justify-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] py-2.5 px-3 text-xs font-medium text-[#06b6d4] hover:text-white transition"><i data-lucide="share-2" class="h-4 w-4"></i><span>Compartilhar</span></button>
+              <button type="button" onclick="openForwardFolderModal('${file.key}')" class="flex items-center justify-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] py-2.5 px-3 text-xs font-medium text-slate-200 hover:text-white transition"><i data-lucide="folder-input" class="h-4 w-4 text-[#06b6d4]"></i><span>Encaminhar</span></button>
+            </div>
             <button type="button" onclick="toggleFavoriteFile(event, '${file.key}')" class="flex w-full items-center justify-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] py-2.5 px-3 text-xs font-medium text-slate-200 hover:text-white transition"><i data-lucide="star" class="h-4 w-4 ${isFav ? 'text-amber-400 fill-amber-400' : 'text-slate-400'}"></i><span>${isFav ? 'Favoritado' : 'Favoritar'}</span></button>
             ${state.confirmDeleteKey === file.key ? `
               <div class="rounded-xl border border-[#dc2626]/50 bg-[#dc2626]/15 p-3 text-center space-y-2">
@@ -2579,9 +2935,11 @@
       showToast('Download Concluído', `${file.name} salvo no seu dispositivo.`, 'success');
     }
 
-    // 12. CONTROLES, AUTO-LOCK, BLOQUEIO RÁPIDO E LOGOUT
+    // 14. CONTROLES, AUTO-LOCK, BLOQUEIO RÁPIDO E LOGOUT
     function setWorkspaceCategory(cat) {
       state.category = cat;
+      state.activeFolderId = null;
+      document.getElementById('btn-delete-active-folder').classList.add('hidden');
       const titles = { all: 'Todos os Arquivos', photos: 'Fotos', videos: 'Vídeos', documents: 'Documentos', audios: 'Áudios', favorites: 'Favoritos' };
       document.getElementById('ws-category-title').textContent = titles[cat] || 'Todos os Arquivos';
       document.querySelectorAll('.ws-cat-btn').forEach(btn => {
@@ -2590,6 +2948,7 @@
           ? 'ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold bg-[#111827] text-white border border-[#1e293b] transition'
           : 'ws-cat-btn sb-center flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-xs font-medium text-slate-400 hover:bg-[#111827]/80 hover:text-white border border-transparent transition';
       });
+      renderSidebarFolders();
       renderWorkspaceFiles();
       toggleMobileDrawer(false);
     }
@@ -2697,18 +3056,11 @@
     }
 
     window.handleAndroidBack = function () {
-      if (!document.getElementById('modal-fullscreen-media').classList.contains('hidden')) {
-        closeFullscreenMedia();
-        return true;
-      }
-      if (!document.getElementById('modal-about').classList.contains('hidden')) {
-        closeAboutModal();
-        return true;
-      }
-      if (state.previewItemKey) {
-        closePreviewDrawer(true);
-        return true;
-      }
+      if (!document.getElementById('modal-fullscreen-media').classList.contains('hidden')) { closeFullscreenMedia(); return true; }
+      if (!document.getElementById('modal-create-folder').classList.contains('hidden')) { closeCreateFolderModal(); return true; }
+      if (!document.getElementById('modal-forward-folder').classList.contains('hidden')) { closeForwardFolderModal(); return true; }
+      if (!document.getElementById('modal-about').classList.contains('hidden')) { closeAboutModal(); return true; }
+      if (state.previewItemKey) { closePreviewDrawer(true); return true; }
       return false;
     };
 
@@ -2727,12 +3079,14 @@
       }
       if (e.key === 'Escape') {
         closeFullscreenMedia();
+        closeCreateFolderModal();
+        closeForwardFolderModal();
         closeAboutModal();
         if (state.previewItemKey) closePreviewDrawer(true);
       }
     });
 
-    // 13. UTILITÁRIOS E INICIALIZAÇÃO
+    // 15. UTILITÁRIOS E INICIALIZAÇÃO
     function switchView(viewName) {
       ['auth', 'setup', 'pin-lock', 'workspace'].forEach(v => {
         const el = document.getElementById(`view-${v}`);
