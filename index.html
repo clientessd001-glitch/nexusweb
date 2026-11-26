@@ -85,7 +85,7 @@
 
     <div class="w-full max-w-md rounded-3xl nexus-glass p-6 sm:p-8 shadow-2xl relative z-10 animate-fade-up">
       <div class="flex flex-col items-center text-center mb-6">
-        <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] via-[#06b6d4] to-[#dc2626] p-[1px] shadow-lg shadow-[#2563eb]/30">
+        <div onclick="registerAdminSecretTap()" class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] via-[#06b6d4] to-[#dc2626] p-[1px] shadow-lg shadow-[#2563eb]/30 cursor-pointer select-none">
           <div class="flex h-full w-full items-center justify-center rounded-2xl bg-[#060913]">
             <i data-lucide="cloud-lightning" class="h-7 w-7 text-[#06b6d4]"></i>
           </div>
@@ -388,7 +388,7 @@
 
     <div id="pin-lock-card" class="w-full max-w-sm rounded-3xl nexus-glass p-6 sm:p-7 shadow-2xl relative z-10 animate-fade-up">
       <div class="flex flex-col items-center text-center mb-5">
-        <div id="lock-prof-avatar" class="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#06b6d4] text-xl font-extrabold text-slate-950 shadow-xl">SS</div>
+        <div id="lock-prof-avatar" onclick="registerAdminSecretTap()" class="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#06b6d4] text-xl font-extrabold text-slate-950 shadow-xl cursor-pointer select-none">SS</div>
         <h1 id="lock-prof-name" class="text-xl font-bold text-white">Meu Cofre</h1>
         <span id="lock-prof-badge" class="mt-1 inline-flex items-center gap-1.5 rounded-full border border-[#06b6d4]/35 bg-[#06b6d4]/12 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-[#06b6d4]">
           <i data-lucide="lock" class="h-3 w-3"></i>
@@ -418,7 +418,7 @@
       </div>
 
       <div class="mt-5 pt-4 border-t border-[#1e293b] flex items-center justify-between text-[11px] text-slate-500">
-        <span>SSD Nexus • Protegido</span>
+        <span onclick="registerAdminSecretTap()" class="cursor-pointer select-none">SSD Nexus • Protegido</span>
         <button type="button" onclick="handleLogout()" class="text-rose-400 hover:text-rose-300 font-medium transition">Desconectar Conta</button>
       </div>
     </div>
@@ -443,7 +443,7 @@
     <!-- ZONA 1: BARRA LATERAL -->
     <aside id="workspace-sidebar" class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col border-r border-[#1e293b] bg-[#0d1324] transition-all duration-300 lg:static lg:translate-x-0">
       <div class="flex h-16 shrink-0 items-center justify-between border-b border-[#1e293b] px-4">
-        <div class="flex items-center gap-3 overflow-hidden">
+        <div onclick="registerAdminSecretTap()" class="flex items-center gap-3 overflow-hidden cursor-pointer select-none">
           <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#2563eb] to-[#06b6d4] text-white shadow-md shadow-[#2563eb]/25">
             <i data-lucide="cloud-lightning" class="h-5 w-5"></i>
           </div>
@@ -663,6 +663,79 @@
   </div>
 
   <!-- ======================================================================= -->
+  <!-- MODAL: ACESSO ADMIN (PIN MESTRE)                                        -->
+  <!-- ======================================================================= -->
+  <div id="modal-admin-auth" class="fixed inset-0 z-[70] hidden items-center justify-center bg-[#060913]/90 backdrop-blur-md p-4">
+    <div id="admin-auth-card" class="w-full max-w-sm rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2.5">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-600/20 text-rose-400 border border-rose-500/40">
+            <i data-lucide="shield-alert" class="h-5 w-5"></i>
+          </div>
+          <div>
+            <h3 id="admin-auth-title" class="text-base font-bold text-white">Acesso Admin</h3>
+            <p id="admin-auth-sub" class="text-xs text-slate-400">Digite o PIN Mestre do Administrador</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeAdminAuthModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label for="admin-pin-input" class="block text-[11px] text-slate-300 mb-1">PIN Mestre (4 a 6 dígitos)</label>
+          <input id="admin-pin-input" type="password" inputmode="numeric" maxlength="6" placeholder="••••••" class="h-12 w-full rounded-xl border border-[#1e293b] bg-[#060913] text-center font-mono text-lg tracking-widest text-white focus:border-[#06b6d4] focus:outline-none" />
+        </div>
+        <div id="admin-pin-confirm-box" class="hidden">
+          <label for="admin-pin-confirm" class="block text-[11px] text-slate-300 mb-1">Confirmar PIN Mestre</label>
+          <input id="admin-pin-confirm" type="password" inputmode="numeric" maxlength="6" placeholder="••••••" class="h-12 w-full rounded-xl border border-[#1e293b] bg-[#060913] text-center font-mono text-lg tracking-widest text-white focus:border-[#06b6d4] focus:outline-none" />
+        </div>
+        <p id="admin-auth-error" class="min-h-[16px] text-xs font-medium text-[#dc2626]"></p>
+        <button id="btn-admin-auth-submit" type="button" onclick="submitAdminAuth()" class="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#dc2626] to-[#2563eb] text-xs font-bold text-white shadow-lg hover:brightness-110 transition">
+          <i data-lucide="unlock" class="h-4 w-4"></i>
+          <span id="btn-admin-auth-label">Entrar no Painel Admin</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODAL: PAINEL ADMIN (GERENCIAR PERFIS, BLOQUEAR, PIN, PROTEGER/EXCLUIR) -->
+  <!-- ======================================================================= -->
+  <div id="modal-admin-panel" class="fixed inset-0 z-[75] hidden items-center justify-center bg-[#060913]/92 backdrop-blur-md p-4">
+    <div class="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl nexus-glass shadow-2xl animate-fade-up overflow-hidden">
+      <div class="flex items-center justify-between border-b border-[#1e293b] px-6 py-4 bg-[#060913]/80">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-600/20 text-rose-400 border border-rose-500/40">
+            <i data-lucide="shield-check" class="h-5 w-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Painel Admin • SSD Nexus</h3>
+            <p class="text-[11px] text-slate-400">Controle remoto de perfis sincronizado na nuvem</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="refreshAdminPanel()" title="Sincronizar da Nuvem" class="flex h-9 items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] px-3 text-xs font-semibold text-[#06b6d4] hover:border-[#06b6d4]/50 transition">
+            <i id="icon-admin-sync" data-lucide="refresh-cw" class="h-3.5 w-3.5"></i>
+            <span class="hidden sm:inline">Sincronizar</span>
+          </button>
+          <button type="button" onclick="closeAdminPanel()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:bg-[#111827] hover:text-white">
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="admin-profiles-list" class="flex-1 overflow-y-auto p-5 space-y-3"></div>
+
+      <div class="border-t border-[#1e293b] bg-[#060913]/80 px-6 py-3 flex items-center justify-between text-[11px] text-slate-400">
+        <span id="admin-stats-label">0 perfil(is) registrados</span>
+        <button type="button" onclick="closeAdminPanel()" class="rounded-xl bg-[#111827] border border-[#1e293b] px-4 py-1.5 text-xs font-semibold text-white hover:border-[#06b6d4]/50 transition">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================= -->
   <!-- MODAL: CRIAR NOVA PASTA                                                 -->
   <!-- ======================================================================= -->
   <div id="modal-create-folder" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
@@ -763,13 +836,13 @@
   <div id="modal-about" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
     <div class="w-full max-w-md rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
       <div class="flex items-start justify-between">
-        <div class="flex items-center gap-3">
+        <div onclick="registerAdminSecretTap()" class="flex items-center gap-3 cursor-pointer select-none">
           <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#2563eb] to-[#06b6d4] text-white shadow-lg">
             <i data-lucide="cloud-lightning" class="h-6 w-6"></i>
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.2</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.3</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -789,7 +862,7 @@
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
-          <span class="font-medium text-slate-200">PIN SHA-256 + Auto-Lock</span>
+          <span class="font-medium text-slate-200">PIN SHA-256 + Auto-Lock + Admin</span>
         </div>
       </div>
 
@@ -800,7 +873,7 @@
   </div>
 
   <!-- Pilha de Notificações Toast -->
-  <div id="toast-stack" class="fixed bottom-20 right-4 z-50 flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
+  <div id="toast-stack" class="fixed bottom-20 right-4 z-[80] flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
 
   <!-- Carregamento do bundle local GramJS -->
   <script>window.__SSD_GRAMJS_SCRIPT_FAILED = false;</script>
@@ -813,6 +886,7 @@
       api_hash: 'e5024e850807919814641dfcb5d26639'
     };
 
+    const ADMIN_REGISTRY_TAG = '#SSD_NEXUS_ADMIN_V1';
     const SESSION_STORAGE_KEY = 'ssd_nexus_gramjs_session';
     const STORAGE_KEYS = {
       DEVICE_PROFILE: 'ssd_nexus_device_profile_v3',
@@ -846,6 +920,11 @@
       setupStorage: 'CP',
       setupColor: 'cyan',
       lockBuffer: '',
+      adminTapCount: 0,
+      adminTapTimer: null,
+      adminMsgId: null,
+      adminData: { adminPinHash: '', profiles: [] },
+      adminEditingPinId: null,
       folders: [],
       fileFolderMap: {},
       activeFolderId: null,
@@ -996,7 +1075,7 @@
 
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.2.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.3.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1020,7 +1099,7 @@
           state.client = null;
         }
 
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.2.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.3.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
 
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
@@ -1319,7 +1398,313 @@
       }
     }
 
-    // 5. PERSISTÊNCIA DO PERFIL, FAVORITOS E PASTAS
+    // 5. REGISTRO ADMIN NA NUVEM (#SSD_NEXUS_ADMIN_V1)
+    async function loadAdminRegistryFromCloud() {
+      if (!state.client) return state.adminData;
+      try {
+        if (!state.client.connected) await state.client.connect();
+        const msgs = await state.client.getMessages('me', { search: ADMIN_REGISTRY_TAG, limit: 10 });
+        if (Array.isArray(msgs) && msgs.length > 0) {
+          const latest = msgs.find(m => m.message && m.message.includes(ADMIN_REGISTRY_TAG));
+          if (latest) {
+            state.adminMsgId = toSafeNumber(latest.id);
+            const rawJson = latest.message.replace(ADMIN_REGISTRY_TAG, '').trim();
+            const parsed = JSON.parse(rawJson);
+            if (parsed && typeof parsed === 'object') {
+              state.adminData = {
+                adminPinHash: parsed.adminPinHash || '',
+                profiles: Array.isArray(parsed.profiles) ? parsed.profiles : []
+              };
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('[SSD Nexus Admin Read]', e);
+      }
+      return state.adminData;
+    }
+
+    async function saveAdminRegistryToCloud() {
+      if (!state.client) return;
+      const payload = `${ADMIN_REGISTRY_TAG}\n${JSON.stringify(state.adminData)}`;
+      try {
+        if (!state.client.connected) await state.client.connect();
+        if (state.adminMsgId) {
+          await state.client.editMessage('me', { message: state.adminMsgId, text: payload });
+        } else {
+          const sent = await state.client.sendMessage('me', { message: payload });
+          if (sent && sent.id) state.adminMsgId = toSafeNumber(sent.id);
+        }
+      } catch (e) {
+        try {
+          const sent = await state.client.sendMessage('me', { message: payload });
+          if (sent && sent.id) state.adminMsgId = toSafeNumber(sent.id);
+        } catch (err) {}
+      }
+    }
+
+    async function registerProfileInAdminRegistry(prof) {
+      await loadAdminRegistryFromCloud();
+      const idx = state.adminData.profiles.findIndex(p => p.id === prof.id);
+      const entry = {
+        id: prof.id,
+        name: prof.name,
+        color: prof.color || 'cyan',
+        storageType: prof.storageType || 'CP',
+        channelId: prof.channelId || '',
+        pinHash: prof.pinHash,
+        pinLength: prof.pinLength || 4,
+        blocked: idx >= 0 ? Boolean(state.adminData.profiles[idx].blocked) : false,
+        protected: idx >= 0 ? Boolean(state.adminData.profiles[idx].protected) : false,
+        createdAt: idx >= 0 ? (state.adminData.profiles[idx].createdAt || prof.createdAt) : (prof.createdAt || Date.now())
+      };
+      if (idx >= 0) state.adminData.profiles[idx] = entry;
+      else state.adminData.profiles.push(entry);
+      await saveAdminRegistryToCloud();
+    }
+
+    // Entrada discreta: 5 toques no logo/avatar/Sobre
+    function registerAdminSecretTap() {
+      if (!state.client || !state.user) return;
+      state.adminTapCount++;
+      clearTimeout(state.adminTapTimer);
+      state.adminTapTimer = setTimeout(() => { state.adminTapCount = 0; }, 1800);
+      if (state.adminTapCount >= 5) {
+        state.adminTapCount = 0;
+        openAdminAuthModal();
+      }
+    }
+
+    async function openAdminAuthModal() {
+      await loadAdminRegistryFromCloud();
+      const hasAdminPin = Boolean(state.adminData.adminPinHash);
+      document.getElementById('admin-auth-title').textContent = hasAdminPin ? 'Acesso Admin' : 'Criar PIN Mestre Admin';
+      document.getElementById('admin-auth-sub').textContent = hasAdminPin
+        ? 'Digite o PIN Mestre do Administrador'
+        : 'Primeiro acesso: defina o PIN Mestre para controlar os perfis';
+      document.getElementById('btn-admin-auth-label').textContent = hasAdminPin ? 'Entrar no Painel Admin' : 'Salvar PIN Mestre e Abrir';
+      document.getElementById('admin-pin-confirm-box').classList.toggle('hidden', hasAdminPin);
+      document.getElementById('admin-pin-input').value = '';
+      document.getElementById('admin-pin-confirm').value = '';
+      document.getElementById('admin-auth-error').textContent = '';
+
+      const modal = document.getElementById('modal-admin-auth');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('admin-pin-input').focus();
+      refreshIcons();
+    }
+
+    function closeAdminAuthModal() {
+      const modal = document.getElementById('modal-admin-auth');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    document.getElementById('admin-pin-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitAdminAuth(); });
+    document.getElementById('admin-pin-confirm').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitAdminAuth(); });
+
+    async function submitAdminAuth() {
+      const p1 = document.getElementById('admin-pin-input').value.replace(/\D/g, '');
+      const p2 = document.getElementById('admin-pin-confirm').value.replace(/\D/g, '');
+      const errEl = document.getElementById('admin-auth-error');
+      errEl.textContent = '';
+
+      if (p1.length < 4 || p1.length > 6) {
+        errEl.textContent = 'O PIN Mestre deve ter entre 4 e 6 dígitos.';
+        shakeElement('admin-auth-card');
+        return;
+      }
+
+      const enteredHash = await sha256Hex(p1);
+
+      if (!state.adminData.adminPinHash) {
+        if (p1 !== p2) {
+          errEl.textContent = 'Os dois PINs não coincidem.';
+          shakeElement('admin-auth-card');
+          return;
+        }
+        state.adminData.adminPinHash = enteredHash;
+        await saveAdminRegistryToCloud();
+        closeAdminAuthModal();
+        openAdminPanel();
+        showToast('PIN Mestre Criado', 'Acesso Admin configurado na nuvem.', 'success');
+        return;
+      }
+
+      if (enteredHash === state.adminData.adminPinHash) {
+        closeAdminAuthModal();
+        openAdminPanel();
+      } else {
+        errEl.textContent = 'PIN Mestre incorreto.';
+        shakeElement('admin-auth-card');
+        document.getElementById('admin-pin-input').value = '';
+      }
+    }
+
+    function openAdminPanel() {
+      state.adminEditingPinId = null;
+      const modal = document.getElementById('modal-admin-panel');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      renderAdminProfilesList();
+    }
+
+    function closeAdminPanel() {
+      const modal = document.getElementById('modal-admin-panel');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      state.adminEditingPinId = null;
+    }
+
+    async function refreshAdminPanel() {
+      const icon = document.getElementById('icon-admin-sync');
+      if (icon) icon.classList.add('animate-spin');
+      await loadAdminRegistryFromCloud();
+      renderAdminProfilesList();
+      if (icon) icon.classList.remove('animate-spin');
+      showToast('Admin Sincronizado', 'Lista de perfis atualizada da nuvem.', 'info');
+    }
+
+    function renderAdminProfilesList() {
+      const container = document.getElementById('admin-profiles-list');
+      const list = state.adminData.profiles || [];
+      document.getElementById('admin-stats-label').textContent = `${list.length} perfil(is) registrados`;
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="rounded-2xl border border-dashed border-[#1e293b] bg-[#060913] p-8 text-center text-xs text-slate-400">
+            Nenhum perfil registrado ainda na nuvem.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(p => {
+        const palette = ACCENT_PALETTE[p.color] || ACCENT_PALETTE.cyan;
+        const createdStr = p.createdAt ? new Date(p.createdAt).toLocaleDateString('pt-BR') : '—';
+        const isEditingPin = state.adminEditingPinId === p.id;
+        const isThisDevice = state.deviceProfile && state.deviceProfile.id === p.id;
+
+        return `
+          <div class="rounded-2xl border ${p.blocked ? 'border-rose-500/50 bg-rose-950/20' : 'border-[#1e293b] bg-[#060913]'} p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${palette.solid} text-xs font-extrabold">${escapeHtml(getInitials(p.name))}</div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-sm font-bold text-white truncate">${escapeHtml(p.name)}</span>
+                    <span class="rounded bg-[#111827] border border-[#1e293b] px-1.5 py-0.5 font-mono text-[10px] text-[#06b6d4]">${escapeHtml(p.storageType || 'CP')}</span>
+                    ${isThisDevice ? '<span class="rounded bg-blue-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-blue-300">Este aparelho</span>' : ''}
+                  </div>
+                  <div class="text-[11px] text-slate-400 mt-0.5">Criado em ${createdStr} • PIN ${p.pinLength || 4} dígitos</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="rounded-full px-2.5 py-0.5 text-[10px] font-bold ${p.blocked ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/35'}">
+                  ${p.blocked ? 'BLOQUEADO' : 'ATIVO'}
+                </span>
+                ${p.protected ? '<span class="rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/35 px-2 py-0.5 text-[10px] font-bold">PROTEGIDO</span>' : ''}
+              </div>
+            </div>
+
+            ${isEditingPin ? `
+              <div class="flex items-center gap-2 rounded-xl border border-[#06b6d4]/40 bg-[#0d1324] p-2.5">
+                <input id="admin-new-pin-${p.id}" type="password" inputmode="numeric" maxlength="6" placeholder="Novo PIN (4-6 dígitos)" class="h-9 flex-1 rounded-lg border border-[#1e293b] bg-[#060913] px-3 font-mono text-xs text-white focus:border-[#06b6d4] focus:outline-none" />
+                <button type="button" onclick="adminSaveNewPin('${p.id}')" class="rounded-lg bg-[#06b6d4] px-3 py-1.5 text-xs font-bold text-slate-950">Salvar</button>
+                <button type="button" onclick="adminCancelPinEdit()" class="rounded-lg bg-[#111827] px-2.5 py-1.5 text-xs text-slate-300">Cancelar</button>
+              </div>
+            ` : ''}
+
+            <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-[#1e293b]/80">
+              <button type="button" onclick="adminToggleBlock('${p.id}')" class="inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition ${p.blocked ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500 hover:text-slate-950' : 'border-rose-500/40 bg-rose-500/15 text-rose-300 hover:bg-rose-600 hover:text-white'}">
+                <i data-lucide="${p.blocked ? 'unlock' : 'ban'}" class="h-3.5 w-3.5"></i>
+                <span>${p.blocked ? 'Desbloquear' : 'Bloquear'}</span>
+              </button>
+
+              <button type="button" onclick="adminStartPinEdit('${p.id}')" class="inline-flex items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] px-3 py-1.5 text-xs font-semibold text-[#06b6d4] hover:border-[#06b6d4]/50 transition">
+                <i data-lucide="key-round" class="h-3.5 w-3.5"></i>
+                <span>Mudar PIN</span>
+              </button>
+
+              <button type="button" onclick="adminToggleProtect('${p.id}')" class="inline-flex items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] px-3 py-1.5 text-xs font-semibold ${p.protected ? 'text-amber-300 border-amber-500/40' : 'text-slate-300 hover:text-white'} transition">
+                <i data-lucide="shield" class="h-3.5 w-3.5"></i>
+                <span>${p.protected ? 'Desproteger' : 'Proteger'}</span>
+              </button>
+
+              <button type="button" onclick="adminDeleteProfile('${p.id}')" ${p.protected ? 'disabled' : ''} class="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-[#dc2626]/40 bg-[#dc2626]/10 px-3 py-1.5 text-xs font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white disabled:opacity-35 disabled:cursor-not-allowed transition">
+                <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
+                <span>Excluir</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      refreshIcons();
+    }
+
+    async function adminToggleBlock(profileId) {
+      const p = state.adminData.profiles.find(x => x.id === profileId);
+      if (!p) return;
+      p.blocked = !p.blocked;
+      await saveAdminRegistryToCloud();
+      renderAdminProfilesList();
+      showToast(p.blocked ? 'Perfil Bloqueado' : 'Perfil Desbloqueado', `"${p.name}" atualizado na nuvem.`, p.blocked ? 'warning' : 'success');
+    }
+
+    function adminStartPinEdit(profileId) {
+      state.adminEditingPinId = profileId;
+      renderAdminProfilesList();
+      const inp = document.getElementById(`admin-new-pin-${profileId}`);
+      if (inp) inp.focus();
+    }
+
+    function adminCancelPinEdit() {
+      state.adminEditingPinId = null;
+      renderAdminProfilesList();
+    }
+
+    async function adminSaveNewPin(profileId) {
+      const inp = document.getElementById(`admin-new-pin-${profileId}`);
+      const newPin = (inp ? inp.value : '').replace(/\D/g, '');
+      if (newPin.length < 4 || newPin.length > 6) {
+        showToast('PIN Inválido', 'Digite entre 4 e 6 números.', 'danger');
+        return;
+      }
+      const p = state.adminData.profiles.find(x => x.id === profileId);
+      if (!p) return;
+      p.pinHash = await sha256Hex(newPin);
+      p.pinLength = newPin.length;
+      if (state.deviceProfile && state.deviceProfile.id === profileId) {
+        state.deviceProfile.pinHash = p.pinHash;
+        state.deviceProfile.pinLength = p.pinLength;
+        saveDeviceProfile(state.deviceProfile);
+      }
+      state.adminEditingPinId = null;
+      await saveAdminRegistryToCloud();
+      renderAdminProfilesList();
+      showToast('PIN Atualizado', `Novo PIN definido para "${p.name}".`, 'success');
+    }
+
+    async function adminToggleProtect(profileId) {
+      const p = state.adminData.profiles.find(x => x.id === profileId);
+      if (!p) return;
+      p.protected = !p.protected;
+      await saveAdminRegistryToCloud();
+      renderAdminProfilesList();
+      showToast(p.protected ? 'Proteção Ativada' : 'Proteção Removida', `"${p.name}" ${p.protected ? 'não pode ser excluído.' : 'liberado.'}`, 'info');
+    }
+
+    async function adminDeleteProfile(profileId) {
+      const p = state.adminData.profiles.find(x => x.id === profileId);
+      if (!p || p.protected) return;
+      state.adminData.profiles = state.adminData.profiles.filter(x => x.id !== profileId);
+      await saveAdminRegistryToCloud();
+      renderAdminProfilesList();
+      showToast('Perfil Removido', `"${p.name}" removido do registro (arquivos mantidos na nuvem).`, 'info');
+    }
+
+    // 6. PERSISTÊNCIA DO PERFIL, FAVORITOS E PASTAS
     function normalizeChannelId(raw) {
       if (raw === null || raw === undefined) return '';
       const str = typeof raw === 'object' && raw.value !== undefined ? String(raw.value) : String(raw);
@@ -1372,9 +1757,17 @@
         const phoneStr = me?.phone ? `+${me.phone}` : state.formattedPhone;
 
         state.user = { id: userId, name: fullName, phone: phoneStr };
+        await loadAdminRegistryFromCloud();
 
         const boundProfile = loadDeviceProfile();
         if (boundProfile) {
+          // Sincroniza eventual mudança de PIN feita pelo Admin
+          const remoteProf = state.adminData.profiles.find(p => p.id === boundProfile.id);
+          if (remoteProf && remoteProf.pinHash) {
+            boundProfile.pinHash = remoteProf.pinHash;
+            boundProfile.pinLength = remoteProf.pinLength || boundProfile.pinLength;
+            saveDeviceProfile(boundProfile);
+          }
           state.deviceProfile = boundProfile;
           loadFavoritesAndFolders();
           openDevicePinLockScreen();
@@ -1387,7 +1780,7 @@
       }
     }
 
-    // 6. TELA DE CONFIGURAÇÃO DO PERFIL (CRIAR OU JÁ TENHO + MS/CP)
+    // 7. TELA DE CONFIGURAÇÃO DO PERFIL (CRIAR OU JÁ TENHO + MS/CP)
     function openDeviceSetupChoice() {
       document.getElementById('setup-choice-panel').classList.remove('hidden');
       document.getElementById('setup-form-panel').classList.add('hidden');
@@ -1564,6 +1957,7 @@
         };
 
         saveDeviceProfile(profile);
+        await registerProfileInAdminRegistry(profile);
         loadFavoritesAndFolders();
         state.isUnlocked = true;
         showToast('Perfil Configurado', `"${name}" (${state.setupStorage}) vinculado a este aparelho.`, 'success');
@@ -1576,7 +1970,7 @@
       }
     }
 
-    // 7. TELA DE PIN EXCLUSIVA DESTE APARELHO
+    // 8. TELA DE PIN EXCLUSIVA DESTE APARELHO (COM CHECAGEM ADMIN)
     function openDevicePinLockScreen() {
       revokeAllObjectUrls();
       state.isUnlocked = false;
@@ -1590,7 +1984,7 @@
 
       const palette = ACCENT_PALETTE[prof.color] || ACCENT_PALETTE.cyan;
       const avatarEl = document.getElementById('lock-prof-avatar');
-      avatarEl.className = `mb-3 flex h-16 w-16 items-center justify-center rounded-2xl ${palette.solid} text-xl font-extrabold shadow-xl`;
+      avatarEl.className = `mb-3 flex h-16 w-16 items-center justify-center rounded-2xl ${palette.solid} text-xl font-extrabold shadow-xl cursor-pointer select-none`;
       avatarEl.textContent = getInitials(prof.name);
 
       document.getElementById('lock-prof-name').textContent = prof.name;
@@ -1629,6 +2023,25 @@
     async function verifyDeviceLockPin() {
       const prof = state.deviceProfile;
       if (!prof) return;
+
+      // Checa status atualizado no registro Admin da nuvem
+      await loadAdminRegistryFromCloud();
+      const remoteProf = state.adminData.profiles.find(p => p.id === prof.id);
+      if (remoteProf) {
+        if (remoteProf.blocked) {
+          shakeElement('pin-lock-card');
+          state.lockBuffer = '';
+          renderLockDots();
+          document.getElementById('lock-pin-error').textContent = 'Acesso bloqueado pelo Administrador.';
+          return;
+        }
+        if (remoteProf.pinHash && remoteProf.pinHash !== prof.pinHash) {
+          prof.pinHash = remoteProf.pinHash;
+          prof.pinLength = remoteProf.pinLength || prof.pinLength;
+          saveDeviceProfile(prof);
+        }
+      }
+
       const enteredHash = await sha256Hex(state.lockBuffer);
       if (enteredHash === prof.pinHash) {
         state.isUnlocked = true;
@@ -1645,7 +2058,7 @@
     function backspaceLockBuffer() { state.lockBuffer = state.lockBuffer.slice(0, -1); renderLockDots(); }
     function clearLockBuffer() { state.lockBuffer = ''; document.getElementById('lock-pin-error').textContent = ''; renderLockDots(); }
 
-    // 8. GERENCIAMENTO DE PASTAS E ENCAMINHAMENTO ENTRE PASTAS
+    // 9. PASTAS E ENCAMINHAMENTO ENTRE PASTAS
     function openCreateFolderModal() {
       state.newFolderColor = 'cyan';
       document.getElementById('input-folder-name').value = '';
@@ -1834,9 +2247,8 @@
       }
     }
 
-    // 9. COMPARTILHAR ARQUIVO (CORRIGIDO: SEM FORÇAR DOWNLOAD)
+    // 10. COMPARTILHAR ARQUIVO (APK ANDROID + WEB SHARE)
     async function executeNativeOrWebShare(file, blob) {
-      // 1. Se estiver no APK Android com ponte nativa
       if (window.AndroidBridge && typeof window.AndroidBridge.shareFile === 'function') {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -1847,14 +2259,9 @@
         return true;
       }
 
-      // 2. Web Share API (Chrome / Android / iOS)
       const shareFile = new File([blob], file.name, { type: file.mimeType || 'application/octet-stream' });
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [shareFile] })) {
-        await navigator.share({
-          files: [shareFile],
-          title: file.name,
-          text: 'Enviado via SSD Nexus'
-        });
+        await navigator.share({ files: [shareFile], title: file.name, text: 'Enviado via SSD Nexus' });
         return true;
       }
       return false;
@@ -1864,7 +2271,6 @@
       const file = state.cloudFiles.find(f => f.key === fileKey);
       if (!file) return;
 
-      // Se já está em memória, compartilha direto no mesmo clique
       if (state.previewCache[fileKey] && state.previewCache[fileKey].blob) {
         try {
           const ok = await executeNativeOrWebShare(file, state.previewCache[fileKey].blob);
@@ -1874,7 +2280,6 @@
         }
       }
 
-      // Prepara o arquivo em memória
       const toastCard = createProgressToast(`Preparando ${file.name}...`);
       const entry = await downloadFileDataOnDemand(file, (pct) => updateProgressToast(toastCard, pct));
       removeProgressToast(toastCard);
@@ -1884,7 +2289,6 @@
         return;
       }
 
-      // Tenta abrir o menu de compartilhamento imediatamente
       try {
         const ok = await executeNativeOrWebShare(file, entry.blob);
         if (ok) return;
@@ -1892,7 +2296,6 @@
         if (err && err.name === 'AbortError') return;
       }
 
-      // Se o navegador bloqueou por perda de gesto após o download, exibe botão de confirmação
       const stack = document.getElementById('toast-stack');
       const card = document.createElement('div');
       card.className = 'pointer-events-auto flex items-center justify-between gap-3 rounded-2xl border border-[#06b6d4]/60 bg-[#0d1324] p-3.5 shadow-2xl animate-fade-up';
@@ -1907,14 +2310,14 @@
         card.remove();
         try {
           const ok = await executeNativeOrWebShare(file, entry.blob);
-          if (!ok) showToast('Indisponível', 'Este navegador não suporta envio direto de arquivos.', 'warning');
+          if (!ok) showToast('Indisponível', 'Atualize o APK com o shareFile nativo para compartilhar direto.', 'warning');
         } catch (e) {}
       };
       stack.appendChild(card);
       setTimeout(() => { if (card.parentNode) card.remove(); }, 10000);
     }
 
-    // 10. WORKSPACE E RESOLUÇÃO DE PEER (MS OU CP)
+    // 11. WORKSPACE E RESOLUÇÃO DE PEER (MS OU CP)
     async function resolveDeviceProfilePeer() {
       const prof = state.deviceProfile;
       if (!prof || prof.storageType === 'MS' || !prof.channelId) return 'me';
@@ -2169,7 +2572,7 @@
       }
     }
 
-    // 11. UPLOAD EM STREAMING (BLOCOS DE 512 KB) COM VÍNCULO AUTOMÁTICO À PASTA ABERTA
+    // 12. UPLOAD EM STREAMING (BLOCOS DE 512 KB)
     const SSD_UPLOAD_CHUNK_SIZE = 512 * 1024;
     const SSD_BIG_FILE_THRESHOLD = 10 * 1024 * 1024;
     const SSD_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
@@ -2435,7 +2838,7 @@
       if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) uploadFilesToCloud(Array.from(e.dataTransfer.files));
     });
 
-    // 12. AGRUPAMENTO POR DATA DE UPLOAD E RENDERIZAÇÃO DA ZONA 2
+    // 13. AGRUPAMENTO POR DATA DE UPLOAD E RENDERIZAÇÃO DA ZONA 2
     function formatUploadDayHeader(timestampSec) {
       const date = new Date(timestampSec * 1000);
       const now = new Date();
@@ -2761,7 +3164,7 @@
       }
     }
 
-    // 13. INSPETOR LATERAL + TELA CHEIA
+    // 14. INSPETOR LATERAL + TELA CHEIA
     async function openPreviewDrawer(fileKey) {
       const file = state.cloudFiles.find(f => f.key === fileKey);
       if (!file) return;
@@ -3028,7 +3431,7 @@
       showToast('Download Concluído', `${file.name} salvo no seu dispositivo.`, 'success');
     }
 
-    // 14. CONTROLES, AUTO-LOCK, BLOQUEIO RÁPIDO E LOGOUT
+    // 15. CONTROLES, AUTO-LOCK, BLOQUEIO RÁPIDO E LOGOUT
     function setWorkspaceCategory(cat) {
       state.category = cat;
       state.activeFolderId = null;
@@ -3150,6 +3553,8 @@
 
     window.handleAndroidBack = function () {
       if (!document.getElementById('modal-fullscreen-media').classList.contains('hidden')) { closeFullscreenMedia(); return true; }
+      if (!document.getElementById('modal-admin-panel').classList.contains('hidden')) { closeAdminPanel(); return true; }
+      if (!document.getElementById('modal-admin-auth').classList.contains('hidden')) { closeAdminAuthModal(); return true; }
       if (!document.getElementById('modal-create-folder').classList.contains('hidden')) { closeCreateFolderModal(); return true; }
       if (!document.getElementById('modal-forward-folder').classList.contains('hidden')) { closeForwardFolderModal(); return true; }
       if (!document.getElementById('modal-about').classList.contains('hidden')) { closeAboutModal(); return true; }
@@ -3164,7 +3569,7 @@
       if (e.altKey && e.key.toLowerCase() === 'l') {
         if (!document.getElementById('view-workspace').classList.contains('hidden')) { e.preventDefault(); triggerQuickLock('Bloqueio Rápido (Alt+L)'); return; }
       }
-      if (!document.getElementById('view-pin-lock').classList.contains('hidden')) {
+      if (!document.getElementById('view-pin-lock').classList.contains('hidden') && document.getElementById('modal-admin-auth').classList.contains('hidden') && document.getElementById('modal-admin-panel').classList.contains('hidden')) {
         if (/^[0-9]$/.test(e.key)) { e.preventDefault(); pressLockDigit(e.key); }
         else if (e.key === 'Backspace') { e.preventDefault(); backspaceLockBuffer(); }
         else if (e.key === 'Enter') { e.preventDefault(); verifyDeviceLockPin(); }
@@ -3172,6 +3577,8 @@
       }
       if (e.key === 'Escape') {
         closeFullscreenMedia();
+        closeAdminPanel();
+        closeAdminAuthModal();
         closeCreateFolderModal();
         closeForwardFolderModal();
         closeAboutModal();
@@ -3179,7 +3586,7 @@
       }
     });
 
-    // 15. UTILITÁRIOS E INICIALIZAÇÃO
+    // 16. UTILITÁRIOS E INICIALIZAÇÃO
     function switchView(viewName) {
       ['auth', 'setup', 'pin-lock', 'workspace'].forEach(v => {
         const el = document.getElementById(`view-${v}`);
