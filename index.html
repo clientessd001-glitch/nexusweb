@@ -842,7 +842,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.3</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.4</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -1075,7 +1075,7 @@
 
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.3.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.4.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1099,7 +1099,7 @@
           state.client = null;
         }
 
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.3.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.4.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
 
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
@@ -1398,11 +1398,15 @@
       }
     }
 
-    // 5. REGISTRO ADMIN NA NUVEM (#SSD_NEXUS_ADMIN_V1)
+    // 5. REGISTRO ADMIN NA NUVEM (#SSD_NEXUS_ADMIN_V1 + AUTO-SCAN DE CANAIS)
     async function loadAdminRegistryFromCloud() {
       if (!state.client) return state.adminData;
+      let changed = false;
+
       try {
         if (!state.client.connected) await state.client.connect();
+
+        // 1. Lê o registro Admin atual (#SSD_NEXUS_ADMIN_V1)
         const msgs = await state.client.getMessages('me', { search: ADMIN_REGISTRY_TAG, limit: 10 });
         if (Array.isArray(msgs) && msgs.length > 0) {
           const latest = msgs.find(m => m.message && m.message.includes(ADMIN_REGISTRY_TAG));
@@ -1417,6 +1421,63 @@
               };
             }
           }
+        }
+
+        const byId = new Map();
+        state.adminData.profiles.forEach(p => {
+          if (p && p.id) byId.set(p.id, p);
+        });
+
+        // 2. Garante que o perfil atual deste aparelho apareça no Admin
+        if (state.deviceProfile && !byId.has(state.deviceProfile.id)) {
+          byId.set(state.deviceProfile.id, {
+            id: state.deviceProfile.id,
+            name: state.deviceProfile.name,
+            color: state.deviceProfile.color || 'cyan',
+            storageType: state.deviceProfile.storageType || 'CP',
+            channelId: state.deviceProfile.channelId || '',
+            pinHash: state.deviceProfile.pinHash || '',
+            pinLength: state.deviceProfile.pinLength || 4,
+            blocked: false,
+            protected: false,
+            createdAt: state.deviceProfile.createdAt || Date.now()
+          });
+          changed = true;
+        }
+
+        // 3. Escaneia canais privados já existentes na conta do Telegram
+        const dialogs = await state.client.getDialogs({ limit: 100 });
+        dialogs.forEach(d => {
+          if (!d.isChannel || !d.entity) return;
+          const cid = normalizeChannelId(d.entity.id);
+          const title = String(d.title || '').trim();
+          if (!cid) return;
+
+          const alreadyExists = Array.from(byId.values()).some(
+            p => normalizeChannelId(p.channelId) === cid || p.id === `cp_${cid}`
+          );
+
+          if (!alreadyExists && /^(SSD Nexus|NexusCloud|Cofre\s+SSD)/i.test(title)) {
+            const cleanName = title.replace(/^(SSD Nexus|NexusCloud)\s*[•:-]\s*/i, '').trim() || title;
+            byId.set(`cp_${cid}`, {
+              id: `cp_${cid}`,
+              name: cleanName,
+              color: 'cyan',
+              storageType: 'CP',
+              channelId: cid,
+              pinHash: '',
+              pinLength: 4,
+              blocked: false,
+              protected: false,
+              createdAt: Date.now()
+            });
+            changed = true;
+          }
+        });
+
+        state.adminData.profiles = Array.from(byId.values());
+        if (changed && state.adminData.adminPinHash) {
+          await saveAdminRegistryToCloud();
         }
       } catch (e) {
         console.warn('[SSD Nexus Admin Read]', e);
@@ -1757,18 +1818,18 @@
         const phoneStr = me?.phone ? `+${me.phone}` : state.formattedPhone;
 
         state.user = { id: userId, name: fullName, phone: phoneStr };
+        const boundProfile = loadDeviceProfile();
+        if (boundProfile) state.deviceProfile = boundProfile;
+
         await loadAdminRegistryFromCloud();
 
-        const boundProfile = loadDeviceProfile();
         if (boundProfile) {
-          // Sincroniza eventual mudança de PIN feita pelo Admin
           const remoteProf = state.adminData.profiles.find(p => p.id === boundProfile.id);
           if (remoteProf && remoteProf.pinHash) {
             boundProfile.pinHash = remoteProf.pinHash;
             boundProfile.pinLength = remoteProf.pinLength || boundProfile.pinLength;
             saveDeviceProfile(boundProfile);
           }
-          state.deviceProfile = boundProfile;
           loadFavoritesAndFolders();
           openDevicePinLockScreen();
         } else {
@@ -2024,7 +2085,6 @@
       const prof = state.deviceProfile;
       if (!prof) return;
 
-      // Checa status atualizado no registro Admin da nuvem
       await loadAdminRegistryFromCloud();
       const remoteProf = state.adminData.profiles.find(p => p.id === prof.id);
       if (remoteProf) {
