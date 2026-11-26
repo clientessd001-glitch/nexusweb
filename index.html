@@ -142,7 +142,7 @@
         </button>
       </div>
 
-      <!-- Entrada de Telefone (+55 com asteriscos visuais) -->
+      <!-- Entrada de Telefone -->
       <div id="auth-panel-phone" class="hidden space-y-4 animate-fade-up">
         <div>
           <label for="input-phone" class="block text-xs font-medium text-slate-300 mb-2">Número de Celular</label>
@@ -434,7 +434,7 @@
           <i data-lucide="cloud-upload" class="h-8 w-8 animate-bounce"></i>
         </div>
         <h2 class="text-xl font-bold text-white">Solte para enviar para <span id="drag-target-profile-name" class="text-[#06b6d4]">seu Cofre</span></h2>
-        <p class="mt-1.5 text-xs text-slate-400">Os arquivos serão enviados exclusivamente para o cofre deste aparelho</p>
+        <p class="mt-1.5 text-xs text-slate-400">Os arquivos entram na fila de upload em segundo plano com Pausar/Retomar</p>
       </div>
     </div>
 
@@ -626,7 +626,7 @@
       </header>
 
       <div class="flex flex-1 overflow-hidden">
-        <main class="flex-1 overflow-y-auto p-4 lg:p-6 pb-24">
+        <main class="flex-1 overflow-y-auto p-4 lg:p-6 pb-28">
           <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div class="flex flex-wrap items-center gap-2.5">
@@ -638,7 +638,7 @@
                 </button>
               </div>
               <p class="mt-1 text-xs text-slate-400">
-                Arquivos organizados por data de upload. Arraste para esta janela ou toque na nuvem para enviar.
+                Arquivos organizados por data de upload. Envie em segundo plano com Pausar/Retomar enquanto navega.
               </p>
             </div>
           </div>
@@ -653,6 +653,32 @@
 
         <aside id="ws-preview-drawer" class="fixed inset-y-0 right-0 z-40 hidden w-full sm:w-[420px] flex-col border-l border-[#1e293b] bg-[#0d1324] shadow-2xl lg:static"></aside>
       </div>
+    </div>
+
+    <!-- PAINEL DE FILA DE UPLOAD EM SEGUNDO PLANO (PAUSAR / RETOMAR / MINIMIZAR) -->
+    <div id="upload-queue-dock" class="fixed bottom-20 right-4 z-40 hidden w-[calc(100vw-2rem)] max-w-sm rounded-2xl border border-[#06b6d4]/50 bg-[#0d1324]/95 shadow-2xl backdrop-blur-xl overflow-hidden animate-fade-up">
+      <div onclick="toggleUploadQueueExpand()" class="flex items-center justify-between gap-2 px-4 py-3 bg-[#060913]/90 border-b border-[#1e293b] cursor-pointer select-none">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div id="uq-status-dot" class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#06b6d4]/15 text-[#06b6d4]">
+            <i data-lucide="cloud-upload" class="h-4 w-4"></i>
+          </div>
+          <div class="min-w-0">
+            <div id="uq-summary-title" class="truncate text-xs font-bold text-white">Enviando em segundo plano</div>
+            <div id="uq-summary-sub" class="font-mono text-[10px] text-[#06b6d4]">0% • 0/0 concluídos</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
+          <button id="btn-uq-pause-all" type="button" onclick="togglePauseAllUploads()" title="Pausar/Retomar todos" class="rounded-lg border border-[#1e293b] bg-[#111827] px-2 py-1 text-[10px] font-semibold text-amber-300 hover:border-amber-400/50 transition">Pausar</button>
+          <button type="button" onclick="toggleUploadQueueExpand()" title="Expandir/Minimizar" class="rounded-lg p-1 text-slate-400 hover:text-white">
+            <i id="icon-uq-chevron" data-lucide="chevron-down" class="h-4 w-4"></i>
+          </button>
+          <button id="btn-uq-clear-done" type="button" onclick="clearFinishedUploads()" title="Fechar" class="hidden rounded-lg p-1 text-slate-400 hover:text-white">
+            <i data-lucide="x" class="h-4 w-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="uq-items-body" class="max-h-64 overflow-y-auto p-3 space-y-2"></div>
     </div>
 
     <!-- BOTÃO FLUTUANTE DE NUVEM PARA UPLOAD -->
@@ -842,7 +868,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.4</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.5</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -857,8 +883,8 @@
           <span class="font-semibold text-white">SSD Soluções 2026</span>
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
-          <span class="text-slate-400">Organização</span>
-          <span class="font-mono text-emerald-400">Timeline por Dia + Pastas</span>
+          <span class="text-slate-400">Transferência</span>
+          <span class="font-mono text-emerald-400">Fila 2º Plano + Pausar/Retomar</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
@@ -873,7 +899,7 @@
   </div>
 
   <!-- Pilha de Notificações Toast -->
-  <div id="toast-stack" class="fixed bottom-20 right-4 z-[80] flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
+  <div id="toast-stack" class="fixed top-20 right-4 z-[80] flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
 
   <!-- Carregamento do bundle local GramJS -->
   <script>window.__SSD_GRAMJS_SCRIPT_FAILED = false;</script>
@@ -930,6 +956,9 @@
       activeFolderId: null,
       newFolderColor: 'cyan',
       forwardTargetKey: null,
+      uploadQueue: [],
+      uploadQueueExpanded: true,
+      uploadWorkerRunning: false,
       cloudFiles: [],
       rawMessagesByKey: new Map(),
       favoriteKeys: new Set(),
@@ -1075,7 +1104,7 @@
 
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.4.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.5.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1099,7 +1128,7 @@
           state.client = null;
         }
 
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.4.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.5.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
 
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
@@ -1406,7 +1435,6 @@
       try {
         if (!state.client.connected) await state.client.connect();
 
-        // 1. Lê o registro Admin atual (#SSD_NEXUS_ADMIN_V1)
         const msgs = await state.client.getMessages('me', { search: ADMIN_REGISTRY_TAG, limit: 10 });
         if (Array.isArray(msgs) && msgs.length > 0) {
           const latest = msgs.find(m => m.message && m.message.includes(ADMIN_REGISTRY_TAG));
@@ -1424,11 +1452,8 @@
         }
 
         const byId = new Map();
-        state.adminData.profiles.forEach(p => {
-          if (p && p.id) byId.set(p.id, p);
-        });
+        state.adminData.profiles.forEach(p => { if (p && p.id) byId.set(p.id, p); });
 
-        // 2. Garante que o perfil atual deste aparelho apareça no Admin
         if (state.deviceProfile && !byId.has(state.deviceProfile.id)) {
           byId.set(state.deviceProfile.id, {
             id: state.deviceProfile.id,
@@ -1445,7 +1470,6 @@
           changed = true;
         }
 
-        // 3. Escaneia canais privados já existentes na conta do Telegram
         const dialogs = await state.client.getDialogs({ limit: 100 });
         dialogs.forEach(d => {
           if (!d.isChannel || !d.entity) return;
@@ -1476,12 +1500,8 @@
         });
 
         state.adminData.profiles = Array.from(byId.values());
-        if (changed && state.adminData.adminPinHash) {
-          await saveAdminRegistryToCloud();
-        }
-      } catch (e) {
-        console.warn('[SSD Nexus Admin Read]', e);
-      }
+        if (changed && state.adminData.adminPinHash) await saveAdminRegistryToCloud();
+      } catch (e) {}
       return state.adminData;
     }
 
@@ -1524,7 +1544,6 @@
       await saveAdminRegistryToCloud();
     }
 
-    // Entrada discreta: 5 toques no logo/avatar/Sobre
     function registerAdminSecretTap() {
       if (!state.client || !state.user) return;
       state.adminTapCount++;
@@ -1633,11 +1652,7 @@
       document.getElementById('admin-stats-label').textContent = `${list.length} perfil(is) registrados`;
 
       if (list.length === 0) {
-        container.innerHTML = `
-          <div class="rounded-2xl border border-dashed border-[#1e293b] bg-[#060913] p-8 text-center text-xs text-slate-400">
-            Nenhum perfil registrado ainda na nuvem.
-          </div>
-        `;
+        container.innerHTML = `<div class="rounded-2xl border border-dashed border-[#1e293b] bg-[#060913] p-8 text-center text-xs text-slate-400">Nenhum perfil registrado ainda na nuvem.</div>`;
         return;
       }
 
@@ -1720,10 +1735,7 @@
       if (inp) inp.focus();
     }
 
-    function adminCancelPinEdit() {
-      state.adminEditingPinId = null;
-      renderAdminProfilesList();
-    }
+    function adminCancelPinEdit() { state.adminEditingPinId = null; renderAdminProfilesList(); }
 
     async function adminSaveNewPin(profileId) {
       const inp = document.getElementById(`admin-new-pin-${profileId}`);
@@ -1836,12 +1848,11 @@
           openDeviceSetupChoice();
         }
       } catch (err) {
-        console.error('[SSD Nexus Session Error]', err);
         showToast('Erro de Sessão', 'Não foi possível carregar os dados da conta.', 'danger');
       }
     }
 
-    // 7. TELA DE CONFIGURAÇÃO DO PERFIL (CRIAR OU JÁ TENHO + MS/CP)
+    // 7. TELA DE CONFIGURAÇÃO DO PERFIL
     function openDeviceSetupChoice() {
       document.getElementById('setup-choice-panel').classList.remove('hidden');
       document.getElementById('setup-form-panel').classList.add('hidden');
@@ -2031,7 +2042,7 @@
       }
     }
 
-    // 8. TELA DE PIN EXCLUSIVA DESTE APARELHO (COM CHECAGEM ADMIN)
+    // 8. TELA DE PIN EXCLUSIVA DESTE APARELHO
     function openDevicePinLockScreen() {
       revokeAllObjectUrls();
       state.isUnlocked = false;
@@ -2377,7 +2388,432 @@
       setTimeout(() => { if (card.parentNode) card.remove(); }, 10000);
     }
 
-    // 11. WORKSPACE E RESOLUÇÃO DE PEER (MS OU CP)
+    // 11. FILA DE UPLOAD EM SEGUNDO PLANO COM PAUSAR / RETOMAR / CANCELAR
+    const SSD_UPLOAD_CHUNK_SIZE = 512 * 1024;
+    const SSD_BIG_FILE_THRESHOLD = 10 * 1024 * 1024;
+    const SSD_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
+    const SSD_UPLOAD_CONCURRENCY = 3;
+
+    function triggerCloudUpload() {
+      const picker = document.getElementById('cloud-file-picker');
+      picker.value = '';
+      picker.click();
+    }
+
+    document.getElementById('cloud-file-picker').addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        enqueueBackgroundUploads(Array.from(e.target.files));
+        e.target.value = '';
+      }
+    });
+
+    function generateSafeFileId() {
+      return Math.floor(Math.random() * 8000000000000000) + 100000000000000;
+    }
+
+    function extractVideoMetadata(file) {
+      return new Promise((resolve) => {
+        if (!file.type || !file.type.startsWith('video/')) { resolve(null); return; }
+        const url = URL.createObjectURL(file);
+        const video = document.createElement('video');
+        let settled = false;
+        const finish = (meta) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          video.removeAttribute('src');
+          try { video.load(); } catch (e) {}
+          URL.revokeObjectURL(url);
+          resolve(meta);
+        };
+        const timer = setTimeout(() => finish(null), 3500);
+        video.preload = 'metadata';
+        video.muted = true;
+        video.onloadedmetadata = () => finish({ duration: Math.max(0, Math.round(video.duration || 0)), w: video.videoWidth || 0, h: video.videoHeight || 0 });
+        video.onerror = () => finish(null);
+        video.src = url;
+      });
+    }
+
+    function notifyNativeBackgroundUpload(isActive) {
+      if (window.AndroidBridge && typeof window.AndroidBridge.setUploadActive === 'function') {
+        try { window.AndroidBridge.setUploadActive(Boolean(isActive)); } catch (e) {}
+      }
+    }
+
+    function enqueueBackgroundUploads(fileList) {
+      if (!state.client || !state.gramjsLib || !state.deviceProfile) return;
+      const targetFolderId = state.category === 'folder' ? state.activeFolderId : null;
+      let added = 0;
+
+      for (const file of fileList) {
+        if (!file.size) continue;
+        if (file.size > SSD_MAX_FILE_SIZE) {
+          showToast('Arquivo Muito Grande', `${file.name} excede o limite de 2 GB.`, 'danger');
+          continue;
+        }
+        state.uploadQueue.push({
+          uid: 'up_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+          file,
+          name: file.name,
+          totalSize: file.size,
+          uploadedBytes: 0,
+          pct: 0,
+          speedBps: 0,
+          status: 'queued', // queued | uploading | paused | finalizing | done | error | cancelled
+          errorMsg: '',
+          targetFolderId,
+          // Estado retomável por blocos
+          fileId: generateSafeFileId(),
+          totalParts: Math.ceil(file.size / SSD_UPLOAD_CHUNK_SIZE),
+          isBig: file.size > SSD_BIG_FILE_THRESHOLD,
+          completedParts: new Set()
+        });
+        added++;
+      }
+
+      if (added > 0) {
+        state.uploadQueueExpanded = true;
+        renderUploadQueueDock();
+        processUploadQueueWorker();
+      }
+    }
+
+    function toggleUploadQueueExpand() {
+      state.uploadQueueExpanded = !state.uploadQueueExpanded;
+      renderUploadQueueDock();
+    }
+
+    function toggleUploadItemPause(uid) {
+      const task = state.uploadQueue.find(t => t.uid === uid);
+      if (!task) return;
+      if (task.status === 'uploading' || task.status === 'queued') {
+        task.status = 'paused';
+        task.speedBps = 0;
+      } else if (task.status === 'paused' || task.status === 'error') {
+        task.status = 'queued';
+        task.errorMsg = '';
+        processUploadQueueWorker();
+      }
+      renderUploadQueueDock();
+    }
+
+    function togglePauseAllUploads() {
+      const hasActive = state.uploadQueue.some(t => t.status === 'uploading' || t.status === 'queued');
+      state.uploadQueue.forEach(t => {
+        if (hasActive && (t.status === 'uploading' || t.status === 'queued')) {
+          t.status = 'paused';
+          t.speedBps = 0;
+        } else if (!hasActive && (t.status === 'paused' || t.status === 'error')) {
+          t.status = 'queued';
+          t.errorMsg = '';
+        }
+      });
+      renderUploadQueueDock();
+      if (!hasActive) processUploadQueueWorker();
+    }
+
+    function cancelUploadItem(uid) {
+      const idx = state.uploadQueue.findIndex(t => t.uid === uid);
+      if (idx === -1) return;
+      const task = state.uploadQueue[idx];
+      task.status = 'cancelled';
+      state.uploadQueue.splice(idx, 1);
+      renderUploadQueueDock();
+    }
+
+    function clearFinishedUploads() {
+      state.uploadQueue = state.uploadQueue.filter(t => !['done', 'error', 'cancelled'].includes(t.status));
+      renderUploadQueueDock();
+    }
+
+    function renderUploadQueueDock() {
+      const dock = document.getElementById('upload-queue-dock');
+      const body = document.getElementById('uq-items-body');
+      const chevron = document.getElementById('icon-uq-chevron');
+      const btnPauseAll = document.getElementById('btn-uq-pause-all');
+      const btnClear = document.getElementById('btn-uq-clear-done');
+
+      if (!dock || !body) return;
+
+      if (state.uploadQueue.length === 0) {
+        dock.classList.add('hidden');
+        notifyNativeBackgroundUpload(false);
+        return;
+      }
+
+      dock.classList.remove('hidden');
+      body.classList.toggle('hidden', !state.uploadQueueExpanded);
+      if (chevron) chevron.setAttribute('data-lucide', state.uploadQueueExpanded ? 'chevron-down' : 'chevron-up');
+
+      const total = state.uploadQueue.length;
+      const doneCount = state.uploadQueue.filter(t => t.status === 'done').length;
+      const activeCount = state.uploadQueue.filter(t => ['uploading', 'queued', 'finalizing'].includes(t.status)).length;
+      const pausedCount = state.uploadQueue.filter(t => t.status === 'paused').length;
+      const totalBytesAll = state.uploadQueue.reduce((s, t) => s + t.totalSize, 0) || 1;
+      const uploadedBytesAll = state.uploadQueue.reduce((s, t) => s + (t.status === 'done' ? t.totalSize : t.uploadedBytes), 0);
+      const overallPct = Math.min(100, Math.round((uploadedBytesAll / totalBytesAll) * 100));
+
+      notifyNativeBackgroundUpload(activeCount > 0);
+      if (activeCount > 0) resetAutoLockTimer();
+
+      const titleEl = document.getElementById('uq-summary-title');
+      const subEl = document.getElementById('uq-summary-sub');
+      if (activeCount > 0) {
+        titleEl.textContent = `Enviando em segundo plano (${activeCount})`;
+        subEl.textContent = `${overallPct}% • ${doneCount}/${total} concluídos`;
+      } else if (pausedCount > 0) {
+        titleEl.textContent = `Envio pausado (${pausedCount})`;
+        subEl.textContent = `${overallPct}% • Toque em Retomar para continuar`;
+      } else {
+        titleEl.textContent = `Envios finalizados`;
+        subEl.textContent = `${doneCount}/${total} arquivos enviados`;
+      }
+
+      if (activeCount > 0) {
+        btnPauseAll.classList.remove('hidden');
+        btnPauseAll.textContent = 'Pausar';
+        btnPauseAll.className = 'rounded-lg border border-amber-500/40 bg-amber-500/15 px-2 py-1 text-[10px] font-semibold text-amber-300 hover:bg-amber-500 hover:text-slate-950 transition';
+      } else if (pausedCount > 0) {
+        btnPauseAll.classList.remove('hidden');
+        btnPauseAll.textContent = 'Retomar';
+        btnPauseAll.className = 'rounded-lg border border-emerald-500/40 bg-emerald-500/15 px-2 py-1 text-[10px] font-semibold text-emerald-300 hover:bg-emerald-500 hover:text-slate-950 transition';
+      } else {
+        btnPauseAll.classList.add('hidden');
+      }
+
+      btnClear.classList.toggle('hidden', activeCount > 0 || pausedCount > 0);
+
+      body.innerHTML = state.uploadQueue.map(t => {
+        const isPaused = t.status === 'paused';
+        const isDone = t.status === 'done';
+        const isErr = t.status === 'error';
+        const canPauseResume = ['uploading', 'queued', 'paused', 'error'].includes(t.status);
+
+        let statusText = `${t.pct}%`;
+        if (isPaused) statusText = `Pausado (${t.pct}%)`;
+        else if (t.status === 'queued') statusText = 'Na fila...';
+        else if (t.status === 'finalizing') statusText = 'Finalizando...';
+        else if (isDone) statusText = 'Concluído';
+        else if (isErr) statusText = 'Falhou';
+        else if (t.speedBps > 0) statusText = `${t.pct}% • ${formatFileSize(t.speedBps)}/s`;
+
+        return `
+          <div class="rounded-xl border border-[#1e293b] bg-[#060913] p-2.5 space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="truncate text-[11px] font-semibold text-slate-100 flex-1" title="${escapeHtml(t.name)}">${escapeHtml(t.name)}</span>
+              <div class="flex items-center gap-1 shrink-0">
+                ${canPauseResume ? `
+                  <button type="button" onclick="toggleUploadItemPause('${t.uid}')" title="${isPaused || isErr ? 'Retomar' : 'Pausar'}" class="rounded-md border border-[#1e293b] bg-[#111827] px-2 py-0.5 text-[10px] font-semibold ${isPaused || isErr ? 'text-emerald-300 hover:border-emerald-400/50' : 'text-amber-300 hover:border-amber-400/50'} transition">
+                    ${isPaused || isErr ? '▶ Retomar' : '⏸ Pausar'}
+                  </button>
+                ` : ''}
+                ${!isDone ? `
+                  <button type="button" onclick="cancelUploadItem('${t.uid}')" title="Cancelar" class="rounded-md border border-[#dc2626]/40 bg-[#dc2626]/15 px-1.5 py-0.5 text-[10px] font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition">✕</button>
+                ` : ''}
+              </div>
+            </div>
+            <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#111827]">
+              <div class="h-full rounded-full transition-all duration-150 ${isDone ? 'bg-emerald-500' : (isPaused ? 'bg-amber-400' : (isErr ? 'bg-[#dc2626]' : 'bg-gradient-to-r from-[#2563eb] to-[#06b6d4]'))}" style="width: ${isDone ? 100 : t.pct}%"></div>
+            </div>
+            <div class="flex items-center justify-between text-[10px] font-mono text-slate-400">
+              <span>${formatFileSize(isDone ? t.totalSize : t.uploadedBytes)} / ${formatFileSize(t.totalSize)}</span>
+              <span class="${isDone ? 'text-emerald-400' : (isPaused ? 'text-amber-300' : (isErr ? 'text-rose-400' : 'text-[#06b6d4]'))}">${statusText}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      refreshIcons();
+    }
+
+    async function uploadTaskResumableChunks(task) {
+      const { Api, Buffer } = state.gramjsLib;
+      const pendingParts = [];
+      for (let i = 0; i < task.totalParts; i++) {
+        if (!task.completedParts.has(i)) pendingParts.push(i);
+      }
+
+      let cursor = 0;
+      let fatalError = null;
+      let sessionBytes = 0;
+      const startedAt = Date.now();
+
+      async function uploadPart(partIndex) {
+        const start = partIndex * SSD_UPLOAD_CHUNK_SIZE;
+        const end = Math.min(start + SSD_UPLOAD_CHUNK_SIZE, task.totalSize);
+        const chunkAb = await task.file.slice(start, end).arrayBuffer();
+        const chunkBuf = Buffer.from(new Uint8Array(chunkAb));
+
+        let attempt = 0;
+        while (attempt < 5) {
+          if (task.status === 'paused') throw new Error('UPLOAD_PAUSED');
+          if (task.status === 'cancelled') throw new Error('UPLOAD_CANCELLED');
+          attempt++;
+          try {
+            if (!state.client.connected) await state.client.connect();
+            if (task.isBig) {
+              await state.client.invoke(new Api.upload.SaveBigFilePart({ fileId: task.fileId, filePart: partIndex, fileTotalParts: task.totalParts, bytes: chunkBuf }));
+            } else {
+              await state.client.invoke(new Api.upload.SaveFilePart({ fileId: task.fileId, filePart: partIndex, bytes: chunkBuf }));
+            }
+            task.completedParts.add(partIndex);
+            task.uploadedBytes = Math.min(task.totalSize, task.completedParts.size * SSD_UPLOAD_CHUNK_SIZE);
+            sessionBytes += chunkBuf.length;
+            const elapsedSec = Math.max(0.2, (Date.now() - startedAt) / 1000);
+            task.speedBps = sessionBytes / elapsedSec;
+            task.pct = Math.min(99, Math.max(1, Math.round((task.completedParts.size / task.totalParts) * 100)));
+            renderUploadQueueDock();
+            return;
+          } catch (err) {
+            if (task.status === 'paused') throw new Error('UPLOAD_PAUSED');
+            if (task.status === 'cancelled') throw new Error('UPLOAD_CANCELLED');
+            const errMsg = String((err && (err.errorMessage || err.message)) || '');
+            const floodMatch = errMsg.match(/FLOOD_WAIT_(\d+)/i);
+            if (floodMatch) {
+              await new Promise(r => setTimeout(r, Math.min((parseInt(floodMatch[1], 10) + 1) * 1000, 30000)));
+            } else if (attempt < 5) {
+              await new Promise(r => setTimeout(r, attempt * 1500));
+              try { if (!state.client.connected) await state.client.connect(); } catch (e) {}
+            } else {
+              throw err;
+            }
+          }
+        }
+      }
+
+      const workers = [];
+      for (let w = 0; w < Math.min(SSD_UPLOAD_CONCURRENCY, pendingParts.length); w++) {
+        workers.push((async () => {
+          while (!fatalError && task.status === 'uploading') {
+            const idx = cursor++;
+            if (idx >= pendingParts.length) break;
+            try { await uploadPart(pendingParts[idx]); } catch (err) { fatalError = err; break; }
+          }
+        })());
+      }
+      await Promise.all(workers);
+
+      if (task.status === 'paused') throw new Error('UPLOAD_PAUSED');
+      if (task.status === 'cancelled') throw new Error('UPLOAD_CANCELLED');
+      if (fatalError) throw fatalError;
+
+      return task.isBig
+        ? new Api.InputFileBig({ id: task.fileId, parts: task.totalParts, name: task.name })
+        : new Api.InputFile({ id: task.fileId, parts: task.totalParts, name: task.name, md5Checksum: '' });
+    }
+
+    async function processUploadQueueWorker() {
+      if (state.uploadWorkerRunning) return;
+      state.uploadWorkerRunning = true;
+
+      try {
+        const { Api } = state.gramjsLib;
+        while (true) {
+          const nextTask = state.uploadQueue.find(t => t.status === 'queued');
+          if (!nextTask) break;
+
+          nextTask.status = 'uploading';
+          renderUploadQueueDock();
+
+          try {
+            if (!state.client.connected) await state.client.connect();
+            const rawPeer = await resolveDeviceProfilePeer();
+            const inputPeer = rawPeer === 'me' ? new Api.InputPeerSelf() : await state.client.getInputEntity(rawPeer);
+
+            const inputFile = await uploadTaskResumableChunks(nextTask);
+
+            nextTask.status = 'finalizing';
+            nextTask.pct = 99;
+            nextTask.speedBps = 0;
+            renderUploadQueueDock();
+
+            const file = nextTask.file;
+            const isSmallPhoto = file.type && file.type.startsWith('image/') && file.size <= SSD_BIG_FILE_THRESHOLD;
+            const isVideo = (file.type && file.type.startsWith('video/')) || /\.(mp4|mov|m4v|webm|mkv|avi)$/i.test(file.name);
+
+            let media;
+            if (isSmallPhoto) {
+              media = new Api.InputMediaUploadedPhoto({ file: inputFile });
+            } else {
+              const attributes = [new Api.DocumentAttributeFilename({ fileName: file.name })];
+              if (isVideo) {
+                const vMeta = await extractVideoMetadata(file);
+                if (vMeta && vMeta.w > 0 && vMeta.h > 0) {
+                  attributes.push(new Api.DocumentAttributeVideo({ duration: vMeta.duration, w: vMeta.w, h: vMeta.h, supportsStreaming: true }));
+                }
+              }
+              media = new Api.InputMediaUploadedDocument({
+                file: inputFile,
+                mimeType: file.type || (isVideo ? 'video/mp4' : 'application/octet-stream'),
+                attributes,
+                forceFile: !isVideo
+              });
+            }
+
+            const beforeIds = new Set(state.cloudFiles.map(f => f.id));
+            await state.client.invoke(new Api.messages.SendMedia({ peer: inputPeer, media, message: file.name, randomId: generateSafeFileId() }));
+
+            nextTask.status = 'done';
+            nextTask.pct = 100;
+            nextTask.uploadedBytes = nextTask.totalSize;
+            renderUploadQueueDock();
+
+            await refreshCloudFiles(false);
+            if (nextTask.targetFolderId) {
+              state.cloudFiles.forEach(item => {
+                if (!beforeIds.has(item.id)) state.fileFolderMap[item.key] = nextTask.targetFolderId;
+              });
+              saveFoldersStorage();
+              renderSidebarFolders();
+              renderWorkspaceFiles();
+            }
+          } catch (err) {
+            if (err && (err.message === 'UPLOAD_PAUSED' || err.message === 'UPLOAD_CANCELLED')) {
+              renderUploadQueueDock();
+            } else {
+              nextTask.status = 'error';
+              nextTask.speedBps = 0;
+              nextTask.errorMsg = sanitizeBrandText(err && (err.errorMessage || err.message) ? (err.errorMessage || err.message) : 'Erro');
+              renderUploadQueueDock();
+            }
+          }
+        }
+      } finally {
+        state.uploadWorkerRunning = false;
+        renderUploadQueueDock();
+      }
+    }
+
+    let dragCounter = 0;
+    const dragOverlayEl = document.getElementById('ws-drag-overlay');
+    window.addEventListener('dragenter', (e) => {
+      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
+      e.preventDefault();
+      dragCounter++;
+      dragOverlayEl.classList.remove('hidden');
+      dragOverlayEl.classList.add('flex');
+    });
+    window.addEventListener('dragover', (e) => {
+      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
+      e.preventDefault();
+    });
+    window.addEventListener('dragleave', (e) => {
+      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
+      e.preventDefault();
+      dragCounter--;
+      if (dragCounter <= 0) { dragCounter = 0; dragOverlayEl.classList.add('hidden'); dragOverlayEl.classList.remove('flex'); }
+    });
+    window.addEventListener('drop', (e) => {
+      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
+      e.preventDefault();
+      dragCounter = 0;
+      dragOverlayEl.classList.add('hidden');
+      dragOverlayEl.classList.remove('flex');
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) enqueueBackgroundUploads(Array.from(e.dataTransfer.files));
+    });
+
+    // 12. WORKSPACE E RESOLUÇÃO DE PEER (MS OU CP)
     async function resolveDeviceProfilePeer() {
       const prof = state.deviceProfile;
       if (!prof || prof.storageType === 'MS' || !prof.channelId) return 'me';
@@ -2420,6 +2856,7 @@
       setWorkspaceCols(state.gridCols);
       renderWorkspaceHeaderAndProfile();
       renderSidebarFolders();
+      renderUploadQueueDock();
       resetAutoLockTimer();
       await refreshCloudFiles(false);
     }
@@ -2631,272 +3068,6 @@
         processThumbnailQueue();
       }
     }
-
-    // 12. UPLOAD EM STREAMING (BLOCOS DE 512 KB)
-    const SSD_UPLOAD_CHUNK_SIZE = 512 * 1024;
-    const SSD_BIG_FILE_THRESHOLD = 10 * 1024 * 1024;
-    const SSD_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
-    const SSD_UPLOAD_CONCURRENCY = 3;
-
-    function triggerCloudUpload() {
-      const picker = document.getElementById('cloud-file-picker');
-      picker.value = '';
-      picker.click();
-    }
-
-    document.getElementById('cloud-file-picker').addEventListener('change', (e) => {
-      if (e.target.files && e.target.files.length > 0) {
-        uploadFilesToCloud(Array.from(e.target.files));
-        e.target.value = '';
-      }
-    });
-
-    function generateSafeFileId() {
-      return Math.floor(Math.random() * 8000000000000000) + 100000000000000;
-    }
-
-    function extractVideoMetadata(file) {
-      return new Promise((resolve) => {
-        if (!file.type || !file.type.startsWith('video/')) { resolve(null); return; }
-        const url = URL.createObjectURL(file);
-        const video = document.createElement('video');
-        let settled = false;
-        const finish = (meta) => {
-          if (settled) return;
-          settled = true;
-          clearTimeout(timer);
-          video.removeAttribute('src');
-          try { video.load(); } catch (e) {}
-          URL.revokeObjectURL(url);
-          resolve(meta);
-        };
-        const timer = setTimeout(() => finish(null), 3500);
-        video.preload = 'metadata';
-        video.muted = true;
-        video.onloadedmetadata = () => finish({ duration: Math.max(0, Math.round(video.duration || 0)), w: video.videoWidth || 0, h: video.videoHeight || 0 });
-        video.onerror = () => finish(null);
-        video.src = url;
-      });
-    }
-
-    function createUploadProgressCard(fileName, totalSize, cancelState) {
-      const stack = document.getElementById('toast-stack');
-      const card = document.createElement('div');
-      card.className = 'pointer-events-auto rounded-2xl border border-[#06b6d4]/45 bg-[#0d1324]/95 p-3.5 shadow-2xl backdrop-blur-xl animate-fade-up space-y-2';
-      card.innerHTML = `
-        <div class="flex items-center justify-between gap-2">
-          <span class="truncate text-xs font-semibold text-white max-w-[195px]" title="${escapeHtml(fileName)}">Enviando ${escapeHtml(fileName)}</span>
-          <div class="flex items-center gap-2 shrink-0">
-            <span data-up-pct class="font-mono text-xs font-bold text-[#06b6d4]">0%</span>
-            <button type="button" data-up-cancel class="rounded-md border border-[#dc2626]/40 bg-[#dc2626]/15 px-1.5 py-0.5 text-[10px] font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition">Cancelar</button>
-          </div>
-        </div>
-        <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#060913]">
-          <div data-up-bar class="h-full rounded-full bg-gradient-to-r from-[#2563eb] to-[#06b6d4] transition-all duration-150" style="width: 1%"></div>
-        </div>
-        <div class="flex items-center justify-between text-[10px] font-mono text-slate-400">
-          <span data-up-bytes>0 B / ${formatFileSize(totalSize)}</span>
-          <span data-up-speed>Preparando...</span>
-        </div>
-      `;
-      const cancelBtn = card.querySelector('[data-up-cancel]');
-      cancelBtn.addEventListener('click', () => {
-        cancelState.aborted = true;
-        cancelBtn.disabled = true;
-        cancelBtn.textContent = 'Cancelando...';
-      });
-      stack.appendChild(card);
-      return card;
-    }
-
-    function updateUploadProgressCard(card, { pct, uploadedBytes, totalSize, speedBps, statusText }) {
-      if (!card) return;
-      const pctEl = card.querySelector('[data-up-pct]');
-      const barEl = card.querySelector('[data-up-bar]');
-      const bytesEl = card.querySelector('[data-up-bytes]');
-      const speedEl = card.querySelector('[data-up-speed]');
-      if (pctEl) pctEl.textContent = `${pct}%`;
-      if (barEl) barEl.style.width = `${pct}%`;
-      if (bytesEl && typeof uploadedBytes === 'number') bytesEl.textContent = `${formatFileSize(uploadedBytes)} / ${formatFileSize(totalSize)}`;
-      if (speedEl) speedEl.textContent = statusText || (speedBps > 0 ? `${formatFileSize(speedBps)}/s` : 'Enviando...');
-    }
-
-    async function uploadFileInChunks(file, onProgress, cancelState) {
-      const { Api, Buffer } = state.gramjsLib;
-      const totalSize = file.size;
-      const totalParts = Math.ceil(totalSize / SSD_UPLOAD_CHUNK_SIZE);
-      const isBig = totalSize > SSD_BIG_FILE_THRESHOLD;
-      const fileId = generateSafeFileId();
-
-      let nextPart = 0;
-      let uploadedBytes = 0;
-      let fatalError = null;
-      const startedAt = Date.now();
-
-      async function uploadSinglePart(partIndex) {
-        const start = partIndex * SSD_UPLOAD_CHUNK_SIZE;
-        const end = Math.min(start + SSD_UPLOAD_CHUNK_SIZE, totalSize);
-        const chunkAb = await file.slice(start, end).arrayBuffer();
-        const chunkBuf = Buffer.from(new Uint8Array(chunkAb));
-
-        let attempt = 0;
-        while (attempt < 5) {
-          if (cancelState.aborted) throw new Error('UPLOAD_CANCELLED');
-          attempt++;
-          try {
-            if (!state.client.connected) await state.client.connect();
-            if (isBig) {
-              await state.client.invoke(new Api.upload.SaveBigFilePart({ fileId, filePart: partIndex, fileTotalParts: totalParts, bytes: chunkBuf }));
-            } else {
-              await state.client.invoke(new Api.upload.SaveFilePart({ fileId, filePart: partIndex, bytes: chunkBuf }));
-            }
-            uploadedBytes += chunkBuf.length;
-            resetAutoLockTimer();
-            if (typeof onProgress === 'function') {
-              const elapsedSec = Math.max(0.2, (Date.now() - startedAt) / 1000);
-              onProgress({ pct: Math.min(99, Math.max(1, Math.round((uploadedBytes / totalSize) * 100))), uploadedBytes, totalSize, speedBps: uploadedBytes / elapsedSec });
-            }
-            return;
-          } catch (err) {
-            if (cancelState.aborted) throw new Error('UPLOAD_CANCELLED');
-            const errMsg = String((err && (err.errorMessage || err.message)) || '');
-            const floodMatch = errMsg.match(/FLOOD_WAIT_(\d+)/i);
-            if (floodMatch) {
-              await new Promise(r => setTimeout(r, Math.min((parseInt(floodMatch[1], 10) + 1) * 1000, 30000)));
-            } else if (attempt < 5) {
-              await new Promise(r => setTimeout(r, attempt * 1500));
-              try { if (!state.client.connected) await state.client.connect(); } catch (e) {}
-            } else {
-              throw err;
-            }
-          }
-        }
-      }
-
-      const workers = [];
-      for (let w = 0; w < Math.min(SSD_UPLOAD_CONCURRENCY, totalParts); w++) {
-        workers.push((async () => {
-          while (!fatalError && !cancelState.aborted) {
-            const partIndex = nextPart++;
-            if (partIndex >= totalParts) break;
-            try { await uploadSinglePart(partIndex); } catch (err) { fatalError = err; break; }
-          }
-        })());
-      }
-      await Promise.all(workers);
-
-      if (cancelState.aborted) throw new Error('UPLOAD_CANCELLED');
-      if (fatalError) throw fatalError;
-      return isBig
-        ? new Api.InputFileBig({ id: fileId, parts: totalParts, name: file.name })
-        : new Api.InputFile({ id: fileId, parts: totalParts, name: file.name, md5Checksum: '' });
-    }
-
-    async function uploadFilesToCloud(fileList) {
-      if (!state.client || !state.gramjsLib || !state.deviceProfile) return;
-      const { Api, Buffer } = state.gramjsLib;
-      if (!Api || !Buffer) return;
-
-      const rawPeer = await resolveDeviceProfilePeer();
-      const inputPeer = rawPeer === 'me' ? new Api.InputPeerSelf() : await state.client.getInputEntity(rawPeer);
-      const targetFolderId = state.category === 'folder' ? state.activeFolderId : null;
-      const beforeIds = new Set(state.cloudFiles.map(f => f.id));
-      let uploadedCount = 0;
-
-      for (const file of fileList) {
-        if (!file.size) continue;
-        if (file.size > SSD_MAX_FILE_SIZE) {
-          showToast('Arquivo Muito Grande', `${file.name} excede o limite de 2 GB.`, 'danger');
-          continue;
-        }
-
-        const cancelState = { aborted: false };
-        const toastCard = createUploadProgressCard(file.name, file.size, cancelState);
-
-        try {
-          if (!state.client.connected) await state.client.connect();
-          const inputFile = await uploadFileInChunks(file, (prog) => updateUploadProgressCard(toastCard, prog), cancelState);
-
-          updateUploadProgressCard(toastCard, { pct: 99, uploadedBytes: file.size, totalSize: file.size, statusText: 'Finalizando...' });
-
-          const isSmallPhoto = file.type && file.type.startsWith('image/') && file.size <= SSD_BIG_FILE_THRESHOLD;
-          const isVideo = (file.type && file.type.startsWith('video/')) || /\.(mp4|mov|m4v|webm|mkv|avi)$/i.test(file.name);
-
-          let media;
-          if (isSmallPhoto) {
-            media = new Api.InputMediaUploadedPhoto({ file: inputFile });
-          } else {
-            const attributes = [new Api.DocumentAttributeFilename({ fileName: file.name })];
-            if (isVideo) {
-              const vMeta = await extractVideoMetadata(file);
-              if (vMeta && vMeta.w > 0 && vMeta.h > 0) {
-                attributes.push(new Api.DocumentAttributeVideo({ duration: vMeta.duration, w: vMeta.w, h: vMeta.h, supportsStreaming: true }));
-              }
-            }
-            media = new Api.InputMediaUploadedDocument({
-              file: inputFile,
-              mimeType: file.type || (isVideo ? 'video/mp4' : 'application/octet-stream'),
-              attributes,
-              forceFile: !isVideo
-            });
-          }
-
-          await state.client.invoke(new Api.messages.SendMedia({ peer: inputPeer, media, message: file.name, randomId: generateSafeFileId() }));
-          updateUploadProgressCard(toastCard, { pct: 100, uploadedBytes: file.size, totalSize: file.size, statusText: 'Concluído!' });
-          setTimeout(() => removeProgressToast(toastCard), 900);
-          uploadedCount++;
-        } catch (err) {
-          removeProgressToast(toastCard);
-          if (err && err.message === 'UPLOAD_CANCELLED') {
-            showToast('Envio Cancelado', `Upload de ${file.name} interrompido.`, 'warning');
-          } else {
-            const detail = sanitizeBrandText(err && (err.errorMessage || err.message) ? (err.errorMessage || err.message) : 'Erro');
-            showToast('Falha no Upload', `${file.name}: ${detail}`, 'danger');
-          }
-        }
-      }
-
-      if (uploadedCount > 0) {
-        await refreshCloudFiles(false);
-        if (targetFolderId) {
-          state.cloudFiles.forEach(item => {
-            if (!beforeIds.has(item.id)) state.fileFolderMap[item.key] = targetFolderId;
-          });
-          saveFoldersStorage();
-          renderSidebarFolders();
-          renderWorkspaceFiles();
-        }
-        showToast('Upload Concluído', `${uploadedCount} arquivo(s) enviados.`, 'success');
-      }
-    }
-
-    let dragCounter = 0;
-    const dragOverlayEl = document.getElementById('ws-drag-overlay');
-    window.addEventListener('dragenter', (e) => {
-      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
-      e.preventDefault();
-      dragCounter++;
-      dragOverlayEl.classList.remove('hidden');
-      dragOverlayEl.classList.add('flex');
-    });
-    window.addEventListener('dragover', (e) => {
-      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
-      e.preventDefault();
-    });
-    window.addEventListener('dragleave', (e) => {
-      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
-      e.preventDefault();
-      dragCounter--;
-      if (dragCounter <= 0) { dragCounter = 0; dragOverlayEl.classList.add('hidden'); dragOverlayEl.classList.remove('flex'); }
-    });
-    window.addEventListener('drop', (e) => {
-      if (document.getElementById('view-workspace').classList.contains('hidden')) return;
-      e.preventDefault();
-      dragCounter = 0;
-      dragOverlayEl.classList.add('hidden');
-      dragOverlayEl.classList.remove('flex');
-      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) uploadFilesToCloud(Array.from(e.dataTransfer.files));
-    });
 
     // 13. AGRUPAMENTO POR DATA DE UPLOAD E RENDERIZAÇÃO DA ZONA 2
     function formatUploadDayHeader(timestampSec) {
@@ -3580,7 +3751,8 @@
     function resetAutoLockTimer() {
       if (state.autoLockTimer) { clearTimeout(state.autoLockTimer); state.autoLockTimer = null; }
       const inWorkspace = !document.getElementById('view-workspace').classList.contains('hidden');
-      if (inWorkspace && state.autoLockMinutes > 0 && state.isUnlocked) {
+      const hasActiveUpload = state.uploadQueue.some(t => ['uploading', 'queued', 'finalizing'].includes(t.status));
+      if (inWorkspace && state.autoLockMinutes > 0 && state.isUnlocked && !hasActiveUpload) {
         state.autoLockTimer = setTimeout(() => triggerQuickLock('Bloqueio Automático por Inatividade'), state.autoLockMinutes * 60 * 1000);
       }
     }
@@ -3605,6 +3777,7 @@
       state.deviceProfile = null;
       state.isUnlocked = false;
       state.cloudFiles = [];
+      state.uploadQueue = [];
       state.rawMessagesByKey.clear();
       state.currentPhoneCodeHash = '';
       showToast('Conta Desconectada', 'Sessão e vínculo deste aparelho removidos.', 'info');
