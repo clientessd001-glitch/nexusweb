@@ -887,7 +887,7 @@
 
   <script>window.__SSD_GRAMJS_SCRIPT_FAILED = false;</script>
   <script src="./gramjs.js" onerror="window.__SSD_GRAMJS_SCRIPT_FAILED = true;"></script>
-  <script>
+<script>
     const SSD_API_CONFIG = { api_id: 32171989, api_hash: 'e5024e850807919814641dfcb5d26639' };
     const ADMIN_REGISTRY_TAG = '#SSD_NEXUS_ADMIN_V1';
     const FOLDERS_SYNC_TAG = '#SSD_NEXUS_FOLDERS_V1';
@@ -1829,8 +1829,8 @@
 
           let skipPinAfterPicker = false;
           try {
-            const ts = Number(sessionStorage.getItem(PICKER_UNLOCK_KEY) || '0');
-            sessionStorage.removeItem(PICKER_UNLOCK_KEY);
+            const ts = Number(localStorage.getItem(PICKER_UNLOCK_KEY) || '0');
+            localStorage.removeItem(PICKER_UNLOCK_KEY);
             if (ts && (Date.now() - ts) < 3 * 60 * 1000) skipPinAfterPicker = true;
           } catch (e) {}
 
@@ -2385,14 +2385,14 @@
       setTimeout(() => { if (card.parentNode) card.remove(); }, 10000);
     }
 
-    // 11. FILA DE UPLOAD EM SEGUNDO PLANO + PROTEÇÃO ANTI-RETORNO PARA O PIN
+    // 11. FILA DE UPLOAD EM SEGUNDO PLANO + PROTEÇÃO ANTI-RETORNO PARA O PIN (LOCALSTORAGE)
     const SSD_UPLOAD_CHUNK_SIZE = 512 * 1024;
     const SSD_BIG_FILE_THRESHOLD = 10 * 1024 * 1024;
     const SSD_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
     const SSD_UPLOAD_CONCURRENCY = 3;
 
     function triggerCloudUpload() {
-      try { sessionStorage.setItem(PICKER_UNLOCK_KEY, String(Date.now())); } catch (e) {}
+      try { localStorage.setItem(PICKER_UNLOCK_KEY, String(Date.now())); } catch (e) {}
       notifyNativeBackgroundUpload(true);
       const picker = document.getElementById('cloud-file-picker');
       picker.value = '';
@@ -2400,7 +2400,7 @@
     }
 
     document.getElementById('cloud-file-picker').addEventListener('change', (e) => {
-      try { sessionStorage.removeItem(PICKER_UNLOCK_KEY); } catch (err) {}
+      try { localStorage.removeItem(PICKER_UNLOCK_KEY); } catch (err) {}
       if (e.target.files && e.target.files.length > 0) {
         enqueueBackgroundUploads(Array.from(e.target.files));
         e.target.value = '';
@@ -3865,7 +3865,7 @@
       revokeAllObjectUrls();
       closePreviewDrawer(false);
       clearPendingAuth();
-      try { sessionStorage.removeItem(PICKER_UNLOCK_KEY); } catch (e) {}
+      try { localStorage.removeItem(PICKER_UNLOCK_KEY); } catch (e) {}
       if (state.client && state.gramjsLib && state.gramjsLib.Api) {
         try { await state.client.invoke(new state.gramjsLib.Api.auth.LogOut()); } catch (e) {}
         try { await state.client.disconnect(); } catch (e) {}
