@@ -38,10 +38,7 @@
 
   <style>
     * { box-sizing: border-box; }
-    html, body {
-      max-width: 100%;
-      overflow-x: hidden;
-    }
+    html, body { max-width: 100%; overflow-x: hidden; }
     body {
       background-color: #060913;
       color: #f8fafc;
@@ -79,9 +76,7 @@
 
   <input type="file" id="cloud-file-picker" multiple class="hidden" />
 
-  <!-- ======================================================================= -->
-  <!-- TELA 1: AUTENTICAÇÃO (CELULAR + DDI/NÚMERO EM ASTERISCOS + CÓDIGO SALVO) -->
-  <!-- ======================================================================= -->
+  <!-- TELA 1: AUTENTICAÇÃO -->
   <section id="view-auth" class="min-h-screen w-full max-w-full flex flex-col items-center justify-center px-3 py-6 sm:p-6 relative overflow-x-hidden overflow-y-auto">
     <div class="pointer-events-none fixed -top-36 left-1/2 -translate-x-1/2 h-96 w-[38rem] rounded-full bg-[#2563eb]/15 blur-3xl"></div>
     <div class="pointer-events-none fixed -bottom-28 right-1/4 h-80 w-96 rounded-full bg-[#06b6d4]/12 blur-3xl"></div>
@@ -145,7 +140,7 @@
         </button>
       </div>
 
-      <!-- Entrada de Telefone (enquadrada para celular + DDI +** + dígitos viram *) -->
+      <!-- Entrada de Telefone -->
       <div id="auth-panel-phone" class="hidden space-y-4 animate-fade-up w-full">
         <div class="w-full">
           <label for="input-phone" class="block text-xs font-medium text-slate-300 mb-2">Número de Celular</label>
@@ -264,9 +259,7 @@
     </div>
   </section>
 
-  <!-- ======================================================================= -->
-  <!-- TELA 2: CONFIGURAÇÃO DO PERFIL DESTE APARELHO (CRIAR OU JÁ TENHO: MS/CP)-->
-  <!-- ======================================================================= -->
+  <!-- TELA 2: CONFIGURAÇÃO DO PERFIL DESTE APARELHO -->
   <section id="view-setup" class="hidden min-h-screen w-full max-w-full flex-col items-center justify-center px-3 py-6 sm:p-6 relative overflow-x-hidden overflow-y-auto">
     <div class="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 h-96 w-[36rem] rounded-full bg-[#2563eb]/15 blur-3xl"></div>
 
@@ -383,9 +376,7 @@
     </div>
   </section>
 
-  <!-- ======================================================================= -->
-  <!-- TELA 3: BLOQUEIO POR PIN EXCLUSIVO DESTE APARELHO                       -->
-  <!-- ======================================================================= -->
+  <!-- TELA 3: BLOQUEIO POR PIN EXCLUSIVO DESTE APARELHO -->
   <section id="view-pin-lock" class="hidden min-h-screen w-full max-w-full flex-col items-center justify-center px-3 py-6 sm:p-6 relative overflow-x-hidden overflow-y-auto">
     <div class="pointer-events-none fixed -top-32 left-1/2 -translate-x-1/2 h-96 w-[36rem] rounded-full bg-[#2563eb]/15 blur-3xl"></div>
 
@@ -427,9 +418,7 @@
     </div>
   </section>
 
-  <!-- ======================================================================= -->
-  <!-- TELA 4: WORKSPACE DE 3 ZONAS                                            -->
-  <!-- ======================================================================= -->
+  <!-- TELA 4: WORKSPACE DE 3 ZONAS -->
   <div id="view-workspace" class="hidden h-screen w-screen overflow-hidden bg-[#060913]">
     <div id="ws-drag-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/92 backdrop-blur-md p-6">
       <div class="w-full max-w-lg rounded-3xl border-2 border-dashed border-[#06b6d4] bg-[#0d1324] p-10 text-center shadow-2xl shadow-[#06b6d4]/20">
@@ -658,7 +647,7 @@
       </div>
     </div>
 
-    <!-- PAINEL DE FILA DE UPLOAD EM SEGUNDO PLANO (PAUSAR / RETOMAR / MINIMIZAR) -->
+    <!-- PAINEL DE FILA DE UPLOAD EM SEGUNDO PLANO -->
     <div id="upload-queue-dock" class="fixed bottom-20 right-4 z-40 hidden w-[calc(100vw-2rem)] max-w-sm rounded-2xl border border-[#06b6d4]/50 bg-[#0d1324]/95 shadow-2xl backdrop-blur-xl overflow-hidden animate-fade-up">
       <div onclick="toggleUploadQueueExpand()" class="flex items-center justify-between gap-2 px-4 py-3 bg-[#060913]/90 border-b border-[#1e293b] cursor-pointer select-none">
         <div class="flex items-center gap-2.5 min-w-0">
@@ -680,7 +669,6 @@
           </button>
         </div>
       </div>
-
       <div id="uq-items-body" class="max-h-64 overflow-y-auto p-3 space-y-2"></div>
     </div>
 
@@ -691,9 +679,7 @@
     </button>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL: ACESSO ADMIN (PIN MESTRE)                                        -->
-  <!-- ======================================================================= -->
+  <!-- MODAL: ACESSO ADMIN -->
   <div id="modal-admin-auth" class="fixed inset-0 z-[70] hidden items-center justify-center bg-[#060913]/90 backdrop-blur-md p-4">
     <div id="admin-auth-card" class="w-full max-w-sm rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
       <div class="flex items-center justify-between mb-4">
@@ -710,7 +696,6 @@
           <i data-lucide="x" class="h-5 w-5"></i>
         </button>
       </div>
-
       <div class="space-y-3">
         <div>
           <label for="admin-pin-input" class="block text-[11px] text-slate-300 mb-1">PIN Mestre (4 a 6 dígitos)</label>
@@ -729,9 +714,7 @@
     </div>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL: PAINEL ADMIN (GERENCIAR PERFIS, BLOQUEAR, PIN, PROTEGER/EXCLUIR) -->
-  <!-- ======================================================================= -->
+  <!-- MODAL: PAINEL ADMIN -->
   <div id="modal-admin-panel" class="fixed inset-0 z-[75] hidden items-center justify-center bg-[#060913]/92 backdrop-blur-md p-4">
     <div class="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl nexus-glass shadow-2xl animate-fade-up overflow-hidden">
       <div class="flex items-center justify-between border-b border-[#1e293b] px-6 py-4 bg-[#060913]/80">
@@ -754,9 +737,7 @@
           </button>
         </div>
       </div>
-
       <div id="admin-profiles-list" class="flex-1 overflow-y-auto p-5 space-y-3"></div>
-
       <div class="border-t border-[#1e293b] bg-[#060913]/80 px-6 py-3 flex items-center justify-between text-[11px] text-slate-400">
         <span id="admin-stats-label">0 perfil(is) registrados</span>
         <button type="button" onclick="closeAdminPanel()" class="rounded-xl bg-[#111827] border border-[#1e293b] px-4 py-1.5 text-xs font-semibold text-white hover:border-[#06b6d4]/50 transition">Fechar</button>
@@ -764,9 +745,7 @@
     </div>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL: CRIAR NOVA PASTA                                                 -->
-  <!-- ======================================================================= -->
+  <!-- MODAL: CRIAR NOVA PASTA -->
   <div id="modal-create-folder" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
     <div class="w-full max-w-sm rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
       <div class="flex items-center justify-between mb-4">
@@ -776,20 +755,18 @@
           </div>
           <div>
             <h3 class="text-base font-bold text-white">Criar Nova Pasta</h3>
-            <p class="text-xs text-slate-400">Organize os arquivos do seu cofre</p>
+            <p class="text-xs text-slate-400">Salva automaticamente na nuvem</p>
           </div>
         </div>
         <button type="button" onclick="closeCreateFolderModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
           <i data-lucide="x" class="h-5 w-5"></i>
         </button>
       </div>
-
       <div class="space-y-4">
         <div>
           <label for="input-folder-name" class="block text-xs font-medium text-slate-300 mb-1.5">Nome da Pasta</label>
           <input id="input-folder-name" type="text" maxlength="28" placeholder="Ex: Documentos, Viagem, Trabalho..." class="h-11 w-full rounded-xl border border-[#1e293b] bg-[#060913] px-3.5 text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none" />
         </div>
-
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-2">Cor da Pasta</label>
           <div class="flex items-center gap-3">
@@ -800,9 +777,7 @@
             <button type="button" onclick="selectFolderColor('violet')" data-f-swatch="violet" class="f-swatch h-8 w-8 rounded-full bg-violet-500 opacity-70 hover:opacity-100 transition"></button>
           </div>
         </div>
-
         <p id="folder-error" class="min-h-[16px] text-xs font-medium text-[#dc2626]"></p>
-
         <div class="flex justify-end gap-2">
           <button type="button" onclick="closeCreateFolderModal()" class="rounded-xl border border-[#1e293b] bg-[#111827] px-4 py-2 text-xs font-medium text-slate-300 hover:text-white">Cancelar</button>
           <button type="button" onclick="saveNewFolder()" class="rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 py-2 text-xs font-semibold text-white hover:brightness-110 transition">Criar Pasta</button>
@@ -811,9 +786,7 @@
     </div>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL: ENCAMINHAR ARQUIVO ENTRE PASTAS                                  -->
-  <!-- ======================================================================= -->
+  <!-- MODAL: ENCAMINHAR ARQUIVO ENTRE PASTAS -->
   <div id="modal-forward-folder" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
     <div class="w-full max-w-sm rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
       <div class="flex items-center justify-between mb-3">
@@ -839,9 +812,7 @@
     </div>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL: VISUALIZADOR TELA CHEIA (FOTOS & VÍDEOS)                         -->
-  <!-- ======================================================================= -->
+  <!-- MODAL: VISUALIZADOR TELA CHEIA -->
   <div id="modal-fullscreen-media" class="fixed inset-0 z-[100] hidden flex-col bg-black select-none">
     <div class="flex items-center justify-between gap-2 bg-gradient-to-b from-black/90 to-transparent px-4 py-3 z-10">
       <span id="fs-media-title" class="truncate text-xs sm:text-sm font-bold text-white flex-1">Visualização</span>
@@ -859,9 +830,7 @@
     </div>
   </div>
 
-  <!-- ======================================================================= -->
-  <!-- MODAL: SOBRE O SSD NEXUS                                                -->
-  <!-- ======================================================================= -->
+  <!-- MODAL: SOBRE O SSD NEXUS -->
   <div id="modal-about" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
     <div class="w-full max-w-md rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
       <div class="flex items-start justify-between">
@@ -878,7 +847,6 @@
           <i data-lucide="x" class="h-5 w-5"></i>
         </button>
       </div>
-
       <div class="mt-5 space-y-3 rounded-2xl border border-[#1e293b] bg-[#060913] p-4 text-xs">
         <div class="flex flex-col gap-1 border-b border-[#1e293b] pb-2.5">
           <span class="text-slate-400">Desenvolvimento</span>
@@ -886,15 +854,14 @@
           <span class="font-semibold text-white">SSD Soluções 2026</span>
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
-          <span class="text-slate-400">Transferência</span>
-          <span class="font-mono text-emerald-400">Fila 2º Plano + Pausar/Retomar</span>
+          <span class="text-slate-400">Sincronização</span>
+          <span class="font-mono text-emerald-400">Pastas + Fila 2º Plano</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
           <span class="font-medium text-slate-200">PIN SHA-256 + Auto-Lock + Admin</span>
         </div>
       </div>
-
       <div class="mt-5 flex justify-end">
         <button type="button" onclick="closeAboutModal()" class="rounded-xl bg-gradient-to-r from-[#2563eb] to-[#06b6d4] px-5 py-2 text-xs font-semibold text-white hover:brightness-110 transition">Fechar</button>
       </div>
@@ -904,18 +871,13 @@
   <!-- Pilha de Notificações Toast -->
   <div id="toast-stack" class="fixed top-20 right-4 z-[80] flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
 
-  <!-- Carregamento do bundle local GramJS -->
   <script>window.__SSD_GRAMJS_SCRIPT_FAILED = false;</script>
   <script src="./gramjs.js" onerror="window.__SSD_GRAMJS_SCRIPT_FAILED = true;"></script>
-
+<!-- FINAL PARTE 1 -->
   <script>
-    // 1. CONFIGURAÇÃO E PALETA
-    const SSD_API_CONFIG = {
-      api_id: 32171989,
-      api_hash: 'e5024e850807919814641dfcb5d26639'
-    };
-
+    const SSD_API_CONFIG = { api_id: 32171989, api_hash: 'e5024e850807919814641dfcb5d26639' };
     const ADMIN_REGISTRY_TAG = '#SSD_NEXUS_ADMIN_V1';
+    const FOLDERS_SYNC_TAG = '#SSD_NEXUS_FOLDERS_V1';
     const SESSION_STORAGE_KEY = 'ssd_nexus_gramjs_session';
     const PENDING_AUTH_KEY = 'ssd_nexus_pending_auth';
     const STORAGE_KEYS = {
@@ -927,16 +889,8 @@
     };
 
     function savePendingAuth(fullPhone, formattedPhone, phoneCodeHash) {
-      try {
-        localStorage.setItem(PENDING_AUTH_KEY, JSON.stringify({
-          fullPhone,
-          formattedPhone,
-          phoneCodeHash,
-          ts: Date.now()
-        }));
-      } catch (e) {}
+      try { localStorage.setItem(PENDING_AUTH_KEY, JSON.stringify({ fullPhone, formattedPhone, phoneCodeHash, ts: Date.now() })); } catch (e) {}
     }
-
     function loadPendingAuth() {
       try {
         const raw = localStorage.getItem(PENDING_AUTH_KEY);
@@ -947,14 +901,9 @@
           return null;
         }
         return data;
-      } catch (e) {
-        return null;
-      }
+      } catch (e) { return null; }
     }
-
-    function clearPendingAuth() {
-      try { localStorage.removeItem(PENDING_AUTH_KEY); } catch (e) {}
-    }
+    function clearPendingAuth() { try { localStorage.removeItem(PENDING_AUTH_KEY); } catch (e) {} }
 
     const ACCENT_PALETTE = {
       cyan: { solid: 'bg-[#06b6d4] text-slate-950', dot: 'bg-[#06b6d4]', soft: 'bg-[#06b6d4]/15', border: 'border-[#06b6d4]/40', text: 'text-[#06b6d4]' },
@@ -965,57 +914,19 @@
     };
 
     const state = {
-      client: null,
-      gramjsLib: null,
-      initTimeoutId: null,
-      currentFullPhone: '',
-      formattedPhone: '',
-      currentPhoneCodeHash: '',
-      resendTimerId: null,
-      resendRemaining: 60,
-      user: null,
-      deviceProfile: null,
-      isUnlocked: false,
-      setupMode: 'create',
-      setupStorage: 'CP',
-      setupColor: 'cyan',
-      lockBuffer: '',
-      adminTapCount: 0,
-      adminTapTimer: null,
-      adminMsgId: null,
-      adminData: { adminPinHash: '', profiles: [] },
-      adminEditingPinId: null,
-      folders: [],
-      fileFolderMap: {},
-      activeFolderId: null,
-      newFolderColor: 'cyan',
-      forwardTargetKey: null,
-      uploadQueue: [],
-      uploadQueueExpanded: true,
-      uploadWorkerRunning: false,
-      cloudFiles: [],
-      rawMessagesByKey: new Map(),
-      favoriteKeys: new Set(),
-      thumbnailUrls: {},
-      previewCache: {},
-      previewZoom: 1,
-      fsZoom: 1,
-      fsRot: 0,
-      thumbQueue: [],
-      activeThumbWorkers: 0,
-      category: 'all',
-      viewMode: 'grid',
-      gridCols: Number(localStorage.getItem('ssd_nexus_grid_cols')) || 3,
-      sortBy: 'date-desc',
-      searchQuery: '',
-      previewItemKey: null,
-      confirmDeleteKey: null,
-      sidebarCollapsed: false,
-      autoLockMinutes: 5,
-      autoLockTimer: null
+      client: null, gramjsLib: null, initTimeoutId: null, currentFullPhone: '', formattedPhone: '', currentPhoneCodeHash: '',
+      resendTimerId: null, resendRemaining: 60, user: null, deviceProfile: null, isUnlocked: false,
+      setupMode: 'create', setupStorage: 'CP', setupColor: 'cyan', lockBuffer: '',
+      adminTapCount: 0, adminTapTimer: null, adminMsgId: null, adminData: { adminPinHash: '', profiles: [] }, adminEditingPinId: null,
+      folders: [], fileFolderMap: {}, foldersMsgId: null, activeFolderId: null, newFolderColor: 'cyan', forwardTargetKey: null,
+      uploadQueue: [], uploadQueueExpanded: true, uploadWorkerRunning: false,
+      cloudFiles: [], rawMessagesByKey: new Map(), favoriteKeys: new Set(), thumbnailUrls: {}, previewCache: {},
+      previewZoom: 1, fsZoom: 1, fsRot: 0, thumbQueue: [], activeThumbWorkers: 0,
+      category: 'all', viewMode: 'grid', gridCols: Number(localStorage.getItem('ssd_nexus_grid_cols')) || 3,
+      sortBy: 'date-desc', searchQuery: '', previewItemKey: null, confirmDeleteKey: null,
+      sidebarCollapsed: false, autoLockMinutes: 5, autoLockTimer: null
     };
 
-    // 2. HASH SHA-256 PARA PIN
     async function sha256Hex(pinText) {
       const salted = 'ssd_nexus_vault_sha256_' + String(pinText);
       if (window.crypto && window.crypto.subtle) {
@@ -1032,10 +943,8 @@
       function rightRotate(v, a) { return (v >>> a) | (v << (32 - a)); }
       const mathPow = Math.pow, maxWord = mathPow(2, 32);
       let result = '';
-      const words = [], asciiBitLength = ascii.length * 8;
-      const hash = [], k = [];
-      let primeCounter = 0;
-      const isComposite = {};
+      const words = [], asciiBitLength = ascii.length * 8, hash = [], k = [];
+      let primeCounter = 0; const isComposite = {};
       for (let candidate = 2; primeCounter < 64; candidate++) {
         if (!isComposite[candidate]) {
           for (let i = 0; i < 313; i += candidate) isComposite[i] = candidate;
@@ -1046,8 +955,7 @@
       ascii += '\x80';
       while ((ascii.length % 64) - 56) ascii += '\x00';
       for (let i = 0; i < ascii.length; i++) words[i >> 2] |= ascii.charCodeAt(i) << (((3 - i) % 4) * 8);
-      words[words.length] = (asciiBitLength / maxWord) | 0;
-      words[words.length] = asciiBitLength;
+      words[words.length] = (asciiBitLength / maxWord) | 0; words[words.length] = asciiBitLength;
       for (let j = 0; j < words.length;) {
         const w = words.slice(j, (j += 16)), oldHash = hash.slice(0);
         for (let i = 0; i < 64; i++) {
@@ -1055,30 +963,16 @@
           const temp1 = hash[7] + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) + ((e & hash[5]) ^ (~e & hash[6])) + k[i] +
             (w[i] = i < 16 ? w[i] : (w[i - 16] + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) + w[i - 7] + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))) | 0);
           const temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
-          hash.unshift((temp1 + temp2) | 0);
-          hash[4] = (hash[4] + temp1) | 0;
-          hash.pop();
+          hash.unshift((temp1 + temp2) | 0); hash[4] = (hash[4] + temp1) | 0; hash.pop();
         }
         for (let i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
       }
-      for (let i = 0; i < 8; i++) {
-        for (let j = 3; j + 1; j--) {
-          const b = (hash[i] >> (j * 8)) & 255;
-          result += (b < 16 ? 0 : '') + b.toString(16);
-        }
-      }
+      for (let i = 0; i < 8; i++) { for (let j = 3; j + 1; j--) { const b = (hash[i] >> (j * 8)) & 255; result += (b < 16 ? 0 : '') + b.toString(16); } }
       return result;
     }
 
-    // 3. MOTOR GRAMJS E INICIALIZAÇÃO
-    function clearInitTimeout() {
-      if (state.initTimeoutId) { clearTimeout(state.initTimeoutId); state.initTimeoutId = null; }
-    }
-
-    function updateInitStatus(title, subtitle, pct) {
-      setAuthSubPanel('init', { title, subtitle, pct });
-    }
-
+    function clearInitTimeout() { if (state.initTimeoutId) { clearTimeout(state.initTimeoutId); state.initTimeoutId = null; } }
+    function updateInitStatus(title, subtitle, pct) { setAuthSubPanel('init', { title, subtitle, pct }); }
     function getResolvedGramJsLib() {
       const raw = window.gramjs || window.telegram || null;
       if (!raw || !raw.TelegramClient || !raw.Api) return null;
@@ -1087,51 +981,32 @@
       if (!StringSession) return null;
       return { TelegramClient: raw.TelegramClient, Api: raw.Api, Logger: raw.Logger, StringSession, Buffer: BufferImpl };
     }
-
     function skipToPhoneLogin() {
-      clearInitTimeout();
-      clearAuthErrorBox('phone');
-      setAuthSubPanel('phone');
-      const inp = document.getElementById('input-phone');
-      if (inp) inp.focus();
+      clearInitTimeout(); clearAuthErrorBox('phone'); setAuthSubPanel('phone');
+      const inp = document.getElementById('input-phone'); if (inp) inp.focus();
     }
-
     function showMissingBundleDiagnostic() {
       document.getElementById('auth-init-error-title').textContent = 'Motor SSD Sync (gramjs.js) não encontrado';
       document.getElementById('auth-init-error-msg').innerHTML = 'O arquivo local <span class="font-mono text-[#06b6d4]">./gramjs.js</span> não foi encontrado.';
       document.getElementById('auth-init-error-detail').textContent = 'Verifique se gramjs.js está na raiz do repositório e recarregue.';
       setAuthSubPanel('init-error');
     }
-
     async function retryEngineBootstrap() {
       if (!getResolvedGramJsLib()) {
         updateInitStatus('Verificando motor local...', 'Buscando ./gramjs.js...', 25);
         try {
           await new Promise((resolve, reject) => {
-            const s = document.createElement('script');
-            s.src = `./gramjs.js?t=${Date.now()}`;
-            s.onload = resolve;
-            s.onerror = reject;
-            document.head.appendChild(s);
+            const s = document.createElement('script'); s.src = `./gramjs.js?t=${Date.now()}`; s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
           });
-        } catch (e) {
-          showMissingBundleDiagnostic();
-          return;
-        }
+        } catch (e) { showMissingBundleDiagnostic(); return; }
       }
       await bootstrapSSDEngine();
     }
 
     async function bootstrapSSDEngine() {
-      clearInitTimeout();
-      switchView('auth');
-
+      clearInitTimeout(); switchView('auth');
       const resolvedLib = getResolvedGramJsLib();
-      if (window.__SSD_GRAMJS_SCRIPT_FAILED || !resolvedLib) {
-        showMissingBundleDiagnostic();
-        return;
-      }
-
+      if (window.__SSD_GRAMJS_SCRIPT_FAILED || !resolvedLib) { showMissingBundleDiagnostic(); return; }
       state.gramjsLib = resolvedLib;
       const { TelegramClient, Logger, StringSession } = resolvedLib;
       const savedSession = localStorage.getItem(SESSION_STORAGE_KEY) || '';
@@ -1149,65 +1024,43 @@
           state.formattedPhone = pending.formattedPhone;
           state.currentPhoneCodeHash = pending.phoneCodeHash;
           document.getElementById('label-sent-phone').textContent = state.formattedPhone;
-          clearAuthErrorBox('code');
-          setAuthSubPanel('code');
+          clearAuthErrorBox('code'); setAuthSubPanel('code');
           const boxes = document.querySelectorAll('.ssd-code-box');
           boxes.forEach(b => (b.value = ''));
           if (boxes[0]) boxes[0].focus();
           return;
         }
-
         skipToPhoneLogin();
         return;
       }
 
       updateInitStatus('Conectando à Nuvem SSD...', 'Validando sessão criptografada...', 45);
-
       let timedOut = false;
       const timeoutPromise = new Promise((_, reject) => {
-        state.initTimeoutId = setTimeout(() => {
-          timedOut = true;
-          reject(new Error('TIMEOUT_SESSION_CHECK'));
-        }, 12000);
+        state.initTimeoutId = setTimeout(() => { timedOut = true; reject(new Error('TIMEOUT_SESSION_CHECK')); }, 12000);
       });
 
       try {
-        if (state.client) {
-          try { await state.client.disconnect(); } catch (e) {}
-          state.client = null;
-        }
-
+        if (state.client) { try { await state.client.disconnect(); } catch (e) {} state.client = null; }
         const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.6.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
-
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
         if (typeof client.setLogLevel === 'function') { try { client.setLogLevel('error'); } catch (e) {} }
-
         state.client = client;
         await Promise.race([client.connect(), timeoutPromise]);
         if (timedOut) return;
-
         updateInitStatus('Verificando sessão criptografada...', 'Autenticando credenciais...', 80);
         const isAuthorized = await Promise.race([client.checkAuthorization(), timeoutPromise]);
         clearInitTimeout();
-
-        if (isAuthorized) {
-          await finalizeAuthenticatedSession();
-        } else {
-          localStorage.removeItem(SESSION_STORAGE_KEY);
-          skipToPhoneLogin();
-        }
+        if (isAuthorized) { await finalizeAuthenticatedSession(); }
+        else { localStorage.removeItem(SESSION_STORAGE_KEY); skipToPhoneLogin(); }
       } catch (err) {
-        clearInitTimeout();
-        localStorage.removeItem(SESSION_STORAGE_KEY);
-        try {
-          state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), { connectionRetries: 5, useWSS: true });
-        } catch (e) {}
+        clearInitTimeout(); localStorage.removeItem(SESSION_STORAGE_KEY);
+        try { state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), { connectionRetries: 5, useWSS: true }); } catch (e) {}
         skipToPhoneLogin();
       }
     }
 
-    // 4. FLUXO DE AUTENTICAÇÃO (MÁSCARA DE ASTERISCOS + PERSISTÊNCIA DO CÓDIGO)
     function setAuthSubPanel(panelName, meta = {}) {
       ['init', 'init-error', 'phone', 'code', 'password'].forEach(p => {
         const el = document.getElementById(`auth-panel-${p}`);
@@ -1216,10 +1069,7 @@
       if (panelName === 'init') {
         if (meta.title) document.getElementById('auth-init-title').textContent = meta.title;
         if (meta.subtitle) document.getElementById('auth-init-subtitle').textContent = meta.subtitle;
-        if (typeof meta.pct === 'number') {
-          const bar = document.getElementById('auth-init-bar');
-          if (bar) bar.style.width = `${meta.pct}%`;
-        }
+        if (typeof meta.pct === 'number') { const bar = document.getElementById('auth-init-bar'); if (bar) bar.style.width = `${meta.pct}%`; }
       }
       refreshIcons();
     }
@@ -1228,24 +1078,17 @@
       const box = document.getElementById(`error-${scope}-box`);
       const rawEl = document.getElementById(`error-${scope}-raw`);
       const hintEl = document.getElementById(`error-${scope}-hint`);
-      if (box) box.classList.add('hidden');
-      if (rawEl) rawEl.textContent = '';
-      if (hintEl) hintEl.textContent = '';
+      if (box) box.classList.add('hidden'); if (rawEl) rawEl.textContent = ''; if (hintEl) hintEl.textContent = '';
     }
 
-    function sanitizeBrandText(text) {
-      return String(text || '').replace(/telegram/gi, 'SSD Sync');
-    }
+    function sanitizeBrandText(text) { return String(text || '').replace(/telegram/gi, 'SSD Sync'); }
 
     function getAuthErrorHint(rawMsg) {
       const upper = String(rawMsg || '').toUpperCase();
       if (upper.includes('PHONE_NUMBER_INVALID')) return 'Número de celular inválido. Confira o DDI e o DDD digitados.';
       if (upper.includes('PHONE_CODE_INVALID')) return 'Código de 5 dígitos incorreto. Verifique as notificações do seu SSD Sync.';
       if (upper.includes('PHONE_CODE_EXPIRED')) return 'O código digitado expirou. Solicite um novo código.';
-      if (upper.includes('FLOOD_WAIT')) {
-        const match = upper.match(/FLOOD_WAIT_(\d+)/);
-        return `Muitas tentativas. Aguarde ${match ? match[1] + ' segundos' : 'alguns minutos'}.`;
-      }
+      if (upper.includes('FLOOD_WAIT')) { const m = upper.match(/FLOOD_WAIT_(\d+)/); return `Muitas tentativas. Aguarde ${m ? m[1] + ' segundos' : 'alguns minutos'}.`; }
       if (upper.includes('PASSWORD_HASH_INVALID')) return 'Senha de duas etapas incorreta.';
       return 'Confira os dados informados e tente novamente.';
     }
@@ -1263,7 +1106,6 @@
     }
 
     let rawPhoneDigits = '';
-
     function formatMaskedPhone(len, ddi) {
       const stars = '*'.repeat(len);
       if (ddi === '+55') {
@@ -1279,7 +1121,6 @@
     phoneInputEl.addEventListener('input', (e) => {
       const ddi = document.getElementById('select-ddi').value;
       const inputType = e.inputType || '';
-
       if (inputType === 'deleteContentBackward' || inputType === 'deleteContentForward') {
         rawPhoneDigits = rawPhoneDigits.slice(0, -1);
       } else if (e.data) {
@@ -1288,17 +1129,12 @@
       } else {
         const newDigits = e.target.value.replace(/\D/g, '');
         const starCount = (e.target.value.match(/\*/g) || []).length;
-        if (newDigits) {
-          rawPhoneDigits = (rawPhoneDigits + newDigits).slice(0, 11);
-        } else if (starCount < rawPhoneDigits.length) {
-          rawPhoneDigits = rawPhoneDigits.slice(0, starCount);
-        }
+        if (newDigits) rawPhoneDigits = (rawPhoneDigits + newDigits).slice(0, 11);
+        else if (starCount < rawPhoneDigits.length) rawPhoneDigits = rawPhoneDigits.slice(0, starCount);
       }
-
       e.target.value = formatMaskedPhone(rawPhoneDigits.length, ddi);
       clearAuthErrorBox('phone');
     });
-
     phoneInputEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') handlePhoneSubmit(); });
 
     async function handlePhoneSubmit() {
@@ -1856,7 +1692,7 @@
       showToast('Perfil Removido', `"${p.name}" removido do registro (arquivos mantidos na nuvem).`, 'info');
     }
 
-    // 6. PERSISTÊNCIA DO PERFIL, FAVORITOS E PASTAS
+    // 6. PERSISTÊNCIA DO PERFIL, FAVORITOS E PASTAS (LOCAL + NUVEM)
     function normalizeChannelId(raw) {
       if (raw === null || raw === undefined) return '';
       const str = typeof raw === 'object' && raw.value !== undefined ? String(raw.value) : String(raw);
@@ -1891,11 +1727,58 @@
       try { localStorage.setItem(STORAGE_KEYS.FAVORITES_PREFIX + state.user.id, JSON.stringify(Array.from(state.favoriteKeys))); } catch (e) {}
     }
 
-    function saveFoldersStorage() {
+    function saveFoldersStorage(syncCloud = true) {
       if (!state.deviceProfile) return;
       const pid = state.deviceProfile.id;
       try { localStorage.setItem(STORAGE_KEYS.FOLDERS_PREFIX + pid, JSON.stringify(state.folders)); } catch (e) {}
       try { localStorage.setItem(STORAGE_KEYS.FILE_FOLDERS_PREFIX + pid, JSON.stringify(state.fileFolderMap)); } catch (e) {}
+      if (syncCloud) syncFoldersToCloud();
+    }
+
+    async function loadFoldersFromCloud(peer) {
+      if (!state.client || !state.deviceProfile) return;
+      try {
+        const msgs = await state.client.getMessages(peer, { search: FOLDERS_SYNC_TAG, limit: 5 });
+        const latest = Array.isArray(msgs) ? msgs.find(m => m.message && m.message.includes(FOLDERS_SYNC_TAG)) : null;
+        if (latest) {
+          state.foldersMsgId = toSafeNumber(latest.id);
+          const parsed = JSON.parse(latest.message.replace(FOLDERS_SYNC_TAG, '').trim());
+          if (parsed && Array.isArray(parsed.folders)) {
+            state.folders = parsed.folders;
+            state.fileFolderMap = parsed.fileFolderMap || {};
+            saveFoldersStorage(false);
+          }
+        } else {
+          state.foldersMsgId = null;
+          if (state.folders.length > 0 || Object.keys(state.fileFolderMap).length > 0) {
+            await syncFoldersToCloud();
+          }
+        }
+      } catch (e) {}
+    }
+
+    async function syncFoldersToCloud() {
+      if (!state.client || !state.deviceProfile) return;
+      const payload = `${FOLDERS_SYNC_TAG}\n${JSON.stringify({
+        folders: state.folders,
+        fileFolderMap: state.fileFolderMap
+      })}`;
+      try {
+        if (!state.client.connected) await state.client.connect();
+        const peer = await resolveDeviceProfilePeer();
+        if (state.foldersMsgId) {
+          await state.client.editMessage(peer, { message: state.foldersMsgId, text: payload });
+        } else {
+          const sent = await state.client.sendMessage(peer, { message: payload });
+          if (sent && sent.id) state.foldersMsgId = toSafeNumber(sent.id);
+        }
+      } catch (e) {
+        try {
+          const peer = await resolveDeviceProfilePeer();
+          const sent = await state.client.sendMessage(peer, { message: payload });
+          if (sent && sent.id) state.foldersMsgId = toSafeNumber(sent.id);
+        } catch (err) {}
+      }
     }
 
     async function finalizeAuthenticatedSession() {
@@ -2129,6 +2012,7 @@
       state.cloudFiles = [];
       state.rawMessagesByKey.clear();
       state.lockBuffer = '';
+      state.foldersMsgId = null;
       closePreviewDrawer(false);
 
       const prof = state.deviceProfile;
@@ -2253,10 +2137,10 @@
 
       const folder = { id: 'fld_' + Date.now(), name, color: state.newFolderColor };
       state.folders.push(folder);
-      saveFoldersStorage();
+      saveFoldersStorage(true);
       closeCreateFolderModal();
       renderSidebarFolders();
-      showToast('Pasta Criada', `Pasta "${name}" adicionada ao seu cofre.`, 'success');
+      showToast('Pasta Criada', `Pasta "${name}" salva na nuvem.`, 'success');
     }
 
     function renderSidebarFolders() {
@@ -2312,10 +2196,10 @@
         if (state.fileFolderMap[k] === state.activeFolderId) delete state.fileFolderMap[k];
       });
       state.folders = state.folders.filter(f => f.id !== state.activeFolderId);
-      saveFoldersStorage();
+      saveFoldersStorage(true);
       setWorkspaceCategory('all');
       renderSidebarFolders();
-      showToast('Pasta Excluída', `A pasta "${folder.name}" foi removida. Seus arquivos continuam em Todos os Arquivos.`, 'info');
+      showToast('Pasta Excluída', `A pasta "${folder.name}" foi removida da nuvem. Seus arquivos continuam em Todos os Arquivos.`, 'info');
     }
 
     function openForwardFolderModal(fileKey) {
@@ -2388,7 +2272,7 @@
         showToast('Arquivo Encaminhado', `Movido para a pasta "${folder ? folder.name : ''}".`, 'success');
       }
 
-      saveFoldersStorage();
+      saveFoldersStorage(true);
       closeForwardFolderModal();
       renderSidebarFolders();
       renderWorkspaceFiles();
@@ -2843,7 +2727,7 @@
               state.cloudFiles.forEach(item => {
                 if (!beforeIds.has(item.id)) state.fileFolderMap[item.key] = nextTask.targetFolderId;
               });
-              saveFoldersStorage();
+              saveFoldersStorage(true);
               renderSidebarFolders();
               renderWorkspaceFiles();
             }
@@ -3001,6 +2885,7 @@
         state.rawMessagesByKey.clear();
 
         const peer = await resolveDeviceProfilePeer();
+        await loadFoldersFromCloud(peer);
         const messages = await state.client.getMessages(peer, { limit: 100 });
 
         if (Array.isArray(messages)) {
@@ -3018,7 +2903,7 @@
         renderSidebarFolders();
         renderWorkspaceFiles();
 
-        if (notify) showToast('Sincronização Concluída', `${state.cloudFiles.length} arquivo(s) carregados.`, 'success');
+        if (notify) showToast('Sincronização Concluída', `${state.cloudFiles.length} arquivo(s) e ${state.folders.length} pasta(s) carregados.`, 'success');
       } catch (err) {
         if (notify) showToast('Aviso de Sincronização', 'Não foi possível atualizar a lista agora.', 'warning');
       } finally {
@@ -3442,6 +3327,7 @@
       if (!state.client) return;
       const file = state.cloudFiles.find(f => f.key === fileKey);
       if (!file) return;
+      const hadFolder = Boolean(state.fileFolderMap[fileKey]);
       try {
         await state.client.deleteMessages(file.peer || 'me', [file.id], { revoke: true });
         state.cloudFiles = state.cloudFiles.filter(f => f.key !== fileKey);
@@ -3451,7 +3337,7 @@
         state.confirmDeleteKey = null;
         if (state.previewItemKey === fileKey) closePreviewDrawer(false);
         saveFavoriteKeys();
-        saveFoldersStorage();
+        saveFoldersStorage(hadFolder);
         renderWorkspaceSidebarCounts();
         renderSidebarFolders();
         renderWorkspaceFiles();
@@ -3860,6 +3746,9 @@
       state.isUnlocked = false;
       state.cloudFiles = [];
       state.uploadQueue = [];
+      state.folders = [];
+      state.fileFolderMap = {};
+      state.foldersMsgId = null;
       state.rawMessagesByKey.clear();
       state.currentPhoneCodeHash = '';
       showToast('Conta Desconectada', 'Sessão e vínculo deste aparelho removidos.', 'info');
@@ -3988,3 +3877,4 @@
   </script>
 </body>
 </html>
+<!-- FINAL PARTE 2 -->
