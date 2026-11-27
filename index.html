@@ -1160,12 +1160,28 @@
 
     function sanitizeBrandText(text) { return String(text || '').replace(/telegram/gi, 'SSD Sync'); }
 
-    function getAuthErrorHint(rawMsg) {
+function formatWaitSeconds(totalSec) {
+      const s = Number(totalSec) || 0;
+      if (s <= 0) return '';
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      if (h > 0) return `${h}h ${m}min`;
+      if (m > 0) return `${m}min ${sec}s`;
+      return `${sec} segundos`;
+    }
+
+    function getAuthErrorHint(rawMsg, err = null) {
       const upper = String(rawMsg || '').toUpperCase();
       if (upper.includes('PHONE_NUMBER_INVALID')) return 'Número de celular inválido. Confira o DDI e o DDD digitados.';
       if (upper.includes('PHONE_CODE_INVALID')) return 'Código de 5 dígitos incorreto. Verifique as notificações do seu SSD Sync.';
       if (upper.includes('PHONE_CODE_EXPIRED')) return 'O código digitado expirou. Solicite um novo código.';
-      if (upper.includes('FLOOD_WAIT')) { const m = upper.match(/FLOOD_WAIT_(\d+)/); return `Muitas tentativas. Aguarde ${m ? m[1] + ' segundos' : 'alguns minutos'}.`; }
+      if (upper.includes('FLOOD')) {
+        const m = upper.match(/FLOOD_WAIT_(\d+)/);
+        const secs = (err && err.seconds) ? Number(err.seconds) : (m ? Number(m[1]) : 0);
+        if (secs > 0) return `Muitas tentativas. Aguarde ${formatWaitSeconds(secs)} antes de tentar novamente.`;
+        return 'Muitas tentativas seguidas. Aguarde alguns minutos antes de tentar novamente.';
+      }
       if (upper.includes('PASSWORD_HASH_INVALID')) return 'Senha de duas etapas incorreta.';
       return 'Confira os dados informados e tente novamente.';
     }
@@ -1176,8 +1192,9 @@
       const box = document.getElementById(`error-${scope}-box`);
       const rawEl = document.getElementById(`error-${scope}-raw`);
       const hintEl = document.getElementById(`error-${scope}-hint`);
-      if (rawEl) rawEl.textContent = `[Erro ${code}] ${sanitizeBrandText(rawMessage)}`;
-      if (hintEl) hintEl.textContent = getAuthErrorHint(rawMessage);
+      const waitTag = (err && err.seconds) ? ` (${formatWaitSeconds(err.seconds)})` : '';
+      if (rawEl) rawEl.textContent = `[Erro ${code}] ${sanitizeBrandText(rawMessage)}${waitTag}`;
+      if (hintEl) hintEl.textContent = getAuthErrorHint(rawMessage, err);
       if (box) box.classList.remove('hidden');
       refreshIcons();
     }
