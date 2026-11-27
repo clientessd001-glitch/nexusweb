@@ -921,7 +921,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.10</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.11</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -936,7 +936,7 @@
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
           <span class="text-slate-400">Recursos</span>
-          <span class="font-mono text-emerald-400">Auto-Sync + Seleção + Paginação</span>
+          <span class="font-mono text-emerald-400">Leitura Total + Pastas v2 + Auto-Sync</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
@@ -1060,7 +1060,7 @@
       adminTapCount: 0, adminTapTimer: null, adminMsgId: null, adminData: { adminPinHash: '', profiles: [] }, adminEditingPinId: null,
       folders: [], fileFolderMap: {}, foldersMsgId: null, activeFolderId: null, newFolderColor: 'cyan', forwardTargetKey: null,
       selectionMode: false, selectedKeys: new Set(),
-      oldestMsgId: 0, hasMoreFiles: false, loadingMore: false,
+      oldestMsgId: 0, hasMoreFiles: false, loadingMore: false, cloudLoadToken: 0,
       uploadQueue: [], uploadQueueExpanded: true, uploadWorkerRunning: false,
       cloudFiles: [], rawMessagesByKey: new Map(), favoriteKeys: new Set(), thumbnailUrls: {}, previewCache: {},
       previewZoom: 1, fsZoom: 1, fsRot: 0, fsFileKey: null, fsIsPdf: false,
@@ -1157,7 +1157,7 @@
 
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.10.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.11.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1186,7 +1186,7 @@
 
       try {
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} state.client = null; }
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.10.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.11.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
         if (typeof client.setLogLevel === 'function') { try { client.setLogLevel('error'); } catch (e) {} }
@@ -1671,7 +1671,7 @@
         const { TelegramClient, Logger, StringSession } = state.gramjsLib;
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} }
 
-        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.10.0' };
+        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.11.0' };
         if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
 
         state.client = new TelegramClient(
@@ -1981,7 +1981,7 @@
       showToast('Perfil Removido', `"${p.name}" removido do registro (arquivos mantidos na nuvem).`, 'info');
     }
 
-    // 6. PERSISTÊNCIA DO PERFIL, FAVORITOS E PASTAS (LOCAL + NUVEM)
+    // 6. PERSISTÊNCIA DO PERFIL, FAVORITOS E PASTAS v2 (COMPACTADO + FILA SEGURA)
     function normalizeChannelId(raw) {
       if (raw === null || raw === undefined) return '';
       const str = typeof raw === 'object' && raw.value !== undefined ? String(raw.value) : String(raw);
@@ -2016,12 +2016,16 @@
       try { localStorage.setItem(STORAGE_KEYS.FAVORITES_PREFIX + state.user.id, JSON.stringify(Array.from(state.favoriteKeys))); } catch (e) {}
     }
 
+    let foldersSyncInFlight = false;
+    let foldersSyncPending = false;
+
     function saveFoldersStorage(syncCloud = true) {
-      if (!state.deviceProfile) return;
+      if (!state.deviceProfile) return Promise.resolve();
       const pid = state.deviceProfile.id;
       try { localStorage.setItem(STORAGE_KEYS.FOLDERS_PREFIX + pid, JSON.stringify(state.folders)); } catch (e) {}
       try { localStorage.setItem(STORAGE_KEYS.FILE_FOLDERS_PREFIX + pid, JSON.stringify(state.fileFolderMap)); } catch (e) {}
-      if (syncCloud) syncFoldersToCloud();
+      if (syncCloud) return syncFoldersToCloud();
+      return Promise.resolve();
     }
 
     async function loadFoldersFromCloud(peer) {
@@ -2032,7 +2036,20 @@
         if (latest) {
           state.foldersMsgId = toSafeNumber(latest.id);
           const parsed = JSON.parse(latest.message.replace(FOLDERS_SYNC_TAG, '').trim());
-          if (parsed && Array.isArray(parsed.folders)) {
+          const pid = state.deviceProfile.id;
+          if (parsed && parsed.v === 2 && Array.isArray(parsed.f)) {
+            state.folders = parsed.f;
+            const rebuilt = {};
+            const mapObj = parsed.m || {};
+            Object.keys(mapObj).forEach(fid => {
+              const ids = mapObj[fid];
+              if (Array.isArray(ids)) {
+                ids.forEach(msgId => { rebuilt[`${pid}_${msgId}`] = fid; });
+              }
+            });
+            state.fileFolderMap = rebuilt;
+            saveFoldersStorage(false);
+          } else if (parsed && Array.isArray(parsed.folders)) {
             state.folders = parsed.folders;
             state.fileFolderMap = parsed.fileFolderMap || {};
             saveFoldersStorage(false);
@@ -2048,25 +2065,48 @@
 
     async function syncFoldersToCloud() {
       if (!state.client || !state.deviceProfile) return;
-      const payload = `${FOLDERS_SYNC_TAG}\n${JSON.stringify({
-        folders: state.folders,
-        fileFolderMap: state.fileFolderMap
-      })}`;
+      if (foldersSyncInFlight) {
+        foldersSyncPending = true;
+        return;
+      }
+      foldersSyncInFlight = true;
       try {
-        if (!state.client.connected) await state.client.connect();
-        const peer = await resolveDeviceProfilePeer();
-        if (state.foldersMsgId) {
-          await state.client.editMessage(peer, { message: state.foldersMsgId, text: payload });
-        } else {
-          const sent = await state.client.sendMessage(peer, { message: payload });
-          if (sent && sent.id) state.foldersMsgId = toSafeNumber(sent.id);
-        }
-      } catch (e) {
-        try {
+        do {
+          foldersSyncPending = false;
+          const pidPrefix = `${state.deviceProfile.id}_`;
+          const grouped = {};
+          Object.keys(state.fileFolderMap).forEach(k => {
+            const fid = state.fileFolderMap[k];
+            if (!fid) return;
+            const msgIdStr = k.startsWith(pidPrefix) ? k.slice(pidPrefix.length) : k.split('_').pop();
+            const msgIdNum = Number(msgIdStr);
+            if (!msgIdNum) return;
+            if (!grouped[fid]) grouped[fid] = [];
+            grouped[fid].push(msgIdNum);
+          });
+
+          const payload = `${FOLDERS_SYNC_TAG}\n${JSON.stringify({ v: 2, f: state.folders, m: grouped })}`;
+          if (!state.client.connected) await state.client.connect();
           const peer = await resolveDeviceProfilePeer();
-          const sent = await state.client.sendMessage(peer, { message: payload });
-          if (sent && sent.id) state.foldersMsgId = toSafeNumber(sent.id);
-        } catch (err) {}
+          try {
+            if (state.foldersMsgId) {
+              await state.client.editMessage(peer, { message: state.foldersMsgId, text: payload });
+            } else {
+              const sent = await state.client.sendMessage(peer, { message: payload });
+              if (sent && sent.id) state.foldersMsgId = toSafeNumber(sent.id);
+            }
+          } catch (e) {
+            const errStr = String((e && (e.errorMessage || e.message)) || '');
+            if (!errStr.includes('MESSAGE_NOT_MODIFIED')) {
+              try {
+                const sent = await state.client.sendMessage(peer, { message: payload });
+                if (sent && sent.id) state.foldersMsgId = toSafeNumber(sent.id);
+              } catch (err) {}
+            }
+          }
+        } while (foldersSyncPending);
+      } finally {
+        foldersSyncInFlight = false;
       }
     }
 
@@ -2315,6 +2355,7 @@
     function openDevicePinLockScreen() {
       revokeAllObjectUrls();
       stopAutoSyncWatcher();
+      state.cloudLoadToken++;
       state.isUnlocked = false;
       state.cloudFiles = [];
       state.rawMessagesByKey.clear();
@@ -3041,15 +3082,30 @@
             nextTask.uploadedBytes = nextTask.totalSize;
             renderUploadQueueDock();
 
-            await refreshCloudFiles(false);
-            if (nextTask.targetFolderId) {
-              state.cloudFiles.forEach(item => {
-                if (!beforeIds.has(item.id)) state.fileFolderMap[item.key] = nextTask.targetFolderId;
-              });
-              saveFoldersStorage(true);
-              renderSidebarFolders();
-              renderWorkspaceFiles();
+            const recentMsgs = await state.client.getMessages(rawPeer, { limit: 15 });
+            if (Array.isArray(recentMsgs)) {
+              const newlyAdded = [];
+              for (const msg of recentMsgs) {
+                const item = parseGramJsMessage(msg, state.deviceProfile, rawPeer);
+                if (item && !beforeIds.has(item.id) && !state.rawMessagesByKey.has(item.key)) {
+                  newlyAdded.push(item);
+                  state.rawMessagesByKey.set(item.key, msg);
+                  if (nextTask.targetFolderId) {
+                    state.fileFolderMap[item.key] = nextTask.targetFolderId;
+                  }
+                }
+              }
+              if (newlyAdded.length > 0) {
+                state.cloudFiles = [...newlyAdded, ...state.cloudFiles];
+              }
             }
+
+            if (nextTask.targetFolderId) {
+              await saveFoldersStorage(true);
+            }
+            renderWorkspaceSidebarCounts();
+            renderSidebarFolders();
+            renderWorkspaceFiles();
           } catch (err) {
             if (err && (err.message === 'UPLOAD_PAUSED' || err.message === 'UPLOAD_CANCELLED')) {
               renderUploadQueueDock();
@@ -3192,6 +3248,7 @@
 
     async function refreshCloudFiles(notify = false) {
       if (!state.client || !state.deviceProfile) return;
+      const myToken = ++state.cloudLoadToken;
       const topIcon = document.getElementById('icon-sync-refresh');
       const sbIcon = document.getElementById('icon-sidebar-sync');
       const banner = document.getElementById('ws-loading-banner');
@@ -3228,18 +3285,74 @@
           state.hasMoreFiles = false;
         }
 
+        if (myToken !== state.cloudLoadToken) return;
         state.cloudFiles = parsedList;
         renderWorkspaceSidebarCounts();
         renderSidebarFolders();
         renderWorkspaceFiles();
 
-        if (notify) showToast('Sincronização Concluída', `${state.cloudFiles.length} arquivo(s) e ${state.folders.length} pasta(s) carregados.`, 'success');
+        if (state.hasMoreFiles) {
+          autoLoadRemainingCloudFiles(myToken, peer, notify);
+        } else if (notify) {
+          showToast('Sincronização Concluída', `${state.cloudFiles.length} arquivo(s) e ${state.folders.length} pasta(s) carregados.`, 'success');
+        }
       } catch (err) {
         if (notify) showToast('Aviso de Sincronização', 'Não foi possível atualizar a lista agora.', 'warning');
       } finally {
         if (topIcon) topIcon.classList.remove('animate-spin');
         if (sbIcon) sbIcon.classList.remove('animate-spin');
         if (banner) { banner.classList.add('hidden'); banner.classList.remove('flex'); }
+      }
+    }
+
+    async function autoLoadRemainingCloudFiles(token, peer, notify = false) {
+      while (token === state.cloudLoadToken && state.hasMoreFiles && state.oldestMsgId && state.client && state.isUnlocked) {
+        await new Promise(r => setTimeout(r, 180));
+        if (token !== state.cloudLoadToken || !state.isUnlocked) return;
+        try {
+          if (!state.client.connected) await state.client.connect();
+          const messages = await state.client.getMessages(peer, { limit: 100, offsetId: state.oldestMsgId });
+          if (token !== state.cloudLoadToken) return;
+
+          if (!Array.isArray(messages) || messages.length === 0) {
+            state.hasMoreFiles = false;
+            break;
+          }
+
+          let minId = state.oldestMsgId;
+          let added = 0;
+          for (const msg of messages) {
+            const mId = toSafeNumber(msg.id);
+            if (mId > 0 && mId < minId) minId = mId;
+            const item = parseGramJsMessage(msg, state.deviceProfile, peer);
+            if (item && !state.rawMessagesByKey.has(item.key)) {
+              state.cloudFiles.push(item);
+              state.rawMessagesByKey.set(item.key, msg);
+              added++;
+            }
+          }
+
+          if (minId === state.oldestMsgId) {
+            state.hasMoreFiles = false;
+            break;
+          }
+          state.oldestMsgId = minId;
+          state.hasMoreFiles = messages.length >= 100;
+
+          if (added > 0) {
+            renderWorkspaceSidebarCounts();
+            renderSidebarFolders();
+            renderWorkspaceFiles();
+          }
+        } catch (e) {
+          break;
+        }
+      }
+      renderWorkspaceSidebarCounts();
+      renderSidebarFolders();
+      renderWorkspaceFiles();
+      if (notify && token === state.cloudLoadToken) {
+        showToast('Biblioteca Completa', `${state.cloudFiles.length} arquivo(s) carregados no total.`, 'success');
       }
     }
 
@@ -4224,6 +4337,7 @@
     async function handleLogout() {
       revokeAllObjectUrls();
       stopAutoSyncWatcher();
+      state.cloudLoadToken++;
       closePreviewDrawer(false);
       clearPendingAuth();
       try { localStorage.removeItem(PICKER_UNLOCK_KEY); } catch (e) {}
