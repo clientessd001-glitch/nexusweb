@@ -620,6 +620,11 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
+          <button id="btn-toggle-select" type="button" onclick="toggleSelectionMode()" title="Selecionar vários arquivos" class="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] px-3 text-xs font-semibold text-slate-200 hover:border-[#06b6d4]/50 hover:text-[#06b6d4] transition">
+            <i data-lucide="check-square" class="h-4 w-4"></i>
+            <span class="hidden sm:inline">Selecionar</span>
+          </button>
+
           <button type="button" onclick="openCreateFolderModal()" title="Criar Nova Pasta" class="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 px-3 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition">
             <i data-lucide="folder-plus" class="h-4 w-4"></i>
             <span class="hidden sm:inline">Nova Pasta</span>
@@ -709,6 +714,31 @@
         </div>
       </div>
       <div id="uq-items-body" class="max-h-64 overflow-y-auto p-3 space-y-2"></div>
+    </div>
+
+    <!-- BARRA DE AÇÕES EM MASSA (SELEÇÃO MÚLTIPLA) -->
+    <div id="bulk-action-bar" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 hidden w-[calc(100vw-1.5rem)] max-w-lg items-center justify-between gap-2 rounded-2xl border border-[#06b6d4]/60 bg-[#0d1324]/95 px-3.5 py-2.5 shadow-2xl backdrop-blur-xl animate-fade-up">
+      <div class="flex items-center gap-2 min-w-0">
+        <span id="bulk-count-label" class="rounded-lg bg-[#06b6d4]/15 px-2.5 py-1 font-mono text-xs font-bold text-[#06b6d4]">0 sel.</span>
+        <button type="button" onclick="selectAllVisibleFiles()" class="text-[11px] font-semibold text-slate-300 hover:text-white underline">Todos</button>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button type="button" onclick="bulkMoveSelectedFiles()" title="Mover para pasta" class="inline-flex items-center gap-1 rounded-xl border border-[#1e293b] bg-[#111827] px-2.5 py-2 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition">
+          <i data-lucide="folder-input" class="h-3.5 w-3.5"></i>
+          <span class="hidden sm:inline">Mover</span>
+        </button>
+        <button type="button" onclick="bulkShareSelectedFiles()" title="Compartilhar selecionados" class="inline-flex items-center gap-1 rounded-xl border border-[#1e293b] bg-[#111827] px-2.5 py-2 text-xs font-semibold text-blue-300 hover:bg-[#2563eb] hover:text-white transition">
+          <i data-lucide="share-2" class="h-3.5 w-3.5"></i>
+          <span class="hidden sm:inline">Compartilhar</span>
+        </button>
+        <button type="button" onclick="bulkDeleteSelectedFiles()" title="Excluir selecionados" class="inline-flex items-center gap-1 rounded-xl border border-[#dc2626]/50 bg-[#dc2626]/15 px-2.5 py-2 text-xs font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition">
+          <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
+          <span class="hidden sm:inline">Excluir</span>
+        </button>
+        <button type="button" onclick="toggleSelectionMode(false)" title="Cancelar seleção" class="rounded-xl p-2 text-slate-400 hover:bg-[#111827] hover:text-white transition">
+          <i data-lucide="x" class="h-4 w-4"></i>
+        </button>
+      </div>
     </div>
 
     <!-- BOTÃO FLUTUANTE DE NUVEM PARA UPLOAD -->
@@ -891,7 +921,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.8</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.9</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -905,8 +935,8 @@
           <span class="font-semibold text-white">SSD Soluções 2026</span>
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
-          <span class="text-slate-400">Sincronização</span>
-          <span class="font-mono text-emerald-400">Auto-Sync + Pastas + PDF</span>
+          <span class="text-slate-400">Recursos</span>
+          <span class="font-mono text-emerald-400">Auto-Sync + Seleção + Pastas</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
@@ -982,7 +1012,7 @@
   <script src="./gramjs.js" onerror="window.__SSD_GRAMJS_SCRIPT_FAILED = true;"></script>
   <script>
     const SSD_API_CONFIG = { api_id: 32171989, api_hash: 'e5024e850807919814641dfcb5d26639' };
-    // Cole aqui a sessão copiada pelo botão "Copiar Sessão" no Painel Admin (opcional)
+    // Cole aqui a sessão copiada pelo botão "Copiar Sessão" no Painel Admin
     const SSD_MASTER_SESSION = '1AQAWcGx1dG8ud2ViLnRlbGVncmFtLm9yZwG7wtasTn4w58jz14DlDqaOwFstcVeum5rdcThJ+CiTXTqZcnWHRsb7G3uY0DAzDyegt0C+AlnxeUhAOI9MrjMZnpCt2LRMG/Wc+3HRLe96h8KZLGiKdg2tifBUAClTeYtIpu5GCT2yNCkfDLWJOIoQVfwb6/n51AFC+kRyM/RIY2NhHUgexagggm8jqc1iqGiTq3uxBMWvVGkQDW6U2eLTBNw0n2AUiS2qhyCuO1w6PkAuwD1BbJOeAfj3AK3tYg/gFHvCnCFi6TIm5RPn7RtsmPeO07aELudCsAQZKgaWwBs5SbU6H/rWeUsdOhSttDYfOZuHTzbQiHwg/q3ifYY6PA==';
 
     const ADMIN_REGISTRY_TAG = '#SSD_NEXUS_ADMIN_V1';
@@ -1029,6 +1059,7 @@
       setupMode: 'create', setupStorage: 'CP', setupColor: 'cyan', lockBuffer: '',
       adminTapCount: 0, adminTapTimer: null, adminMsgId: null, adminData: { adminPinHash: '', profiles: [] }, adminEditingPinId: null,
       folders: [], fileFolderMap: {}, foldersMsgId: null, activeFolderId: null, newFolderColor: 'cyan', forwardTargetKey: null,
+      selectionMode: false, selectedKeys: new Set(),
       uploadQueue: [], uploadQueueExpanded: true, uploadWorkerRunning: false,
       cloudFiles: [], rawMessagesByKey: new Map(), favoriteKeys: new Set(), thumbnailUrls: {}, previewCache: {},
       previewZoom: 1, fsZoom: 1, fsRot: 0, fsFileKey: null, fsIsPdf: false,
@@ -1125,7 +1156,7 @@
 
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.8.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.9.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1154,7 +1185,7 @@
 
       try {
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} state.client = null; }
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.8.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.9.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
         if (typeof client.setLogLevel === 'function') { try { client.setLogLevel('error'); } catch (e) {} }
@@ -1639,7 +1670,7 @@
         const { TelegramClient, Logger, StringSession } = state.gramjsLib;
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} }
 
-        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.8.0' };
+        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.9.0' };
         if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
 
         state.client = new TelegramClient(
@@ -2288,6 +2319,8 @@
       state.rawMessagesByKey.clear();
       state.lockBuffer = '';
       state.foldersMsgId = null;
+      state.selectionMode = false;
+      state.selectedKeys.clear();
       closePreviewDrawer(false);
 
       const prof = state.deviceProfile;
@@ -2538,20 +2571,22 @@
       const fileKey = state.forwardTargetKey;
       if (!fileKey) return;
 
-      if (!folderId) {
-        delete state.fileFolderMap[fileKey];
-        showToast('Arquivo Encaminhado', 'Movido para a Raiz (Sem pasta).', 'success');
-      } else {
-        const folder = state.folders.find(f => f.id === folderId);
-        state.fileFolderMap[fileKey] = folderId;
-        showToast('Arquivo Encaminhado', `Movido para a pasta "${folder ? folder.name : ''}".`, 'success');
-      }
+      const targetKeys = fileKey === '__BULK__' ? Array.from(state.selectedKeys) : [fileKey];
+      targetKeys.forEach(k => {
+        if (!folderId) delete state.fileFolderMap[k];
+        else state.fileFolderMap[k] = folderId;
+      });
+
+      const folder = state.folders.find(f => f.id === folderId);
+      const destName = folderId ? `pasta "${folder ? folder.name : ''}"` : 'Raiz (Sem pasta)';
+      showToast('Arquivos Movidos', `${targetKeys.length} item(ns) movido(s) para ${destName}.`, 'success');
 
       saveFoldersStorage(true);
       closeForwardFolderModal();
+      if (fileKey === '__BULK__') toggleSelectionMode(false);
       renderSidebarFolders();
       renderWorkspaceFiles();
-      if (state.previewItemKey === fileKey) {
+      if (fileKey !== '__BULK__' && state.previewItemKey === fileKey) {
         const file = state.cloudFiles.find(f => f.key === fileKey);
         if (file) renderPreviewDrawer(file, { loading: false });
       }
@@ -2627,7 +2662,7 @@
       setTimeout(() => { if (card.parentNode) card.remove(); }, 10000);
     }
 
-    // 11. FILA DE UPLOAD EM SEGUNDO PLANO + PROTEÇÃO ANTI-RETORNO PARA O PIN (LOCALSTORAGE)
+    // 11. FILA DE UPLOAD EM SEGUNDO PLANO + PROTEÇÃO ANTI-RETORNO PARA O PIN
     const SSD_UPLOAD_CHUNK_SIZE = 512 * 1024;
     const SSD_BIG_FILE_THRESHOLD = 10 * 1024 * 1024;
     const SSD_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
@@ -3091,6 +3126,7 @@
       state.activeFolderId = null;
       state.previewItemKey = null;
       state.confirmDeleteKey = null;
+      toggleSelectionMode(false);
       closePreviewDrawer(false);
       switchView('workspace');
 
@@ -3460,17 +3496,23 @@
               ${group.files.map(file => {
                 const meta = getVisualMetaForFile(file);
                 const isPreviewing = state.previewItemKey === file.key;
+                const isSelected = state.selectedKeys.has(file.key);
                 const isFav = state.favoriteKeys.has(file.key);
                 const cachedThumb = state.thumbnailUrls[file.key];
                 const hasRealThumb = cachedThumb && cachedThumb.startsWith('blob:');
 
                 return `
-                  <div onclick="openPreviewDrawer('${file.key}')" class="group relative flex flex-col overflow-hidden rounded-2xl border ${isPreviewing ? 'border-[#06b6d4] ring-2 ring-[#06b6d4]/25 bg-[#111827]' : 'border-[#1e293b] bg-[#0d1324] hover:border-slate-600 hover:bg-[#111827]/90'} cursor-pointer transition-all animate-fade-up min-w-0">
+                  <div onclick="${state.selectionMode ? `toggleSelectFile('${file.key}')` : `openPreviewDrawer('${file.key}')`}" class="group relative flex flex-col overflow-hidden rounded-2xl border ${(isSelected || isPreviewing) ? 'border-[#06b6d4] ring-2 ring-[#06b6d4]/30 bg-[#111827]' : 'border-[#1e293b] bg-[#0d1324] hover:border-slate-600 hover:bg-[#111827]/90'} cursor-pointer transition-all animate-fade-up min-w-0">
                     <div class="relative ${thumbHeightClass} w-full border-b border-[#1e293b] bg-gradient-to-br ${meta.bg} flex items-center justify-center overflow-hidden">
                       <img data-thumb-key="${file.key}" src="${hasRealThumb ? cachedThumb : ''}" alt="${escapeHtml(file.name)}" class="${hasRealThumb ? '' : 'hidden'} h-full w-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition duration-300" />
                       <div data-thumb-fallback="${file.key}" class="${hasRealThumb ? 'hidden' : 'flex'} h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl border border-[#1e293b] bg-[#060913]/90 ${meta.color} shadow-md">
                         <i data-lucide="${meta.icon}" class="h-5 w-5 sm:h-6 sm:w-6"></i>
                       </div>
+                      ${state.selectionMode ? `
+                        <div class="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-lg border-2 ${isSelected ? 'border-[#06b6d4] bg-[#06b6d4] text-slate-950' : 'border-slate-400 bg-[#060913]/85 text-transparent'} shadow">
+                          <i data-lucide="check" class="h-3.5 w-3.5"></i>
+                        </div>
+                      ` : ''}
                       ${!isCompact4 ? `
                         <button type="button" onclick="toggleFavoriteFile(event, '${file.key}')" aria-label="Favoritar" class="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-lg border border-[#1e293b] bg-[#060913]/85 backdrop-blur-md ${isFav ? 'text-amber-400' : 'text-slate-400 hover:text-white'} transition">
                           <i data-lucide="star" class="h-3.5 w-3.5 ${isFav ? 'fill-amber-400' : ''}"></i>
@@ -3551,10 +3593,21 @@
                     ${group.files.map(file => {
                       const meta = getVisualMetaForFile(file);
                       const isPreviewing = state.previewItemKey === file.key;
+                      const isSelected = state.selectedKeys.has(file.key);
                       const isFav = state.favoriteKeys.has(file.key);
                       return `
-                        <tr onclick="openPreviewDrawer('${file.key}')" class="cursor-pointer transition ${isPreviewing ? 'bg-[#06b6d4]/15' : 'hover:bg-[#111827]'}">
-                          <td class="py-3 pl-4 pr-3"><div class="flex items-center gap-2.5"><i data-lucide="${meta.icon}" class="h-4 w-4 ${meta.color} shrink-0"></i><span class="font-medium text-slate-100 truncate max-w-[160px] sm:max-w-sm">${escapeHtml(file.name)}</span></div></td>
+                        <tr onclick="${state.selectionMode ? `toggleSelectFile('${file.key}')` : `openPreviewDrawer('${file.key}')`}" class="cursor-pointer transition ${(isSelected || isPreviewing) ? 'bg-[#06b6d4]/15' : 'hover:bg-[#111827]'}">
+                          <td class="py-3 pl-4 pr-3">
+                            <div class="flex items-center gap-2.5">
+                              ${state.selectionMode ? `
+                                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 ${isSelected ? 'border-[#06b6d4] bg-[#06b6d4] text-slate-950' : 'border-slate-500 bg-[#060913] text-transparent'}">
+                                  <i data-lucide="check" class="h-3 w-3"></i>
+                                </span>
+                              ` : ''}
+                              <i data-lucide="${meta.icon}" class="h-4 w-4 ${meta.color} shrink-0"></i>
+                              <span class="font-medium text-slate-100 truncate max-w-[160px] sm:max-w-sm">${escapeHtml(file.name)}</span>
+                            </div>
+                          </td>
                           <td class="py-3 px-3"><span class="rounded border px-1.5 py-0.5 font-mono text-[10px] font-semibold ${meta.badge}">${escapeHtml(file.ext)}</span></td>
                           <td class="py-3 px-3 font-mono text-slate-300">${formatFileSize(file.sizeBytes)}</td>
                           <td class="py-3 px-3 text-slate-400 hidden md:table-cell">${escapeHtml(getFolderNameForFile(file.key))}</td>
@@ -4128,6 +4181,8 @@
       state.folders = [];
       state.fileFolderMap = {};
       state.foldersMsgId = null;
+      state.selectionMode = false;
+      state.selectedKeys.clear();
       state.rawMessagesByKey.clear();
       state.currentPhoneCodeHash = '';
       showToast('Conta Desconectada', 'Sessão e vínculo deste aparelho removidos.', 'info');
@@ -4142,6 +4197,7 @@
       if (!document.getElementById('modal-forward-folder').classList.contains('hidden')) { closeForwardFolderModal(); return true; }
       if (!document.getElementById('modal-auto-sync').classList.contains('hidden')) { closeAutoSyncModal(); return true; }
       if (!document.getElementById('modal-about').classList.contains('hidden')) { closeAboutModal(); return true; }
+      if (state.selectionMode) { toggleSelectionMode(false); return true; }
       if (state.previewItemKey) { closePreviewDrawer(true); return true; }
       return false;
     };
@@ -4167,9 +4223,171 @@
         closeForwardFolderModal();
         closeAutoSyncModal();
         closeAboutModal();
+        if (state.selectionMode) toggleSelectionMode(false);
         if (state.previewItemKey) closePreviewDrawer(true);
       }
     });
+
+    // SELEÇÃO MÚLTIPLA (MOVER, COMPARTILHAR E EXCLUIR EM MASSA)
+    function toggleSelectionMode(forceState) {
+      state.selectionMode = typeof forceState === 'boolean' ? forceState : !state.selectionMode;
+      if (!state.selectionMode) state.selectedKeys.clear();
+      if (state.selectionMode) closePreviewDrawer(false);
+
+      const btn = document.getElementById('btn-toggle-select');
+      if (btn) {
+        btn.className = state.selectionMode
+          ? 'inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4] bg-[#06b6d4] px-3 text-xs font-bold text-slate-950 transition'
+          : 'inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] px-3 text-xs font-semibold text-slate-200 hover:border-[#06b6d4]/50 hover:text-[#06b6d4] transition';
+      }
+      updateBulkActionBar();
+      renderWorkspaceFiles();
+    }
+
+    function toggleSelectFile(fileKey) {
+      if (state.selectedKeys.has(fileKey)) state.selectedKeys.delete(fileKey);
+      else state.selectedKeys.add(fileKey);
+      updateBulkActionBar();
+      renderWorkspaceFiles();
+    }
+
+    function selectAllVisibleFiles() {
+      const visible = getVisibleWorkspaceFiles();
+      const allSelected = visible.length > 0 && visible.every(f => state.selectedKeys.has(f.key));
+      if (allSelected) state.selectedKeys.clear();
+      else visible.forEach(f => state.selectedKeys.add(f.key));
+      updateBulkActionBar();
+      renderWorkspaceFiles();
+    }
+
+    function updateBulkActionBar() {
+      const bar = document.getElementById('bulk-action-bar');
+      const fab = document.getElementById('ws-cloud-upload-fab');
+      const lbl = document.getElementById('bulk-count-label');
+      if (!bar) return;
+
+      if (state.selectionMode) {
+        bar.classList.remove('hidden');
+        bar.classList.add('flex');
+        if (fab) fab.classList.add('hidden');
+        if (lbl) lbl.textContent = `${state.selectedKeys.size} sel.`;
+      } else {
+        bar.classList.add('hidden');
+        bar.classList.remove('flex');
+        if (fab && !document.getElementById('ssdCloudFab')) fab.classList.remove('hidden');
+      }
+      refreshIcons();
+    }
+
+    function bulkMoveSelectedFiles() {
+      if (state.selectedKeys.size === 0) {
+        showToast('Nada Selecionado', 'Toque nos arquivos que deseja mover.', 'warning');
+        return;
+      }
+      state.forwardTargetKey = '__BULK__';
+      document.getElementById('forward-modal-desc').textContent = `Mover ${state.selectedKeys.size} arquivo(s) selecionado(s) para:`;
+      const listEl = document.getElementById('forward-folders-list');
+
+      let html = `
+        <button type="button" onclick="executeForwardToFolder('')" class="flex w-full items-center justify-between rounded-2xl border border-[#1e293b] bg-[#060913] hover:border-[#06b6d4]/50 hover:bg-[#111827] p-3 text-left transition">
+          <div class="flex items-center gap-3">
+            <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-[#111827] text-slate-300 border border-[#1e293b]"><i data-lucide="folder-kanban" class="h-4 w-4"></i></div>
+            <div><div class="text-xs font-bold text-white">Raiz (Sem pasta)</div><div class="text-[11px] text-slate-400">Biblioteca principal</div></div>
+          </div>
+          <i data-lucide="arrow-right" class="h-4 w-4 text-slate-400"></i>
+        </button>
+      `;
+
+      state.folders.forEach(f => {
+        const palette = ACCENT_PALETTE[f.color] || ACCENT_PALETTE.cyan;
+        html += `
+          <button type="button" onclick="executeForwardToFolder('${f.id}')" class="flex w-full items-center justify-between rounded-2xl border border-[#1e293b] bg-[#060913] hover:border-[#06b6d4]/50 hover:bg-[#111827] p-3 text-left transition">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${palette.soft} ${palette.text} border ${palette.border}"><i data-lucide="folder" class="h-4 w-4"></i></div>
+              <div class="min-w-0"><div class="text-xs font-bold text-white truncate">${escapeHtml(f.name)}</div><div class="text-[11px] text-slate-400">Mover para esta pasta</div></div>
+            </div>
+            <i data-lucide="arrow-right" class="h-4 w-4 shrink-0 text-slate-400"></i>
+          </button>
+        `;
+      });
+
+      listEl.innerHTML = html;
+      const modal = document.getElementById('modal-forward-folder');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      refreshIcons();
+    }
+
+    async function bulkDeleteSelectedFiles() {
+      const keys = Array.from(state.selectedKeys);
+      if (keys.length === 0) {
+        showToast('Nada Selecionado', 'Toque nos arquivos que deseja excluir.', 'warning');
+        return;
+      }
+      if (!confirm(`Excluir permanentemente ${keys.length} arquivo(s) selecionado(s)?`)) return;
+
+      const selectedFiles = state.cloudFiles.filter(f => state.selectedKeys.has(f.key));
+      const ids = selectedFiles.map(f => f.id);
+      const peer = (selectedFiles[0] && selectedFiles[0].peer) || 'me';
+
+      try {
+        await state.client.deleteMessages(peer, ids, { revoke: true });
+        keys.forEach(k => {
+          state.rawMessagesByKey.delete(k);
+          state.favoriteKeys.delete(k);
+          delete state.fileFolderMap[k];
+        });
+        state.cloudFiles = state.cloudFiles.filter(f => !state.selectedKeys.has(f.key));
+        saveFavoriteKeys();
+        saveFoldersStorage(true);
+        toggleSelectionMode(false);
+        renderWorkspaceSidebarCounts();
+        renderSidebarFolders();
+        renderWorkspaceFiles();
+        showToast('Arquivos Excluídos', `${keys.length} item(ns) removido(s) permanentemente.`, 'info');
+      } catch (err) {
+        showToast('Erro ao Excluir', 'Não foi possível excluir os arquivos selecionados.', 'danger');
+      }
+    }
+
+    async function bulkShareSelectedFiles() {
+      const keys = Array.from(state.selectedKeys);
+      if (keys.length === 0) {
+        showToast('Nada Selecionado', 'Toque nos arquivos que deseja compartilhar.', 'warning');
+        return;
+      }
+      const selectedFiles = state.cloudFiles.filter(f => state.selectedKeys.has(f.key));
+      const toastCard = createProgressToast(`Preparando ${selectedFiles.length} arquivo(s)...`);
+      const readyEntries = [];
+
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const entry = await downloadFileDataOnDemand(selectedFiles[i]);
+        if (entry && entry.blob) readyEntries.push({ file: selectedFiles[i], blob: entry.blob });
+        updateProgressToast(toastCard, Math.round(((i + 1) / selectedFiles.length) * 100));
+      }
+      removeProgressToast(toastCard);
+
+      if (readyEntries.length === 0) {
+        showToast('Erro ao Compartilhar', 'Não foi possível preparar os arquivos.', 'danger');
+        return;
+      }
+
+      const webFiles = readyEntries.map(e => new File([e.blob], e.file.name, { type: e.file.mimeType || 'application/octet-stream' }));
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: webFiles })) {
+        try {
+          await navigator.share({ files: webFiles, title: 'SSD Nexus' });
+          toggleSelectionMode(false);
+          return;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+        }
+      }
+
+      for (const item of readyEntries) {
+        await executeNativeOrWebShare(item.file, item.blob);
+      }
+      toggleSelectionMode(false);
+    }
 
     // 16. UTILITÁRIOS
     function switchView(viewName) {
