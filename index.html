@@ -601,56 +601,61 @@
 
     <!-- ZONA 2 (EXPLORADOR) + ZONA 3 (INSPETOR) -->
     <div class="flex flex-1 flex-col min-w-0 overflow-hidden">
-      <header class="flex shrink-0 flex-wrap items-center justify-between gap-1.5 border-b border-[#1e293b] bg-[#0d1324]/95 px-2.5 py-2 lg:px-5 backdrop-blur-md">
-        <div class="flex flex-1 items-center gap-1.5 min-w-[140px] max-w-[230px] sm:max-w-xs">
+      <header class="flex shrink-0 flex-wrap items-center justify-between gap-1.5 lg:gap-2.5 border-b border-[#1e293b] bg-[#0d1324]/95 px-2.5 py-2 lg:min-h-16 lg:px-6 lg:py-2.5 backdrop-blur-md">
+        <div class="flex flex-1 items-center gap-1.5 lg:gap-2.5 min-w-[135px] max-w-[210px] sm:max-w-xs lg:max-w-xl">
           <button type="button" onclick="toggleMobileDrawer(true)" aria-label="Abrir menu" class="flex lg:hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#1e293b] bg-[#111827] text-slate-300">
             <i data-lucide="menu" class="h-4 w-4"></i>
           </button>
 
           <div class="relative flex-1 min-w-0">
-            <i data-lucide="search" class="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"></i>
-            <input id="ws-search-input" type="text" placeholder="Buscar..." class="h-9 w-full rounded-xl border border-[#1e293b] bg-[#060913] pl-8 pr-7 text-xs text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none transition" />
-            <button id="ws-clear-search" type="button" onclick="clearWorkspaceSearch()" aria-label="Limpar busca" class="hidden absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-white">
-              <i data-lucide="x" class="h-3.5 w-3.5"></i>
-            </button>
+            <i data-lucide="search" class="pointer-events-none absolute left-2.5 lg:left-3.5 top-1/2 h-3.5 w-3.5 lg:h-4 lg:w-4 -translate-y-1/2 text-slate-400"></i>
+            <input id="ws-search-input" type="text" placeholder="Buscar..." class="h-9 lg:h-10 w-full rounded-xl border border-[#1e293b] bg-[#060913] pl-8 lg:pl-10 pr-7 lg:pr-16 text-xs lg:text-sm text-white placeholder-slate-500 focus:border-[#06b6d4] focus:outline-none transition" />
+            <div class="absolute right-2 lg:right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+              <button id="ws-clear-search" type="button" onclick="clearWorkspaceSearch()" aria-label="Limpar busca" class="hidden p-0.5 lg:p-1 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="h-3.5 w-3.5"></i>
+              </button>
+              <kbd class="hidden lg:inline-block rounded border border-[#1e293b] bg-[#111827] px-1.5 py-0.5 font-mono text-[10px] text-slate-400">Ctrl+K</kbd>
+            </div>
           </div>
         </div>
 
-        <div class="flex flex-wrap items-center gap-1.5">
-          <button id="btn-toggle-select" type="button" onclick="toggleSelectionMode()" title="Selecionar" class="inline-flex h-9 items-center gap-1 rounded-xl border border-[#1e293b] bg-[#111827] px-2.5 text-xs font-semibold text-slate-200 hover:border-[#06b6d4]/50 hover:text-[#06b6d4] transition">
+        <div class="flex flex-wrap items-center gap-1.5 lg:gap-2">
+          <button id="btn-toggle-select" type="button" onclick="toggleSelectionMode()" title="Selecionar" class="inline-flex h-9 lg:h-10 items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] px-2.5 lg:px-3 text-xs font-semibold text-slate-200 hover:border-[#06b6d4]/50 hover:text-[#06b6d4] transition">
             <i data-lucide="check-square" class="h-4 w-4"></i>
-            <span class="hidden md:inline">Selecionar</span>
+            <span class="hidden lg:inline">Selecionar</span>
           </button>
 
-          <button type="button" onclick="openCreateFolderModal()" title="Nova Pasta" class="inline-flex h-9 items-center gap-1 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 px-2.5 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition">
+          <button type="button" onclick="openCreateFolderModal()" title="Nova Pasta" class="inline-flex h-9 lg:h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4]/45 bg-[#06b6d4]/15 px-2.5 lg:px-3 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition">
             <i data-lucide="folder-plus" class="h-4 w-4"></i>
-            <span class="hidden md:inline">Pasta</span>
+            <span class="hidden lg:inline">Nova Pasta</span>
           </button>
 
-          <select id="ws-sort-select" onchange="setWorkspaceSort(this.value)" aria-label="Ordenar" class="h-9 rounded-xl border border-[#1e293b] bg-[#060913] px-2 text-[11px] font-medium text-slate-200 focus:border-[#06b6d4] focus:outline-none cursor-pointer">
+          <select id="ws-sort-select" onchange="setWorkspaceSort(this.value)" aria-label="Ordenar" class="h-9 lg:h-10 rounded-xl border border-[#1e293b] bg-[#060913] px-2 lg:px-3 text-[11px] lg:text-xs font-medium text-slate-200 focus:border-[#06b6d4] focus:outline-none cursor-pointer">
             <option value="date-desc">Recentes</option>
             <option value="date-asc">Antigos</option>
-            <option value="name-asc">A-Z</option>
+            <option value="name-asc">Nome (A-Z)</option>
             <option value="size-desc">Maior</option>
             <option value="size-asc">Menor</option>
           </select>
 
-          <div class="flex items-center rounded-xl border border-[#1e293b] bg-[#060913] p-0.5" title="Colunas">
-            <button type="button" onclick="setWorkspaceCols(2)" data-ws-col="2" class="ws-col-btn rounded-lg px-2 py-1 font-mono text-[11px] font-semibold text-slate-400 hover:text-white transition">2</button>
-            <button type="button" onclick="setWorkspaceCols(3)" data-ws-col="3" class="ws-col-btn rounded-lg bg-[#111827] px-2 py-1 font-mono text-[11px] font-semibold text-[#06b6d4] transition">3</button>
-            <button type="button" onclick="setWorkspaceCols(4)" data-ws-col="4" class="ws-col-btn rounded-lg px-2 py-1 font-mono text-[11px] font-semibold text-slate-400 hover:text-white transition">4</button>
+          <div class="flex items-center rounded-xl border border-[#1e293b] bg-[#060913] p-0.5 lg:p-1" title="Colunas">
+            <button type="button" onclick="setWorkspaceCols(2)" data-ws-col="2" class="ws-col-btn rounded-lg px-2 py-1 lg:py-1.5 font-mono text-[11px] lg:text-xs font-semibold text-slate-400 hover:text-white transition">2</button>
+            <button type="button" onclick="setWorkspaceCols(3)" data-ws-col="3" class="ws-col-btn rounded-lg bg-[#111827] px-2 py-1 lg:py-1.5 font-mono text-[11px] lg:text-xs font-semibold text-[#06b6d4] transition">3</button>
+            <button type="button" onclick="setWorkspaceCols(4)" data-ws-col="4" class="ws-col-btn rounded-lg px-2 py-1 lg:py-1.5 font-mono text-[11px] lg:text-xs font-semibold text-slate-400 hover:text-white transition">4</button>
           </div>
 
-          <div class="flex items-center rounded-xl border border-[#1e293b] bg-[#060913] p-0.5">
-            <button id="btn-mode-grid" type="button" onclick="setWorkspaceView('grid')" aria-label="Grade" class="flex items-center rounded-lg bg-[#111827] p-1.5 text-[#06b6d4] transition">
+          <div class="flex items-center rounded-xl border border-[#1e293b] bg-[#060913] p-0.5 lg:p-1">
+            <button id="btn-mode-grid" type="button" onclick="setWorkspaceView('grid')" aria-label="Grade" class="flex items-center gap-1.5 rounded-lg bg-[#111827] p-1.5 lg:px-2.5 lg:py-1.5 text-xs font-medium text-[#06b6d4] transition">
               <i data-lucide="layout-grid" class="h-3.5 w-3.5"></i>
+              <span class="hidden lg:inline">Grade</span>
             </button>
-            <button id="btn-mode-list" type="button" onclick="setWorkspaceView('list')" aria-label="Lista" class="flex items-center rounded-lg p-1.5 text-slate-400 hover:text-white transition">
+            <button id="btn-mode-list" type="button" onclick="setWorkspaceView('list')" aria-label="Lista" class="flex items-center gap-1.5 rounded-lg p-1.5 lg:px-2.5 lg:py-1.5 text-xs font-medium text-slate-400 hover:text-white transition">
               <i data-lucide="list" class="h-3.5 w-3.5"></i>
+              <span class="hidden lg:inline">Lista</span>
             </button>
           </div>
 
-          <button type="button" onclick="refreshCloudFiles(true)" title="Sincronizar" aria-label="Sincronizar" class="flex h-9 w-9 items-center justify-center rounded-xl border border-[#1e293b] bg-[#111827] text-slate-300 hover:border-[#06b6d4]/50 hover:text-cyan-300 transition">
+          <button type="button" onclick="refreshCloudFiles(true)" title="Sincronizar" aria-label="Sincronizar" class="flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-xl border border-[#1e293b] bg-[#111827] text-slate-300 hover:border-[#06b6d4]/50 hover:text-cyan-300 transition">
             <i id="icon-sync-refresh" data-lucide="refresh-cw" class="h-4 w-4"></i>
           </button>
         </div>
@@ -916,7 +921,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.12</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.13</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -931,7 +936,7 @@
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
           <span class="text-slate-400">Recursos</span>
-          <span class="font-mono text-emerald-400">Zoom Pinça + Pastas v2 + Auto-Sync</span>
+          <span class="font-mono text-emerald-400">Upload Seguro + Zoom Pinça + Auto-Sync</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
@@ -1152,7 +1157,7 @@
 
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.12.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.13.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1181,7 +1186,7 @@
 
       try {
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} state.client = null; }
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.12.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.13.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
         if (typeof client.setLogLevel === 'function') { try { client.setLogLevel('error'); } catch (e) {} }
@@ -1666,7 +1671,7 @@
         const { TelegramClient, Logger, StringSession } = state.gramjsLib;
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} }
 
-        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.12.0' };
+        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.13.0' };
         if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
 
         state.client = new TelegramClient(
@@ -2701,7 +2706,7 @@
       setTimeout(() => { if (card.parentNode) card.remove(); }, 10000);
     }
 
-    // 11. FILA DE UPLOAD EM SEGUNDO PLANO + PROTEÇÃO ANTI-RETORNO PARA O PIN
+    // 11. FILA DE UPLOAD UNIVERSAL (QUALQUER FORMATO E TAMANHO ATÉ 2 GB)
     const SSD_UPLOAD_CHUNK_SIZE = 512 * 1024;
     const SSD_BIG_FILE_THRESHOLD = 10 * 1024 * 1024;
     const SSD_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
@@ -2913,7 +2918,7 @@
         else if (t.status === 'queued') statusText = 'Na fila...';
         else if (t.status === 'finalizing') statusText = 'Finalizando...';
         else if (isDone) statusText = 'Concluído';
-        else if (isErr) statusText = 'Falhou';
+        else if (isErr) statusText = t.errorMsg ? `Falhou: ${t.errorMsg.slice(0, 26)}` : 'Falhou';
         else if (t.speedBps > 0) statusText = `${t.pct}% • ${formatFileSize(t.speedBps)}/s`;
 
         return `
@@ -2936,7 +2941,7 @@
             </div>
             <div class="flex items-center justify-between text-[10px] font-mono text-slate-400">
               <span>${formatFileSize(isDone ? t.totalSize : t.uploadedBytes)} / ${formatFileSize(t.totalSize)}</span>
-              <span class="${isDone ? 'text-emerald-400' : (isPaused ? 'text-amber-300' : (isErr ? 'text-rose-400' : 'text-[#06b6d4]'))}">${statusText}</span>
+              <span class="${isDone ? 'text-emerald-400' : (isPaused ? 'text-amber-300' : (isErr ? 'text-rose-400' : 'text-[#06b6d4]'))}">${escapeHtml(statusText)}</span>
             </div>
           </div>
         `;
@@ -3047,30 +3052,44 @@
             renderUploadQueueDock();
 
             const file = nextTask.file;
-            const isSmallPhoto = file.type && file.type.startsWith('image/') && file.size <= SSD_BIG_FILE_THRESHOLD;
             const isVideo = (file.type && file.type.startsWith('video/')) || /\.(mp4|mov|m4v|webm|mkv|avi)$/i.test(file.name);
 
-            let media;
-            if (isSmallPhoto) {
-              media = new Api.InputMediaUploadedPhoto({ file: inputFile });
-            } else {
-              const attributes = [new Api.DocumentAttributeFilename({ fileName: file.name })];
-              if (isVideo) {
-                const vMeta = await extractVideoMetadata(file);
-                if (vMeta && vMeta.w > 0 && vMeta.h > 0) {
-                  attributes.push(new Api.DocumentAttributeVideo({ duration: vMeta.duration, w: vMeta.w, h: vMeta.h, supportsStreaming: true }));
-                }
+            // Modo universal: envia qualquer formato (webp, CMYK, cdr, svg, apk, zip, etc.) como Arquivo Original sem compressão
+            const attributes = [new Api.DocumentAttributeFilename({ fileName: file.name })];
+            if (isVideo) {
+              const vMeta = await extractVideoMetadata(file);
+              if (vMeta && vMeta.w > 0 && vMeta.h > 0) {
+                attributes.push(new Api.DocumentAttributeVideo({ duration: vMeta.duration, w: vMeta.w, h: vMeta.h, supportsStreaming: true }));
               }
-              media = new Api.InputMediaUploadedDocument({
-                file: inputFile,
-                mimeType: file.type || (isVideo ? 'video/mp4' : 'application/octet-stream'),
-                attributes,
-                forceFile: !isVideo
-              });
             }
+            const media = new Api.InputMediaUploadedDocument({
+              file: inputFile,
+              mimeType: file.type || (isVideo ? 'video/mp4' : 'application/octet-stream'),
+              attributes,
+              forceFile: !isVideo
+            });
 
             const beforeIds = new Set(state.cloudFiles.map(f => f.id));
-            await state.client.invoke(new Api.messages.SendMedia({ peer: inputPeer, media, message: file.name, randomId: generateSafeFileId() }));
+
+            let sentOk = false;
+            let lastSendErr = null;
+            for (let sendTry = 1; sendTry <= 5 && !sentOk; sendTry++) {
+              try {
+                if (!state.client.connected) await state.client.connect();
+                await state.client.invoke(new Api.messages.SendMedia({ peer: inputPeer, media, message: file.name, randomId: generateSafeFileId() }));
+                sentOk = true;
+              } catch (sendErr) {
+                lastSendErr = sendErr;
+                const msg = String((sendErr && (sendErr.errorMessage || sendErr.message)) || '').toUpperCase();
+                const flood = msg.match(/FLOOD_WAIT_(\d+)/);
+                if (flood) {
+                  await new Promise(r => setTimeout(r, Math.min((parseInt(flood[1], 10) + 1) * 1000, 40000)));
+                } else {
+                  await new Promise(r => setTimeout(r, sendTry * 1500));
+                }
+              }
+            }
+            if (!sentOk) throw lastSendErr;
 
             nextTask.status = 'done';
             nextTask.pct = 100;
@@ -3204,8 +3223,8 @@
       document.querySelectorAll('.ws-col-btn').forEach(btn => {
         const active = Number(btn.dataset.wsCol) === num;
         btn.className = active
-          ? 'ws-col-btn rounded-lg bg-[#111827] px-2 py-1 font-mono text-[11px] font-semibold text-[#06b6d4] transition'
-          : 'ws-col-btn rounded-lg px-2 py-1 font-mono text-[11px] font-semibold text-slate-400 hover:text-white transition';
+          ? 'ws-col-btn rounded-lg bg-[#111827] px-2 py-1 lg:py-1.5 font-mono text-[11px] lg:text-xs font-semibold text-[#06b6d4] transition'
+          : 'ws-col-btn rounded-lg px-2 py-1 lg:py-1.5 font-mono text-[11px] lg:text-xs font-semibold text-slate-400 hover:text-white transition';
       });
       if (state.viewMode === 'grid') renderWorkspaceFiles();
     }
@@ -4297,11 +4316,11 @@
       const gridBtn = document.getElementById('btn-mode-grid');
       const listBtn = document.getElementById('btn-mode-list');
       if (mode === 'grid') {
-        gridBtn.className = 'flex items-center rounded-lg bg-[#111827] p-1.5 text-[#06b6d4] transition';
-        listBtn.className = 'flex items-center rounded-lg p-1.5 text-slate-400 hover:text-white transition';
+        gridBtn.className = 'flex items-center gap-1.5 rounded-lg bg-[#111827] p-1.5 lg:px-2.5 lg:py-1.5 text-xs font-medium text-[#06b6d4] transition';
+        listBtn.className = 'flex items-center gap-1.5 rounded-lg p-1.5 lg:px-2.5 lg:py-1.5 text-xs font-medium text-slate-400 hover:text-white transition';
       } else {
-        listBtn.className = 'flex items-center rounded-lg bg-[#111827] p-1.5 text-[#06b6d4] transition';
-        gridBtn.className = 'flex items-center rounded-lg p-1.5 text-slate-400 hover:text-white transition';
+        listBtn.className = 'flex items-center gap-1.5 rounded-lg bg-[#111827] p-1.5 lg:px-2.5 lg:py-1.5 text-xs font-medium text-[#06b6d4] transition';
+        gridBtn.className = 'flex items-center gap-1.5 rounded-lg p-1.5 lg:px-2.5 lg:py-1.5 text-xs font-medium text-slate-400 hover:text-white transition';
       }
       renderWorkspaceFiles();
     }
@@ -4460,8 +4479,8 @@
       const btn = document.getElementById('btn-toggle-select');
       if (btn) {
         btn.className = state.selectionMode
-          ? 'inline-flex h-9 items-center gap-1 rounded-xl border border-[#06b6d4] bg-[#06b6d4] px-2.5 text-xs font-bold text-slate-950 transition'
-          : 'inline-flex h-9 items-center gap-1 rounded-xl border border-[#1e293b] bg-[#111827] px-2.5 text-xs font-semibold text-slate-200 hover:border-[#06b6d4]/50 hover:text-[#06b6d4] transition';
+          ? 'inline-flex h-9 lg:h-10 items-center gap-1.5 rounded-xl border border-[#06b6d4] bg-[#06b6d4] px-2.5 lg:px-3 text-xs font-bold text-slate-950 transition'
+          : 'inline-flex h-9 lg:h-10 items-center gap-1.5 rounded-xl border border-[#1e293b] bg-[#111827] px-2.5 lg:px-3 text-xs font-semibold text-slate-200 hover:border-[#06b6d4]/50 hover:text-[#06b6d4] transition';
       }
       updateBulkActionBar();
       renderWorkspaceFiles();
