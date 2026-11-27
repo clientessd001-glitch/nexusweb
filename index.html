@@ -716,26 +716,26 @@
       <div id="uq-items-body" class="max-h-64 overflow-y-auto p-3 space-y-2"></div>
     </div>
 
-    <!-- BARRA DE AÇÕES EM MASSA (SELEÇÃO MÚLTIPLA) -->
-    <div id="bulk-action-bar" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 hidden w-[calc(100vw-1.5rem)] max-w-lg items-center justify-between gap-2 rounded-2xl border border-[#06b6d4]/60 bg-[#0d1324]/95 px-3.5 py-2.5 shadow-2xl backdrop-blur-xl animate-fade-up">
-      <div class="flex items-center gap-2 min-w-0">
-        <span id="bulk-count-label" class="rounded-lg bg-[#06b6d4]/15 px-2.5 py-1 font-mono text-xs font-bold text-[#06b6d4]">0 sel.</span>
+    <!-- BARRA DE AÇÕES EM MASSA (SELEÇÃO MÚLTIPLA CORRIGIDA) -->
+    <div id="bulk-action-bar" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] hidden w-[calc(100vw-1rem)] max-w-lg items-center justify-between gap-1.5 rounded-2xl border border-[#06b6d4]/70 bg-[#0d1324] px-3 py-2.5 shadow-2xl animate-fade-up">
+      <div class="flex items-center gap-2 shrink-0">
+        <span id="bulk-count-label" class="rounded-lg bg-[#06b6d4]/15 px-2 py-1 font-mono text-xs font-bold text-[#06b6d4]">0</span>
         <button type="button" onclick="selectAllVisibleFiles()" class="text-[11px] font-semibold text-slate-300 hover:text-white underline">Todos</button>
       </div>
       <div class="flex items-center gap-1.5">
-        <button type="button" onclick="bulkMoveSelectedFiles()" title="Mover para pasta" class="inline-flex items-center gap-1 rounded-xl border border-[#1e293b] bg-[#111827] px-2.5 py-2 text-xs font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition">
+        <button type="button" onclick="bulkMoveSelectedFiles()" class="inline-flex items-center gap-1 rounded-xl border border-[#1e293b] bg-[#111827] px-2.5 py-2 text-[11px] font-semibold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition">
           <i data-lucide="folder-input" class="h-3.5 w-3.5"></i>
-          <span class="hidden sm:inline">Mover</span>
+          <span>Mover</span>
         </button>
-        <button type="button" onclick="bulkShareSelectedFiles()" title="Compartilhar selecionados" class="inline-flex items-center gap-1 rounded-xl border border-[#1e293b] bg-[#111827] px-2.5 py-2 text-xs font-semibold text-blue-300 hover:bg-[#2563eb] hover:text-white transition">
+        <button type="button" onclick="bulkShareSelectedFiles()" class="inline-flex items-center gap-1 rounded-xl border border-[#1e293b] bg-[#111827] px-2.5 py-2 text-[11px] font-semibold text-blue-300 hover:bg-[#2563eb] hover:text-white transition">
           <i data-lucide="share-2" class="h-3.5 w-3.5"></i>
-          <span class="hidden sm:inline">Compartilhar</span>
+          <span>Enviar</span>
         </button>
-        <button type="button" onclick="bulkDeleteSelectedFiles()" title="Excluir selecionados" class="inline-flex items-center gap-1 rounded-xl border border-[#dc2626]/50 bg-[#dc2626]/15 px-2.5 py-2 text-xs font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition">
+        <button id="btn-bulk-delete" type="button" onclick="bulkDeleteSelectedFiles()" class="inline-flex items-center gap-1 rounded-xl border border-[#dc2626]/60 bg-[#dc2626]/20 px-2.5 py-2 text-[11px] font-semibold text-rose-300 hover:bg-[#dc2626] hover:text-white transition">
           <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
-          <span class="hidden sm:inline">Excluir</span>
+          <span id="btn-bulk-delete-label">Excluir</span>
         </button>
-        <button type="button" onclick="toggleSelectionMode(false)" title="Cancelar seleção" class="rounded-xl p-2 text-slate-400 hover:bg-[#111827] hover:text-white transition">
+        <button type="button" onclick="toggleSelectionMode(false)" title="Cancelar" class="rounded-xl p-1.5 text-slate-400 hover:bg-[#111827] hover:text-white transition">
           <i data-lucide="x" class="h-4 w-4"></i>
         </button>
       </div>
@@ -860,7 +860,7 @@
   </div>
 
   <!-- MODAL: ENCAMINHAR ARQUIVO ENTRE PASTAS -->
-  <div id="modal-forward-folder" class="fixed inset-0 z-50 hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
+  <div id="modal-forward-folder" class="fixed inset-0 z-[70] hidden items-center justify-center bg-[#060913]/85 backdrop-blur-md p-4">
     <div class="w-full max-w-sm rounded-3xl nexus-glass p-6 shadow-2xl animate-fade-up">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-2.5">
@@ -921,7 +921,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.9</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.10</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -936,7 +936,7 @@
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
           <span class="text-slate-400">Recursos</span>
-          <span class="font-mono text-emerald-400">Auto-Sync + Seleção + Pastas</span>
+          <span class="font-mono text-emerald-400">Auto-Sync + Seleção + Paginação</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
@@ -1060,6 +1060,7 @@
       adminTapCount: 0, adminTapTimer: null, adminMsgId: null, adminData: { adminPinHash: '', profiles: [] }, adminEditingPinId: null,
       folders: [], fileFolderMap: {}, foldersMsgId: null, activeFolderId: null, newFolderColor: 'cyan', forwardTargetKey: null,
       selectionMode: false, selectedKeys: new Set(),
+      oldestMsgId: 0, hasMoreFiles: false, loadingMore: false,
       uploadQueue: [], uploadQueueExpanded: true, uploadWorkerRunning: false,
       cloudFiles: [], rawMessagesByKey: new Map(), favoriteKeys: new Set(), thumbnailUrls: {}, previewCache: {},
       previewZoom: 1, fsZoom: 1, fsRot: 0, fsFileKey: null, fsIsPdf: false,
@@ -1156,7 +1157,7 @@
 
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.9.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.10.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1185,7 +1186,7 @@
 
       try {
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} state.client = null; }
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.9.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.10.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
         if (typeof client.setLogLevel === 'function') { try { client.setLogLevel('error'); } catch (e) {} }
@@ -1670,7 +1671,7 @@
         const { TelegramClient, Logger, StringSession } = state.gramjsLib;
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} }
 
-        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.9.0' };
+        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.10.0' };
         if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
 
         state.client = new TelegramClient(
@@ -2321,6 +2322,8 @@
       state.foldersMsgId = null;
       state.selectionMode = false;
       state.selectedKeys.clear();
+      state.oldestMsgId = 0;
+      state.hasMoreFiles = false;
       closePreviewDrawer(false);
 
       const prof = state.deviceProfile;
@@ -3207,14 +3210,22 @@
         await loadFoldersFromCloud(peer);
         const messages = await state.client.getMessages(peer, { limit: 100 });
 
+        let minId = 0;
         if (Array.isArray(messages)) {
           for (const msg of messages) {
+            const mId = toSafeNumber(msg.id);
+            if (mId > 0 && (minId === 0 || mId < minId)) minId = mId;
             const item = parseGramJsMessage(msg, state.deviceProfile, peer);
             if (item) {
               parsedList.push(item);
               state.rawMessagesByKey.set(item.key, msg);
             }
           }
+          state.oldestMsgId = minId;
+          state.hasMoreFiles = messages.length >= 100;
+        } else {
+          state.oldestMsgId = 0;
+          state.hasMoreFiles = false;
         }
 
         state.cloudFiles = parsedList;
@@ -3229,6 +3240,47 @@
         if (topIcon) topIcon.classList.remove('animate-spin');
         if (sbIcon) sbIcon.classList.remove('animate-spin');
         if (banner) { banner.classList.add('hidden'); banner.classList.remove('flex'); }
+      }
+    }
+
+    async function loadMoreCloudFiles() {
+      if (state.loadingMore || !state.hasMoreFiles || !state.oldestMsgId || !state.client) return;
+      state.loadingMore = true;
+      const btn = document.getElementById('btn-load-more-files');
+      if (btn) { btn.disabled = true; btn.textContent = 'Carregando mais...'; }
+
+      try {
+        if (!state.client.connected) await state.client.connect();
+        const peer = await resolveDeviceProfilePeer();
+        const messages = await state.client.getMessages(peer, { limit: 100, offsetId: state.oldestMsgId });
+
+        let minId = state.oldestMsgId;
+        let added = 0;
+        if (Array.isArray(messages) && messages.length > 0) {
+          for (const msg of messages) {
+            const mId = toSafeNumber(msg.id);
+            if (mId > 0 && mId < minId) minId = mId;
+            const item = parseGramJsMessage(msg, state.deviceProfile, peer);
+            if (item && !state.rawMessagesByKey.has(item.key)) {
+              state.cloudFiles.push(item);
+              state.rawMessagesByKey.set(item.key, msg);
+              added++;
+            }
+          }
+          state.oldestMsgId = minId;
+          state.hasMoreFiles = messages.length >= 100;
+        } else {
+          state.hasMoreFiles = false;
+        }
+
+        renderWorkspaceSidebarCounts();
+        renderSidebarFolders();
+        renderWorkspaceFiles();
+        if (added > 0) showToast('Mais Arquivos Carregados', `+${added} arquivo(s) exibido(s).`, 'success');
+      } catch (e) {
+        showToast('Erro', 'Não foi possível carregar mais arquivos.', 'danger');
+      } finally {
+        state.loadingMore = false;
       }
     }
 
@@ -3637,6 +3689,17 @@
             </div>
           </div>
         `).join('');
+      }
+
+      if (state.hasMoreFiles) {
+        container.insertAdjacentHTML('beforeend', `
+          <div class="mt-4 mb-6 flex justify-center">
+            <button id="btn-load-more-files" type="button" onclick="loadMoreCloudFiles()" class="inline-flex items-center gap-2 rounded-2xl border border-[#06b6d4]/50 bg-[#06b6d4]/15 px-6 py-3 text-xs font-bold text-[#06b6d4] hover:bg-[#06b6d4] hover:text-slate-950 transition">
+              <i data-lucide="chevron-down" class="h-4 w-4"></i>
+              <span>Carregar mais arquivos</span>
+            </button>
+          </div>
+        `);
       }
 
       refreshIcons();
@@ -4183,6 +4246,8 @@
       state.foldersMsgId = null;
       state.selectionMode = false;
       state.selectedKeys.clear();
+      state.oldestMsgId = 0;
+      state.hasMoreFiles = false;
       state.rawMessagesByKey.clear();
       state.currentPhoneCodeHash = '';
       showToast('Conta Desconectada', 'Sessão e vínculo deste aparelho removidos.', 'info');
@@ -4228,9 +4293,14 @@
       }
     });
 
-    // SELEÇÃO MÚLTIPLA (MOVER, COMPARTILHAR E EXCLUIR EM MASSA)
+    // SELEÇÃO MÚLTIPLA (MOVER, COMPARTILHAR E EXCLUIR EM MASSA - 2 TOQUES SEM CONFIRM)
+    let bulkDeleteArmed = false;
+
     function toggleSelectionMode(forceState) {
       state.selectionMode = typeof forceState === 'boolean' ? forceState : !state.selectionMode;
+      bulkDeleteArmed = false;
+      const delLbl = document.getElementById('btn-bulk-delete-label');
+      if (delLbl) delLbl.textContent = 'Excluir';
       if (!state.selectionMode) state.selectedKeys.clear();
       if (state.selectionMode) closePreviewDrawer(false);
 
@@ -4270,7 +4340,7 @@
         bar.classList.remove('hidden');
         bar.classList.add('flex');
         if (fab) fab.classList.add('hidden');
-        if (lbl) lbl.textContent = `${state.selectedKeys.size} sel.`;
+        if (lbl) lbl.textContent = `${state.selectedKeys.size}`;
       } else {
         bar.classList.add('hidden');
         bar.classList.remove('flex');
@@ -4324,7 +4394,21 @@
         showToast('Nada Selecionado', 'Toque nos arquivos que deseja excluir.', 'warning');
         return;
       }
-      if (!confirm(`Excluir permanentemente ${keys.length} arquivo(s) selecionado(s)?`)) return;
+
+      const btnLbl = document.getElementById('btn-bulk-delete-label');
+      if (!bulkDeleteArmed) {
+        bulkDeleteArmed = true;
+        if (btnLbl) btnLbl.textContent = 'Confirmar?';
+        setTimeout(() => {
+          bulkDeleteArmed = false;
+          const lbl = document.getElementById('btn-bulk-delete-label');
+          if (lbl) lbl.textContent = 'Excluir';
+        }, 4000);
+        return;
+      }
+
+      bulkDeleteArmed = false;
+      if (btnLbl) btnLbl.textContent = 'Excluindo...';
 
       const selectedFiles = state.cloudFiles.filter(f => state.selectedKeys.has(f.key));
       const ids = selectedFiles.map(f => f.id);
@@ -4347,6 +4431,8 @@
         showToast('Arquivos Excluídos', `${keys.length} item(ns) removido(s) permanentemente.`, 'info');
       } catch (err) {
         showToast('Erro ao Excluir', 'Não foi possível excluir os arquivos selecionados.', 'danger');
+      } finally {
+        if (btnLbl) btnLbl.textContent = 'Excluir';
       }
     }
 
