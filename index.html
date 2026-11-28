@@ -3544,10 +3544,11 @@ function initThumbObserver() {
       processThumbnailQueue();
     }
 
-    async function processThumbnailQueue() {
-      while (state.activeThumbWorkers < 8 && state.thumbQueue.length > 0) {
+async function processThumbnailQueue() {
+      while (state.activeThumbWorkers < 4 && state.thumbQueue.length > 0) {
         const fileKey = state.thumbQueue.shift();
         const rawMsg = state.rawMessagesByKey.get(fileKey);
+        const fileObj = state.cloudFiles.find(f => f.key === fileKey);
         if (!rawMsg || !state.client) {
           delete state.thumbnailUrls[fileKey];
           continue;
@@ -3557,13 +3558,33 @@ function initThumbObserver() {
         (async () => {
           try {
             let data = null;
-            try { data = await state.client.downloadMedia(rawMsg, { thumb: 1 }); }
-            catch (e) {
-              try { data = await state.client.downloadMedia(rawMsg, { thumb: 0 }); } catch (e2) {}
+
+            for (let attempt = 1; attempt <= 2 && (!data || data.length === 0); attempt++) {
+              try {
+                data = await state.client.downloadMedia(rawMsg, { thumb: 1 });
+              } catch (e) {}
+
+              if (!data || data.length === 0) {
+                try {
+                  data = await state.client.downloadMedia(rawMsg, { thumb: 0 });
+                } catch (e) {}
+              }
+
+              // Fallback para imagens enviadas como documento sem miniatura gerada
+              if ((!data || data.length === 0) && fileObj && fileObj.category === 'photos' && fileObj.sizeBytes > 0 && fileObj.sizeBytes <= 3 * 1024 * 1024) {
+                try {
+                  data = await state.client.downloadMedia(rawMsg);
+                } catch (e) {}
+              }
+
+              if (!data || data.length === 0) {
+                await new Promise(r => setTimeout(r, 800 * attempt));
+              }
             }
 
             if (data && data.length > 0) {
-              const url = URL.createObjectURL(new Blob([data], { type: 'image/jpeg' }));
+              const mime = (fileObj && fileObj.mimeType && fileObj.mimeType.startsWith('image/')) ? fileObj.mimeType : 'image/jpeg';
+              const url = URL.createObjectURL(new Blob([data], { type: mime }));
               state.thumbnailUrls[fileKey] = url;
               const imgEl = document.querySelector(`img[data-thumb-key="${fileKey}"]`);
               const fallbackEl = document.querySelector(`[data-thumb-fallback="${fileKey}"]`);
