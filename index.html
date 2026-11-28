@@ -921,7 +921,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.13</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.14</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -936,7 +936,7 @@
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
           <span class="text-slate-400">Recursos</span>
-          <span class="font-mono text-emerald-400">Upload Seguro + Zoom Pinça + Auto-Sync</span>
+          <span class="font-mono text-emerald-400">Upload 2º Plano + Zoom Pinça + Auto-Sync</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
@@ -1157,7 +1157,7 @@
 
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.13.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.14.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1186,7 +1186,7 @@
 
       try {
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} state.client = null; }
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.13.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.14.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
         if (typeof client.setLogLevel === 'function') { try { client.setLogLevel('error'); } catch (e) {} }
@@ -1671,7 +1671,7 @@
         const { TelegramClient, Logger, StringSession } = state.gramjsLib;
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} }
 
-        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.13.0' };
+        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.14.0' };
         if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
 
         state.client = new TelegramClient(
@@ -2878,6 +2878,16 @@
       const overallPct = Math.min(100, Math.round((uploadedBytesAll / totalBytesAll) * 100));
 
       notifyNativeBackgroundUpload(activeCount > 0);
+      if (window.AndroidBridge && typeof window.AndroidBridge.updateUploadProgress === 'function') {
+        try {
+          if (activeCount > 0) {
+            window.AndroidBridge.updateUploadProgress(
+              overallPct,
+              `Enviando ${doneCount}/${total} (${overallPct}%)`
+            );
+          }
+        } catch (e) {}
+      }
       if (activeCount > 0) resetAutoLockTimer();
 
       const titleEl = document.getElementById('uq-summary-title');
@@ -3054,7 +3064,6 @@
             const file = nextTask.file;
             const isVideo = (file.type && file.type.startsWith('video/')) || /\.(mp4|mov|m4v|webm|mkv|avi)$/i.test(file.name);
 
-            // Modo universal: envia qualquer formato (webp, CMYK, cdr, svg, apk, zip, etc.) como Arquivo Original sem compressão
             const attributes = [new Api.DocumentAttributeFilename({ fileName: file.name })];
             if (isVideo) {
               const vMeta = await extractVideoMetadata(file);
@@ -3891,7 +3900,20 @@
     }
 
     // 14. INSPETOR LATERAL + LEITOR PDF.JS + TELA CHEIA + ZOOM PINÇA (10% A 400%)
+    function stopAllDrawerMedia() {
+      const drawer = document.getElementById('ws-preview-drawer');
+      if (!drawer) return;
+      drawer.querySelectorAll('video, audio').forEach(el => {
+        try {
+          el.pause();
+          el.removeAttribute('src');
+          el.load();
+        } catch (e) {}
+      });
+    }
+
     async function openPreviewDrawer(fileKey) {
+      stopAllDrawerMedia();
       const file = state.cloudFiles.find(f => f.key === fileKey);
       if (!file) return;
       state.previewItemKey = fileKey;
@@ -3998,6 +4020,7 @@
     }
 
     function openFullscreenMedia(fileKey) {
+      stopAllDrawerMedia();
       const file = state.cloudFiles.find(f => f.key === fileKey);
       const cached = state.previewCache[fileKey];
       if (!file || !cached || !cached.url) return;
@@ -4130,6 +4153,7 @@
       const vidEl = document.getElementById('fs-media-video');
       vidEl.pause();
       vidEl.removeAttribute('src');
+      try { vidEl.load(); } catch (e) {}
       document.getElementById('fs-pdf-wrap').classList.add('hidden');
       document.getElementById('fs-pdf-nav').classList.add('hidden');
       document.getElementById('fs-pdf-nav').classList.remove('flex');
@@ -4267,11 +4291,13 @@
     }
 
     function closePreviewDrawer(rerender = true) {
+      stopAllDrawerMedia();
       state.previewItemKey = null;
       state.confirmDeleteKey = null;
       const drawer = document.getElementById('ws-preview-drawer');
       drawer.classList.add('hidden');
       drawer.classList.remove('flex');
+      drawer.innerHTML = '';
       if (rerender) renderWorkspaceFiles();
     }
 
