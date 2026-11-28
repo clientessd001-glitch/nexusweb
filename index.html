@@ -921,7 +921,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.14</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.15</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -936,7 +936,7 @@
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
           <span class="text-slate-400">Recursos</span>
-          <span class="font-mono text-emerald-400">Upload 2º Plano + Zoom Pinça + Auto-Sync</span>
+          <span class="font-mono text-emerald-400">Miniaturas 8x + Upload 6x + Auto-Sync</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
@@ -1157,7 +1157,7 @@
 
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.14.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.15.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1186,7 +1186,7 @@
 
       try {
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} state.client = null; }
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.14.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.15.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
         if (typeof client.setLogLevel === 'function') { try { client.setLogLevel('error'); } catch (e) {} }
@@ -1671,7 +1671,7 @@
         const { TelegramClient, Logger, StringSession } = state.gramjsLib;
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} }
 
-        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.14.0' };
+        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.15.0' };
         if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
 
         state.client = new TelegramClient(
@@ -2706,11 +2706,11 @@
       setTimeout(() => { if (card.parentNode) card.remove(); }, 10000);
     }
 
-    // 11. FILA DE UPLOAD UNIVERSAL (QUALQUER FORMATO E TAMANHO ATÉ 2 GB)
+    // 11. FILA DE UPLOAD UNIVERSAL (6 BLOCOS SIMULTÂNEOS • QUALQUER FORMATO ATÉ 2 GB)
     const SSD_UPLOAD_CHUNK_SIZE = 512 * 1024;
     const SSD_BIG_FILE_THRESHOLD = 10 * 1024 * 1024;
     const SSD_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
-    const SSD_UPLOAD_CONCURRENCY = 3;
+    const SSD_UPLOAD_CONCURRENCY = 6;
 
     function triggerCloudUpload() {
       try { localStorage.setItem(PICKER_UNLOCK_KEY, String(Date.now())); } catch (e) {}
@@ -3508,39 +3508,78 @@
       return Boolean(file && (String(file.ext || '').toUpperCase() === 'PDF' || String(file.mimeType || '').toLowerCase() === 'application/pdf'));
     }
 
-    function enqueueThumbnailLoad(fileKey) {
-      if (state.thumbnailUrls[fileKey]) return;
+    // CARREGAMENTO INTELIGENTE DE MINIATURAS SOB DEMANDA (8 WORKERS SIMULTÂNEOS)
+    let thumbObserver = null;
+
+    function initThumbObserver() {
+      if (thumbObserver) thumbObserver.disconnect();
+      thumbObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const imgEl = entry.target;
+          const fileKey = imgEl.getAttribute('data-thumb-key');
+          if (!fileKey) return;
+          thumbObserver.unobserve(imgEl);
+          enqueueThumbnailLoad(fileKey, true);
+        });
+      }, { rootMargin: '250px 0px' });
+
+      document.querySelectorAll('img[data-thumb-key]').forEach(img => {
+        const key = img.getAttribute('data-thumb-key');
+        const cached = state.thumbnailUrls[key];
+        if (!cached || cached === 'none') {
+          thumbObserver.observe(img);
+        }
+      });
+    }
+
+    function enqueueThumbnailLoad(fileKey, priority = false) {
+      const current = state.thumbnailUrls[fileKey];
+      if (current && current !== 'none') return;
       state.thumbnailUrls[fileKey] = 'queued';
-      state.thumbQueue.push(fileKey);
+      if (priority) state.thumbQueue.unshift(fileKey);
+      else state.thumbQueue.push(fileKey);
       processThumbnailQueue();
     }
 
     async function processThumbnailQueue() {
-      if (state.activeThumbWorkers >= 2 || state.thumbQueue.length === 0) return;
-      const fileKey = state.thumbQueue.shift();
-      const rawMsg = state.rawMessagesByKey.get(fileKey);
-      if (!rawMsg || !state.client) { delete state.thumbnailUrls[fileKey]; processThumbnailQueue(); return; }
-
-      state.activeThumbWorkers++;
-      try {
-        let data = null;
-        try { data = await state.client.downloadMedia(rawMsg, { thumb: 1 }); }
-        catch (e) { data = await state.client.downloadMedia(rawMsg, { thumb: 0 }); }
-
-        if (data && data.length > 0) {
-          const url = URL.createObjectURL(new Blob([data], { type: 'image/jpeg' }));
-          state.thumbnailUrls[fileKey] = url;
-          const imgEl = document.querySelector(`img[data-thumb-key="${fileKey}"]`);
-          const fallbackEl = document.querySelector(`[data-thumb-fallback="${fileKey}"]`);
-          if (imgEl) { imgEl.src = url; imgEl.classList.remove('hidden'); if (fallbackEl) fallbackEl.classList.add('hidden'); }
-        } else {
-          state.thumbnailUrls[fileKey] = 'none';
+      while (state.activeThumbWorkers < 8 && state.thumbQueue.length > 0) {
+        const fileKey = state.thumbQueue.shift();
+        const rawMsg = state.rawMessagesByKey.get(fileKey);
+        if (!rawMsg || !state.client) {
+          delete state.thumbnailUrls[fileKey];
+          continue;
         }
-      } catch (e) {
-        state.thumbnailUrls[fileKey] = 'none';
-      } finally {
-        state.activeThumbWorkers--;
-        processThumbnailQueue();
+
+        state.activeThumbWorkers++;
+        (async () => {
+          try {
+            let data = null;
+            try { data = await state.client.downloadMedia(rawMsg, { thumb: 1 }); }
+            catch (e) {
+              try { data = await state.client.downloadMedia(rawMsg, { thumb: 0 }); } catch (e2) {}
+            }
+
+            if (data && data.length > 0) {
+              const url = URL.createObjectURL(new Blob([data], { type: 'image/jpeg' }));
+              state.thumbnailUrls[fileKey] = url;
+              const imgEl = document.querySelector(`img[data-thumb-key="${fileKey}"]`);
+              const fallbackEl = document.querySelector(`[data-thumb-fallback="${fileKey}"]`);
+              if (imgEl) {
+                imgEl.src = url;
+                imgEl.classList.remove('hidden');
+                if (fallbackEl) fallbackEl.classList.add('hidden');
+              }
+            } else {
+              state.thumbnailUrls[fileKey] = 'none';
+            }
+          } catch (e) {
+            delete state.thumbnailUrls[fileKey];
+          } finally {
+            state.activeThumbWorkers--;
+            processThumbnailQueue();
+          }
+        })();
       }
     }
 
@@ -3840,7 +3879,7 @@
 
       refreshIcons();
       if (state.viewMode === 'grid') {
-        items.forEach(file => { if (file.canHaveThumb && !state.thumbnailUrls[file.key]) enqueueThumbnailLoad(file.key); });
+        initThumbObserver();
       }
     }
 
@@ -3901,11 +3940,12 @@
 
     // 14. INSPETOR LATERAL + LEITOR PDF.JS + TELA CHEIA + ZOOM PINÇA (10% A 400%)
     function stopAllDrawerMedia() {
-      const drawer = document.getElementById('ws-preview-drawer');
-      if (!drawer) return;
-      drawer.querySelectorAll('video, audio').forEach(el => {
+      document.querySelectorAll('video, audio').forEach(el => {
         try {
+          el.muted = true;
           el.pause();
+          el.currentTime = 0;
+          el.src = '';
           el.removeAttribute('src');
           el.load();
         } catch (e) {}
@@ -4059,6 +4099,7 @@
         loadPdfIntoCanvas(fileKey, 'fs-pdf-canvas', state.pdfPage || 1, 1.5);
       } else if (file.category === 'videos') {
         vidEl.classList.remove('hidden');
+        vidEl.muted = false;
         vidEl.src = cached.url;
         rotBtn.classList.remove('hidden');
         document.getElementById('fs-zoom-out').classList.add('hidden');
@@ -4151,7 +4192,10 @@
     function closeFullscreenMedia() {
       const modal = document.getElementById('modal-fullscreen-media');
       const vidEl = document.getElementById('fs-media-video');
+      vidEl.muted = true;
       vidEl.pause();
+      vidEl.currentTime = 0;
+      vidEl.src = '';
       vidEl.removeAttribute('src');
       try { vidEl.load(); } catch (e) {}
       document.getElementById('fs-pdf-wrap').classList.add('hidden');
