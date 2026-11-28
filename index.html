@@ -3511,24 +3511,26 @@
     // CARREGAMENTO INTELIGENTE DE MINIATURAS SOB DEMANDA (8 WORKERS SIMULTÂNEOS)
     let thumbObserver = null;
 
-    function initThumbObserver() {
+function initThumbObserver() {
       if (thumbObserver) thumbObserver.disconnect();
       thumbObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (!entry.isIntersecting) return;
-          const imgEl = entry.target;
-          const fileKey = imgEl.getAttribute('data-thumb-key');
+          const box = entry.target;
+          const fileKey = box.getAttribute('data-observe-key');
           if (!fileKey) return;
-          thumbObserver.unobserve(imgEl);
+          thumbObserver.unobserve(box);
           enqueueThumbnailLoad(fileKey, true);
         });
-      }, { rootMargin: '250px 0px' });
+      }, { rootMargin: '300px 0px' });
 
       document.querySelectorAll('img[data-thumb-key]').forEach(img => {
         const key = img.getAttribute('data-thumb-key');
         const cached = state.thumbnailUrls[key];
-        if (!cached || cached === 'none') {
-          thumbObserver.observe(img);
+        const box = img.parentElement;
+        if (box && (!cached || cached === 'none')) {
+          box.setAttribute('data-observe-key', key);
+          thumbObserver.observe(box);
         }
       });
     }
