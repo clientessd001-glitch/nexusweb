@@ -3573,10 +3573,25 @@
         state.activeThumbWorkers++;
         (async () => {
           try {
-            let data = null;
+      let data = null;
             try {
-              data = await state.client.downloadMedia(rawMsg, { thumb: 0 });
-            } catch (e) {}
+              const photoSizes = (rawMsg.photo && rawMsg.photo.sizes) || (rawMsg.media && rawMsg.media.photo && rawMsg.media.photo.sizes) || null;
+              const docThumbs = (rawMsg.media && rawMsg.media.document && rawMsg.media.document.thumbs) || null;
+              const list = Array.isArray(photoSizes) ? photoSizes : (Array.isArray(docThumbs) ? docThumbs : null);
+
+              let bestThumb = 1;
+              if (list && list.length > 0) {
+                const crispIdx = list.findIndex(s => s && s.className !== 'PhotoStrippedSize' && (s.type === 'm' || s.type === 's' || s.type === 'x' || (s.w && s.w >= 160)));
+                if (crispIdx >= 0) bestThumb = crispIdx;
+                else bestThumb = list.length > 1 ? 1 : 0;
+              } else {
+                bestThumb = 0;
+              }
+
+              data = await state.client.downloadMedia(rawMsg, { thumb: bestThumb });
+            } catch (e) {
+              try { data = await state.client.downloadMedia(rawMsg, { thumb: 0 }); } catch (e2) {}
+            }
 
             if ((!data || data.length === 0) && fileObj && fileObj.category === 'photos' && fileObj.sizeBytes > 0 && fileObj.sizeBytes <= 800 * 1024) {
               try {
