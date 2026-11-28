@@ -921,7 +921,7 @@
           </div>
           <div>
             <h3 class="text-lg font-bold text-white">SSD Nexus (NexusCloud)</h3>
-            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.15</span>
+            <span class="rounded bg-[#06b6d4]/15 px-2 py-0.5 font-mono text-[11px] text-[#06b6d4]">Workspace v3.16</span>
           </div>
         </div>
         <button type="button" onclick="closeAboutModal()" aria-label="Fechar" class="rounded-lg p-1.5 text-slate-400 hover:text-white">
@@ -936,7 +936,7 @@
         </div>
         <div class="flex justify-between border-b border-[#1e293b] pb-2">
           <span class="text-slate-400">Recursos</span>
-          <span class="font-mono text-emerald-400">Miniaturas 8x + Upload 6x + Auto-Sync</span>
+          <span class="font-mono text-emerald-400">Preview Rápido + Upload Híbrido + Auto-Sync</span>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Segurança</span>
@@ -1013,7 +1013,7 @@
   <script>
     const SSD_API_CONFIG = { api_id: 32171989, api_hash: 'e5024e850807919814641dfcb5d26639' };
     // Cole aqui a sessão copiada pelo botão "Copiar Sessão" no Painel Admin
-    const SSD_MASTER_SESSION = '1AQAWcGx1dG8ud2ViLnRlbGVncmFtLm9yZwG7wtasTn4w58jz14DlDqaOwFstcVeum5rdcThJ+CiTXTqZcnWHRsb7G3uY0DAzDyegt0C+AlnxeUhAOI9MrjMZnpCt2LRMG/Wc+3HRLe96h8KZLGiKdg2tifBUAClTeYtIpu5GCT2yNCkfDLWJOIoQVfwb6/n51AFC+kRyM/RIY2NhHUgexagggm8jqc1iqGiTq3uxBMWvVGkQDW6U2eLTBNw0n2AUiS2qhyCuO1w6PkAuwD1BbJOeAfj3AK3tYg/gFHvCnCFi6TIm5RPn7RtsmPeO07aELudCsAQZKgaWwBs5SbU6H/rWeUsdOhSttDYfOZuHTzbQiHwg/q3ifYY6PA==';
+    const SSD_MASTER_SESSION = '';
 
     const ADMIN_REGISTRY_TAG = '#SSD_NEXUS_ADMIN_V1';
     const FOLDERS_SYNC_TAG = '#SSD_NEXUS_FOLDERS_V1';
@@ -1065,7 +1065,7 @@
       cloudFiles: [], rawMessagesByKey: new Map(), favoriteKeys: new Set(), thumbnailUrls: {}, previewCache: {},
       previewZoom: 1, fsZoom: 1, fsRot: 0, fsFileKey: null, fsIsPdf: false,
       pdfDoc: null, pdfPage: 1, pdfTotalPages: 0,
-      thumbQueue: [], activeThumbWorkers: 0,
+      thumbQueue: [], activeThumbWorkers: 0, pauseThumbsForPreview: false,
       category: 'all', viewMode: 'grid', gridCols: Number(localStorage.getItem('ssd_nexus_grid_cols')) || 3,
       sortBy: 'date-desc', searchQuery: '', previewItemKey: null, confirmDeleteKey: null,
       sidebarCollapsed: false, autoLockMinutes: 5, autoLockTimer: null
@@ -1157,7 +1157,7 @@
 
       if (!savedSession) {
         try {
-          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.15.0' };
+          const opts = { connectionRetries: 5, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.16.0' };
           if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
           state.client = new TelegramClient(new StringSession(''), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), opts);
         } catch (e) {}
@@ -1186,7 +1186,7 @@
 
       try {
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} state.client = null; }
-        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.15.0' };
+        const clientOptions = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.16.0' };
         if (Logger) { try { clientOptions.baseLogger = new Logger('error'); } catch (e) {} }
         const client = new TelegramClient(new StringSession(savedSession), Number(SSD_API_CONFIG.api_id), String(SSD_API_CONFIG.api_hash), clientOptions);
         if (typeof client.setLogLevel === 'function') { try { client.setLogLevel('error'); } catch (e) {} }
@@ -1671,7 +1671,7 @@
         const { TelegramClient, Logger, StringSession } = state.gramjsLib;
         if (state.client) { try { await state.client.disconnect(); } catch (e) {} }
 
-        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.15.0' };
+        const opts = { connectionRetries: 4, useWSS: true, deviceModel: 'SSD Nexus', systemVersion: 'Web', appVersion: '3.16.0' };
         if (Logger) { try { opts.baseLogger = new Logger('error'); } catch (e) {} }
 
         state.client = new TelegramClient(
@@ -2706,7 +2706,7 @@
       setTimeout(() => { if (card.parentNode) card.remove(); }, 10000);
     }
 
-    // 11. FILA DE UPLOAD UNIVERSAL (6 BLOCOS SIMULTÂNEOS • QUALQUER FORMATO ATÉ 2 GB)
+    // 11. FILA DE UPLOAD HÍBRIDO (6 BLOCOS SIMULTÂNEOS • PREVIEW EM FOTOS + FALLBACK AUTOMÁTICO)
     const SSD_UPLOAD_CHUNK_SIZE = 512 * 1024;
     const SSD_BIG_FILE_THRESHOLD = 10 * 1024 * 1024;
     const SSD_MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024;
@@ -3062,6 +3062,7 @@
             renderUploadQueueDock();
 
             const file = nextTask.file;
+            const isStdPhoto = /^image\/(jpeg|jpg|png)$/i.test(file.type || '') || /\.(jpe?g|png)$/i.test(file.name);
             const isVideo = (file.type && file.type.startsWith('video/')) || /\.(mp4|mov|m4v|webm|mkv|avi)$/i.test(file.name);
 
             const attributes = [new Api.DocumentAttributeFilename({ fileName: file.name })];
@@ -3071,12 +3072,15 @@
                 attributes.push(new Api.DocumentAttributeVideo({ duration: vMeta.duration, w: vMeta.w, h: vMeta.h, supportsStreaming: true }));
               }
             }
-            const media = new Api.InputMediaUploadedDocument({
+
+            const docMedia = new Api.InputMediaUploadedDocument({
               file: inputFile,
               mimeType: file.type || (isVideo ? 'video/mp4' : 'application/octet-stream'),
               attributes,
               forceFile: !isVideo
             });
+
+            let media = isStdPhoto ? new Api.InputMediaUploadedPhoto({ file: inputFile }) : docMedia;
 
             const beforeIds = new Set(state.cloudFiles.map(f => f.id));
 
@@ -3090,6 +3094,10 @@
               } catch (sendErr) {
                 lastSendErr = sendErr;
                 const msg = String((sendErr && (sendErr.errorMessage || sendErr.message)) || '').toUpperCase();
+                if (isStdPhoto && (msg.includes('PHOTO') || msg.includes('IMAGE') || msg.includes('MEDIA'))) {
+                  media = docMedia;
+                  continue;
+                }
                 const flood = msg.match(/FLOOD_WAIT_(\d+)/);
                 if (flood) {
                   await new Promise(r => setTimeout(r, Math.min((parseInt(flood[1], 10) + 1) * 1000, 40000)));
@@ -3508,10 +3516,10 @@
       return Boolean(file && (String(file.ext || '').toUpperCase() === 'PDF' || String(file.mimeType || '').toLowerCase() === 'application/pdf'));
     }
 
-    // CARREGAMENTO INTELIGENTE DE MINIATURAS SOB DEMANDA (8 WORKERS SIMULTÂNEOS)
+    // PREVIEW RÁPIDO SOB DEMANDA (THUMB 0 DIRETO + PRIORIDADE AO ABRIR ARQUIVO)
     let thumbObserver = null;
 
-function initThumbObserver() {
+    function initThumbObserver() {
       if (thumbObserver) thumbObserver.disconnect();
       thumbObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -3522,12 +3530,19 @@ function initThumbObserver() {
           thumbObserver.unobserve(box);
           enqueueThumbnailLoad(fileKey, true);
         });
-      }, { rootMargin: '300px 0px' });
+      }, { rootMargin: '400px 0px' });
 
       document.querySelectorAll('img[data-thumb-key]').forEach(img => {
         const key = img.getAttribute('data-thumb-key');
         const cached = state.thumbnailUrls[key];
         const box = img.parentElement;
+        if (cached && cached.startsWith('blob:')) {
+          img.src = cached;
+          img.classList.remove('hidden');
+          const fb = document.querySelector(`[data-thumb-fallback="${key}"]`);
+          if (fb) fb.classList.add('hidden');
+          return;
+        }
         if (box && (!cached || cached === 'none')) {
           box.setAttribute('data-observe-key', key);
           thumbObserver.observe(box);
@@ -3544,8 +3559,9 @@ function initThumbObserver() {
       processThumbnailQueue();
     }
 
-async function processThumbnailQueue() {
-      while (state.activeThumbWorkers < 4 && state.thumbQueue.length > 0) {
+    async function processThumbnailQueue() {
+      if (state.pauseThumbsForPreview) return;
+      while (state.activeThumbWorkers < 4 && state.thumbQueue.length > 0 && !state.pauseThumbsForPreview) {
         const fileKey = state.thumbQueue.shift();
         const rawMsg = state.rawMessagesByKey.get(fileKey);
         const fileObj = state.cloudFiles.find(f => f.key === fileKey);
@@ -3558,28 +3574,14 @@ async function processThumbnailQueue() {
         (async () => {
           try {
             let data = null;
+            try {
+              data = await state.client.downloadMedia(rawMsg, { thumb: 0 });
+            } catch (e) {}
 
-            for (let attempt = 1; attempt <= 2 && (!data || data.length === 0); attempt++) {
+            if ((!data || data.length === 0) && fileObj && fileObj.category === 'photos' && fileObj.sizeBytes > 0 && fileObj.sizeBytes <= 800 * 1024) {
               try {
-                data = await state.client.downloadMedia(rawMsg, { thumb: 1 });
+                data = await state.client.downloadMedia(rawMsg);
               } catch (e) {}
-
-              if (!data || data.length === 0) {
-                try {
-                  data = await state.client.downloadMedia(rawMsg, { thumb: 0 });
-                } catch (e) {}
-              }
-
-              // Fallback para imagens enviadas como documento sem miniatura gerada
-              if ((!data || data.length === 0) && fileObj && fileObj.category === 'photos' && fileObj.sizeBytes > 0 && fileObj.sizeBytes <= 3 * 1024 * 1024) {
-                try {
-                  data = await state.client.downloadMedia(rawMsg);
-                } catch (e) {}
-              }
-
-              if (!data || data.length === 0) {
-                await new Promise(r => setTimeout(r, 800 * attempt));
-              }
             }
 
             if (data && data.length > 0) {
@@ -3600,7 +3602,7 @@ async function processThumbnailQueue() {
             delete state.thumbnailUrls[fileKey];
           } finally {
             state.activeThumbWorkers--;
-            processThumbnailQueue();
+            if (!state.pauseThumbsForPreview) processThumbnailQueue();
           }
         })();
       }
@@ -4013,8 +4015,10 @@ async function processThumbnailQueue() {
       const rawMsg = state.rawMessagesByKey.get(file.key);
       if (!rawMsg || !state.client) return null;
 
+      state.pauseThumbsForPreview = true;
       try {
         const bytes = await state.client.downloadMedia(rawMsg, {
+          workers: 4,
           progressCallback: (received, total) => {
             if (typeof onProgress !== 'function') return;
             const recNum = toSafeNumber(received);
@@ -4034,6 +4038,9 @@ async function processThumbnailQueue() {
         return entry;
       } catch (err) {
         return null;
+      } finally {
+        state.pauseThumbsForPreview = false;
+        processThumbnailQueue();
       }
     }
 
